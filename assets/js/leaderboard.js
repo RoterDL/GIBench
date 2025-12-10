@@ -26,6 +26,42 @@ function normalizeDiseaseKey(name) {
   return (name || "").toString().trim().toLowerCase();
 }
 
+function buildOptionKeySet(option) {
+  const keys = new Set();
+  [option?.key, option?.disease_cn, option?.disease_en, ...(option?.aliases || [])].forEach(
+    (k) => {
+      const norm = normalizeDiseaseKey(k);
+      if (norm) {
+        keys.add(norm);
+      }
+    }
+  );
+  return keys;
+}
+
+function buildDiseaseOptionsFromStandards(standards) {
+  const categories = standards?.disease_categories;
+  if (!categories) return [];
+  const nameMap = standards?.disease_name_map || {};
+  const opts = [];
+  Object.entries(categories).forEach(([regionEn, diseases]) => {
+    Object.entries(diseases || {}).forEach(([cn, en]) => {
+      const meta = nameMap[cn] || {};
+      const disease_cn = meta.name_cn || cn;
+      const disease_en = meta.name_en || en;
+      opts.push({
+        key: normalizeDiseaseKey(cn || en || disease_en || disease_cn),
+        disease_cn,
+        disease_en,
+        location_cn: meta.location_cn || regionEn,
+        location_en: meta.location_en || regionEn,
+        aliases: [cn, en, disease_cn, disease_en].filter(Boolean),
+      });
+    });
+  });
+  return opts;
+}
+
 function buildQ1Options(models) {
   const map = new Map();
   Object.values(models || {}).forEach((record) => {
@@ -119,6 +155,7 @@ function formatOptionLabel(option, lang) {
 
 function collectChartItems(subtab, option, models) {
   if (!option) return [];
+  const optionKeys = buildOptionKeySet(option);
   const items = [];
   Object.entries(models || {}).forEach(([modelName, record]) => {
     let value = null;
@@ -126,16 +163,18 @@ function collectChartItems(subtab, option, models) {
       const list = record?.tasks?.q1_anatomical_robustness?.per_disease || [];
       const found = list.find(
         (d) =>
-          normalizeDiseaseKey(d.disease_cn || d.disease || d.disease_type || d.disease_en) ===
-          option.key
+          optionKeys.has(
+            normalizeDiseaseKey(d.disease_cn || d.disease || d.disease_type || d.disease_en)
+          )
       );
       value = safeNumber(found?.f1_score);
     } else if (subtab === "q2") {
       const list = record?.tasks?.q2_spatial_localization?.per_disease || [];
       const found = list.find(
         (d) =>
-          normalizeDiseaseKey(d.disease_cn || d.disease_type || d.disease || d.disease_en) ===
-          option.key
+          optionKeys.has(
+            normalizeDiseaseKey(d.disease_cn || d.disease_type || d.disease || d.disease_en)
+          )
       );
       value = safeNumber(found?.overall_avg_iou);
     } else if (subtab === "q3") {
@@ -199,10 +238,18 @@ function initDetailCard(models, standards, { t, getLang, onLanguageChange }) {
   if (!selectEl || !chartEl || !subtabButtons.length) return;
 
   const optionsByTab = {
-    q1: buildQ1Options(models),
-    q2: buildQ2Options(models),
+    q1: [],
+    q2: [],
     q3: buildQ3Options(standards),
   };
+  const standardDiseaseOptions = buildDiseaseOptionsFromStandards(standards);
+  if (standardDiseaseOptions.length) {
+    optionsByTab.q1 = standardDiseaseOptions;
+    optionsByTab.q2 = standardDiseaseOptions;
+  } else {
+    optionsByTab.q1 = buildQ1Options(models);
+    optionsByTab.q2 = buildQ2Options(models);
+  }
 
   let currentTab = "q1";
   let currentLang = getLang();
