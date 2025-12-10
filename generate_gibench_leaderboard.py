@@ -235,9 +235,9 @@ def build_leaderboard() -> Dict[str, Any]:
     if not mc_path.is_file():
         raise FileNotFoundError(f"找不到多项选择题结果文件：{mc_path}")
     if not spatial_path.is_file():
-        raise FileNotFoundError(f"找不到空间定位结果文件：{spatial_path}")
+        raise FileNotFoundError(f"找不到病变定位结果文件：{spatial_path}")
     if not spatial_overall_path.is_file():
-        raise FileNotFoundError(f"找不到空间定位整体指标文件：{spatial_overall_path}")
+        raise FileNotFoundError(f"找不到病变定位整体指标文件：{spatial_overall_path}")
 
     mc_data = load_json(mc_path)
     spatial_overall_raw = load_json(spatial_overall_path)
@@ -304,7 +304,7 @@ def build_leaderboard() -> Dict[str, Any]:
     leaderboard: Dict[str, Any] = {
         "bench_name": "GIBench",
         "generated_at": datetime.now().isoformat(timespec="seconds"),
-        "description": "GIBench 多任务统一模型榜指标（Q1 解剖定位、Q2 空间定位、Q3 诊断区域鲁棒性）",
+        "description": "GIBench 多任务统一模型榜指标（Q1 解剖定位、Q2 病变定位、Q3 诊断）",
         "models": {},
         "standards": standards_payload(alias_sources),
     }
@@ -396,7 +396,7 @@ def build_leaderboard() -> Dict[str, Any]:
             if sample_total:
                 record["summary"]["q3_diagnosis_f1_mean"] = f1_weighted_sum / sample_total
 
-        # Q2：空间定位整体 + 按病变
+        # Q2：病变定位整体 + 按病变
         if model_name in spatial_overall:
             s = spatial_overall[model_name] or {}
             record["tasks"].setdefault("q2_spatial_localization", {})
@@ -445,7 +445,7 @@ def build_leaderboard() -> Dict[str, Any]:
             "standard_error_statistics": comparison_data.get("standard_error_statistics"),
         }
 
-    # Q2：空间定位 IoU
+    # Q2：病变定位 IoU
     spatial_hvm_path = eval_results_root / "physician_vs_model_spatial" / "spatial_metrics.json"
     if spatial_hvm_path.is_file():
         spatial_hvm = load_json(spatial_hvm_path)
