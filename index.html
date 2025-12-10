@@ -33,22 +33,22 @@
         <div class="hero-stats">
           <div class="stat-card">
             <div class="stat-label" id="stat-disease-label">病变类型</div>
-            <div class="stat-value">20</div>
+            <div class="stat-value" id="stat-disease-value">20</div>
             <div class="stat-sub" id="stat-disease-sub">典型食管 / 胃 / 结直肠变异</div>
           </div>
           <div class="stat-card">
             <div class="stat-label" id="stat-image-label">图像与题目</div>
-            <div class="stat-value">947</div>
+            <div class="stat-value" id="stat-image-value">947</div>
             <div class="stat-sub" id="stat-image-sub">每病变 50 张图像，Q1–Q5 评估</div>
           </div>
           <div class="stat-card">
             <div class="stat-label" id="stat-eval-label">评估主体</div>
-            <div class="stat-value">3 + 1</div>
+            <div class="stat-value" id="stat-eval-value">3 + 1</div>
             <div class="stat-sub" id="stat-eval-sub">3 名专科医生 + LLM 裁判</div>
           </div>
           <div class="stat-card">
             <div class="stat-label" id="stat-model-label">模型数量</div>
-            <div class="stat-value">12</div>
+            <div class="stat-value" id="stat-model-value">12</div>
             <div class="stat-sub" id="stat-model-sub">商业 / 医疗开源 / 开源</div>
           </div>
         </div>
@@ -65,16 +65,14 @@
             class="tab-button is-active"
             data-tab="model"
           >
-            <span id="tab-model-zh">模型榜</span>
-            <span class="en" id="tab-model-en">Model Leaderboard</span>
+            <span id="tab-label-model">模型榜</span>
           </button>
           <button
             type="button"
             class="tab-button"
             data-tab="human"
           >
-            <span id="tab-human-zh">人机对比</span>
-            <span class="en" id="tab-human-en">Human vs Model</span>
+            <span id="tab-label-human">人机对比</span>
           </button>
         </div>
         <div class="lang-toggle" id="lang-toggle">
@@ -104,21 +102,21 @@
                 type="button"
                 disabled
               >
-                Q1 解剖定位
+                <span id="task-pill-q1">Q1 解剖定位</span>
               </button>
               <button
                 class="pill-toggle is-active"
                 type="button"
                 disabled
               >
-                Q2 病变定位
+                <span id="task-pill-q2">Q2 病变定位</span>
               </button>
               <button
                 class="pill-toggle is-active"
                 type="button"
                 disabled
               >
-                Q3 诊断选择
+                <span id="task-pill-q3">Q3 诊断选择</span>
               </button>
             </div>
             <div class="controls-group">
@@ -149,7 +147,7 @@
                   <thead>
                     <tr>
                       <th>#</th>
-                      <th>模型</th>
+                      <th id="table-col-model">模型</th>
                       <th>Q1 Macro‑F1</th>
                       <th>Q2 mIoU</th>
                       <th>Q3 Macro‑F1</th>

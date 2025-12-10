@@ -11,6 +11,9 @@
   --radius-md: 10px;
   --radius-pill: 999px;
   --shadow-soft: 0 14px 35px rgba(15, 61, 94, 0.12);
+  --font-base: 14px;
+  --font-title: 18px;
+  --font-small: 12px;
 }
 
 *,
@@ -34,6 +37,8 @@ body {
   padding: 24px 16px 32px;
   display: flex;
   justify-content: center;
+  font-size: var(--font-base);
+  line-height: 1.6;
 }
 
 .page {
@@ -598,6 +603,48 @@ tbody tr.is-selected td {
   color: var(--accent-primary);
   text-decoration: none;
   border-bottom: 1px dashed rgba(18, 79, 110, 0.6);
+}
+
+/* Typography scale overrides */
+.hero-main h1,
+.card-title,
+.summary-title {
+  font-size: var(--font-title);
+}
+
+.lang-btn,
+.tab-button,
+.load-status,
+.label,
+.controls-note,
+.pill-toggle,
+.select,
+.card-subtitle,
+.hero-stats,
+.stat-label,
+.stat-sub,
+.table-wrapper,
+table,
+th,
+td,
+.model-summary-metrics,
+.detail-selected-tip,
+.detail-list,
+.bar-label,
+.bar-value,
+.detail-empty,
+.summary-row,
+.summary-note,
+.case-placeholder,
+.footer {
+  font-size: var(--font-base);
+}
+
+.tab-button .en,
+.tag,
+.metric-sub,
+.select-wrap::after {
+  font-size: var(--font-small);
 }
 
 @media (max-width: 1024px) {

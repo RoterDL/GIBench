@@ -17,6 +17,48 @@ function initTabs() {
   });
 }
 
+function setHeroStatValue(id, value, refKey) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const valid = value !== undefined && value !== null && !(typeof value === "number" && Number.isNaN(value));
+  if (valid) {
+    el.textContent = value;
+    el.removeAttribute("title");
+  } else {
+    el.textContent = "N/A";
+    if (refKey) {
+      el.title = `请在 assets/data/gibench_standards.json 填写 ${refKey}`;
+    }
+  }
+}
+
+function updateHeroStats(standards = {}) {
+  const diseaseCategories = standards.disease_categories || {};
+  const diseaseCount = Object.values(diseaseCategories).reduce((sum, diseases) => {
+    return sum + Object.keys(diseases || {}).length;
+  }, 0);
+  setHeroStatValue("stat-disease-value", diseaseCount || null, "disease_categories");
+
+  const modelCategories = standards.model_categories || {};
+  const modelSet = new Set();
+  Object.values(modelCategories).forEach((list) => {
+    (list || []).forEach((name) => modelSet.add(name));
+  });
+  setHeroStatValue("stat-model-value", modelSet.size || null, "model_categories");
+
+  const physicians = standards.physician_names_en || {};
+  const physicianCount = Object.keys(physicians).length;
+  const evaluators = physicianCount > 0 ? `${physicianCount} + 1` : physicianCount === 0 ? "1" : null;
+  setHeroStatValue("stat-eval-value", evaluators, "physician_names_en (+1 LLM)");
+
+  const datasetOverview = standards.dataset_overview || {};
+  setHeroStatValue(
+    "stat-image-value",
+    datasetOverview.image_question_count,
+    "dataset_overview.image_question_count"
+  );
+}
+
 async function loadData() {
   const statusEl = document.getElementById("load-status");
   if (statusEl) {
@@ -30,12 +72,25 @@ async function loadData() {
       throw new Error(`HTTP ${resp.status}`);
     }
     const data = await resp.json();
+    let standards = data.standards || {};
+    if (!standards.dataset_overview) {
+      try {
+        const stdResp = await fetch("assets/data/gibench_standards.json", { cache: "no-cache" });
+        if (stdResp.ok) {
+          const stdData = await stdResp.json();
+          standards = { ...stdData, ...standards };
+        }
+      } catch (e) {
+        console.warn("fallback standards fetch failed", e);
+      }
+    }
     if (statusEl) {
       statusEl.textContent = t("load.success");
     }
-    setStandards(data.standards || {});
-    initLeaderboard(data, { getLang, onLanguageChange, t, standards: data.standards || {} });
-    initHumanVsModel(data.human_vs_model || {}, { getLang, onLanguageChange, t, standards: data.standards || {} });
+    setStandards(standards);
+    updateHeroStats(standards);
+    initLeaderboard(data, { getLang, onLanguageChange, t, standards });
+    initHumanVsModel(data.human_vs_model || {}, { getLang, onLanguageChange, t, standards });
   } catch (err) {
     console.error("加载 gibench_leaderboard.json 失败：", err);
     if (statusEl) {
