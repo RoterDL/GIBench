@@ -340,16 +340,13 @@ function computeModelRows(models, sortBy) {
     const q1 = safeNumber(summary.q1_anatomical_f1_mean);
     const q2 = safeNumber(summary.q2_spatial_miou);
     const q3 = safeNumber(summary.q3_diagnosis_f1_mean);
-    const metrics = [q1, q2, q3].filter((v) => v !== null);
-    const combined =
-      metrics.length > 0 ? metrics.reduce((a, b) => a + b, 0) / metrics.length : null;
-    return { name, record, q1, q2, q3, combined };
+    return { name, record, q1, q2, q3 };
   });
 
   const key =
-    sortBy === "q1" || sortBy === "q2" || sortBy === "q3" || sortBy === "combined"
+    sortBy === "q1" || sortBy === "q2" || sortBy === "q3"
       ? sortBy
-      : "combined";
+      : "q1";
 
   rows.sort((a, b) => {
     const va = a[key] ?? -1;
@@ -360,7 +357,19 @@ function computeModelRows(models, sortBy) {
   return rows;
 }
 
-function renderModelTable(tbody, rows, selectedName, t) {
+function getColumnMax(rows) {
+  let maxQ1 = null;
+  let maxQ2 = null;
+  let maxQ3 = null;
+  rows.forEach((row) => {
+    if (row.q1 !== null && (maxQ1 === null || row.q1 > maxQ1)) maxQ1 = row.q1;
+    if (row.q2 !== null && (maxQ2 === null || row.q2 > maxQ2)) maxQ2 = row.q2;
+    if (row.q3 !== null && (maxQ3 === null || row.q3 > maxQ3)) maxQ3 = row.q3;
+  });
+  return { maxQ1, maxQ2, maxQ3 };
+}
+
+function renderModelTable(tbody, rows, selectedName, t, columnMax) {
   tbody.innerHTML = "";
   rows.forEach((row, idx) => {
     const tr = document.createElement("tr");
@@ -392,29 +401,26 @@ function renderModelTable(tbody, rows, selectedName, t) {
     nameCell.textContent = row.name;
     tr.appendChild(nameCell);
 
+    const { maxQ1, maxQ2, maxQ3 } = columnMax || {};
+    const isMax = (val, maxVal) => maxVal !== null && val !== null && val === maxVal;
+
     const q1Cell = document.createElement("td");
-    q1Cell.innerHTML = `<div class="metric-value">${formatFloat(
+    q1Cell.innerHTML = `<div class="metric-value${isMax(row.q1, maxQ1) ? " is-max" : ""}">${formatFloat(
       row.q1
     )}</div><div class="metric-sub">${t("metric.q1")}</div>`;
     tr.appendChild(q1Cell);
 
     const q2Cell = document.createElement("td");
-    q2Cell.innerHTML = `<div class="metric-value">${formatFloat(
+    q2Cell.innerHTML = `<div class="metric-value${isMax(row.q2, maxQ2) ? " is-max" : ""}">${formatFloat(
       row.q2
     )}</div><div class="metric-sub">${t("metric.q2")}</div>`;
     tr.appendChild(q2Cell);
 
     const q3Cell = document.createElement("td");
-    q3Cell.innerHTML = `<div class="metric-value">${formatFloat(
+    q3Cell.innerHTML = `<div class="metric-value${isMax(row.q3, maxQ3) ? " is-max" : ""}">${formatFloat(
       row.q3
     )}</div><div class="metric-sub">${t("metric.q3")}</div>`;
     tr.appendChild(q3Cell);
-
-    const combinedCell = document.createElement("td");
-    combinedCell.innerHTML = `<div class="metric-value">${formatFloat(
-      row.combined
-    )}</div><div class="metric-sub">${t("metric.combined")}</div>`;
-    tr.appendChild(combinedCell);
 
     tbody.appendChild(tr);
   });
@@ -468,7 +474,7 @@ export function initLeaderboard(rootData, options) {
   initDetailCard(models, standards, { t, getLang, onLanguageChange });
 
   let currentLang = getLang();
-  let sortBy = sortSelect.value || "combined";
+  let sortBy = sortSelect.value || "q1";
   let rows = computeModelRows(models, sortBy);
   let selectedName = rows[0] ? rows[0].name : null;
 
@@ -482,12 +488,13 @@ export function initLeaderboard(rootData, options) {
     if (!selectedName || !models[selectedName]) {
       selectedName = rows[0].name;
     }
-    renderModelTable(tbody, rows, selectedName, t);
+    const columnMax = getColumnMax(rows);
+    renderModelTable(tbody, rows, selectedName, t, columnMax);
     renderSummary(models[selectedName], t, currentLang);
   }
 
   sortSelect.addEventListener("change", () => {
-    sortBy = sortSelect.value || "combined";
+    sortBy = sortSelect.value || "q1";
     refresh();
   });
 

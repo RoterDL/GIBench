@@ -18,7 +18,6 @@ const UI_TEXTS = {
   "tab-human-en": { zh: "Human vs Model", en: "Human vs Model" },
   "label-tasks": { zh: "任务", en: "Tasks" },
   "label-sort": { zh: "排序（前端示意）", en: "Sorting (UI only)" },
-  "sort-opt-combined": { zh: "按综合 GIBench 分数", en: "By composite GIBench" },
   "sort-opt-q1": { zh: "Q1 解剖定位-F1", en: "Q1 anatomical localization-F1" },
   "sort-opt-q2": { zh: "Q2 病变定位-mIoU", en: "Q2 lesion localization-mIoU" },
   "sort-opt-q3": { zh: "Q3 诊断-F1", en: "Q3 diagnosis-F1" },
@@ -112,7 +111,6 @@ const MESSAGES = {
   "metric.q1": { zh: "Macro‑F1", en: "Macro‑F1" },
   "metric.q2": { zh: "mIoU", en: "mIoU" },
   "metric.q3": { zh: "Macro‑F1", en: "Macro‑F1" },
-  "metric.combined": { zh: "示意综合分", en: "Composite (illustrative)" },
 };
 
 let currentLang = "zh";
