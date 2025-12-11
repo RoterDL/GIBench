@@ -46,10 +46,8 @@ function updateHeroStats(standards = {}) {
   });
   setHeroStatValue("stat-model-value", modelSet.size || null, "model_categories");
 
-  const physicians = standards.physician_names_en || {};
-  const physicianCount = Object.keys(physicians).length;
-  const evaluators = physicianCount > 0 ? `${physicianCount} + 1` : physicianCount === 0 ? "1" : null;
-  setHeroStatValue("stat-eval-value", evaluators, "physician_names_en (+1 LLM)");
+  // 评估主体数量固定为 3+1（3 名医生 + 1 LLM）
+  setHeroStatValue("stat-eval-value", "3 + 1");
 
   const datasetOverview = standards.dataset_overview || {};
   setHeroStatValue(
