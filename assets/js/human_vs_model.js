@@ -91,20 +91,10 @@ function renderQ2Spatial(spatialBlock, standards, t) {
   const { doctors, models } = classifyParticipants(names, standards);
 
   const doctorScores = doctors
-    .map(
-      (n) =>
-        participants[n] &&
-        participants[n].metrics &&
-        safeNumber(participants[n].metrics.overall?.mean_iou)
-    )
+    .map((n) => participants[n] && participants[n].metrics && safeNumber(participants[n].metrics.overall?.mean_iou))
     .filter((v) => v != null);
   const modelScores = models
-    .map(
-      (n) =>
-        participants[n] &&
-        participants[n].metrics &&
-        safeNumber(participants[n].metrics.overall?.mean_iou)
-    )
+    .map((n) => participants[n] && participants[n].metrics && safeNumber(participants[n].metrics.overall?.mean_iou))
     .filter((v) => v != null);
 
   const doctorMean = mean(doctorScores);

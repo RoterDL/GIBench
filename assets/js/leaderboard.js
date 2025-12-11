@@ -8,7 +8,7 @@ function formatFloat(value, digits = 3) {
   return v.toFixed(digits);
 }
 
-function displayDiseaseName(item, lang, standards) {
+function displayDiseaseName(item, lang) {
   if (!item) return lang === "en" ? "Unknown" : "未知病变";
   if (lang === "en") {
     return item.disease_en || item.disease || item.disease_type || "Unknown";
@@ -28,14 +28,10 @@ function normalizeDiseaseKey(name) {
 
 function buildOptionKeySet(option) {
   const keys = new Set();
-  [option?.key, option?.disease_cn, option?.disease_en, ...(option?.aliases || [])].forEach(
-    (k) => {
-      const norm = normalizeDiseaseKey(k);
-      if (norm) {
-        keys.add(norm);
-      }
-    }
-  );
+  [option?.key, option?.disease_cn, option?.disease_en, ...(option?.aliases || [])].forEach((k) => {
+    const norm = normalizeDiseaseKey(k);
+    if (norm) keys.add(norm);
+  });
   return keys;
 }
 
@@ -161,21 +157,11 @@ function collectChartItems(subtab, option, models) {
     let value = null;
     if (subtab === "q1") {
       const list = record?.tasks?.q1_anatomical_robustness?.per_disease || [];
-      const found = list.find(
-        (d) =>
-          optionKeys.has(
-            normalizeDiseaseKey(d.disease_cn || d.disease || d.disease_type || d.disease_en)
-          )
-      );
+      const found = list.find((d) => optionKeys.has(normalizeDiseaseKey(d.disease_cn || d.disease || d.disease_type || d.disease_en)));
       value = safeNumber(found?.f1_score);
     } else if (subtab === "q2") {
       const list = record?.tasks?.q2_spatial_localization?.per_disease || [];
-      const found = list.find(
-        (d) =>
-          optionKeys.has(
-            normalizeDiseaseKey(d.disease_cn || d.disease_type || d.disease || d.disease_en)
-          )
-      );
+      const found = list.find((d) => optionKeys.has(normalizeDiseaseKey(d.disease_cn || d.disease_type || d.disease || d.disease_en)));
       value = safeNumber(found?.overall_avg_iou);
     } else if (subtab === "q3") {
       const regions = record?.tasks?.q3_diagnosis_regional_robustness?.regions || [];
@@ -203,8 +189,11 @@ function renderBarChart(chartEl, items, t) {
     chartEl.appendChild(empty);
     return;
   }
-  const maxValue = Math.max(...items.map((i) => i.value || 0), 0);
-  items.forEach((item) => {
+  const clamp01 = (val) => {
+    if (typeof val !== "number" || Number.isNaN(val)) return 0;
+    return Math.max(0, Math.min(val, 1));
+  };
+  items.forEach((item, idx) => {
     const row = document.createElement("div");
     row.className = "bar-row";
 
@@ -216,7 +205,12 @@ function renderBarChart(chartEl, items, t) {
     track.className = "bar-track";
     const fill = document.createElement("div");
     fill.className = "bar-fill";
-    fill.style.width = maxValue > 0 ? `${(item.value / maxValue) * 100}%` : "0%";
+    fill.style.width = `${clamp01(item.value) * 100}%`;
+    if (idx === 0) {
+      fill.classList.add("bar-fill--primary", "bar-fill--top");
+    } else {
+      fill.classList.add("bar-fill--muted");
+    }
     track.appendChild(fill);
 
     const valueEl = document.createElement("div");
@@ -343,10 +337,7 @@ function computeModelRows(models, sortBy) {
     return { name, record, q1, q2, q3 };
   });
 
-  const key =
-    sortBy === "q1" || sortBy === "q2" || sortBy === "q3"
-      ? sortBy
-      : "q1";
+  const key = sortBy === "q1" || sortBy === "q2" || sortBy === "q3" ? sortBy : "q1";
 
   rows.sort((a, b) => {
     const va = a[key] ?? -1;
@@ -405,28 +396,22 @@ function renderModelTable(tbody, rows, selectedName, t, columnMax) {
     const isMax = (val, maxVal) => maxVal !== null && val !== null && val === maxVal;
 
     const q1Cell = document.createElement("td");
-    q1Cell.innerHTML = `<div class="metric-value${isMax(row.q1, maxQ1) ? " is-max" : ""}">${formatFloat(
-      row.q1
-    )}</div><div class="metric-sub">${t("metric.q1")}</div>`;
+    q1Cell.innerHTML = `<div class="metric-value${isMax(row.q1, maxQ1) ? " is-max" : ""}">${formatFloat(row.q1)}</div><div class="metric-sub">${t("metric.q1")}</div>`;
     tr.appendChild(q1Cell);
 
     const q2Cell = document.createElement("td");
-    q2Cell.innerHTML = `<div class="metric-value${isMax(row.q2, maxQ2) ? " is-max" : ""}">${formatFloat(
-      row.q2
-    )}</div><div class="metric-sub">${t("metric.q2")}</div>`;
+    q2Cell.innerHTML = `<div class="metric-value${isMax(row.q2, maxQ2) ? " is-max" : ""}">${formatFloat(row.q2)}</div><div class="metric-sub">${t("metric.q2")}</div>`;
     tr.appendChild(q2Cell);
 
     const q3Cell = document.createElement("td");
-    q3Cell.innerHTML = `<div class="metric-value${isMax(row.q3, maxQ3) ? " is-max" : ""}">${formatFloat(
-      row.q3
-    )}</div><div class="metric-sub">${t("metric.q3")}</div>`;
+    q3Cell.innerHTML = `<div class="metric-value${isMax(row.q3, maxQ3) ? " is-max" : ""}">${formatFloat(row.q3)}</div><div class="metric-sub">${t("metric.q3")}</div>`;
     tr.appendChild(q3Cell);
 
     tbody.appendChild(tr);
   });
 }
 
-function renderSummary(record, t, lang) {
+function renderSummary(record, t) {
   const nameEl = document.getElementById("model-summary-name");
   const metricsEl = document.getElementById("model-summary-metrics");
   if (!nameEl || !metricsEl) return;
@@ -442,9 +427,9 @@ function renderSummary(record, t, lang) {
   metricsEl.innerHTML = "";
 
   const items = [
-    ["Q1 Macro‑F1", safeNumber(s.q1_anatomical_f1_mean)],
+    ["Q1 Macro-F1", safeNumber(s.q1_anatomical_f1_mean)],
     ["Q2 mIoU", safeNumber(s.q2_spatial_miou)],
-    ["Q3 Macro‑F1", safeNumber(s.q3_diagnosis_f1_mean)],
+    ["Q3 Macro-F1", safeNumber(s.q3_diagnosis_f1_mean)],
   ];
 
   items.forEach(([label, value]) => {

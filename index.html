@@ -16,39 +16,48 @@
     <div class="page">
       <header class="hero">
         <div class="hero-main">
+          <div class="hero-kicker">Endoscopy VQA</div>
           <h1 id="hero-title">GIBench 模型榜</h1>
           <p id="hero-desc">
-            多模态消化内镜 VQA 基准：Q1 解剖定位、Q2 病变定位、Q3 诊断选择、Q4 Findings 与 Q5
+            多模态消化内镜 VQA 基准：Q1 解剖定位、Q2 病变定位、Q3 诊断选择、Q4 看图说话 与 Q5
             后续建议，支持模型间与人机对比两种视图。
           </p>
           <div class="tags">
-            <span class="tag tag--primary">Endoscopy VQA</span>
-            <span class="tag">Q1 Anatomical</span>
-            <span class="tag">Q2 Localization</span>
-            <span class="tag">Q3 Diagnosis</span>
-            <span class="tag">Q4 Findings</span>
-            <span class="tag">Q5 Recommendation</span>
+            <span class="tag tag--primary">ENDOSCOPY VQA</span>
+            <span class="tag">Q1 ANATOMICAL</span>
+            <span class="tag">Q2 LOCALIZATION</span>
+            <span class="tag">Q3 DIAGNOSIS</span>
+            <span class="tag">Q4 FINDINGS</span>
+            <span class="tag">Q5 RECOMMENDATION</span>
           </div>
         </div>
         <div class="hero-stats">
           <div class="stat-card">
             <div class="stat-label" id="stat-disease-label">病变类型</div>
-            <div class="stat-value" id="stat-disease-value">20</div>
+            <div class="stat-value">
+              <span id="stat-disease-value">20</span>
+            </div>
             <div class="stat-sub" id="stat-disease-sub">食管 / 胃 / 结直肠</div>
           </div>
           <div class="stat-card">
             <div class="stat-label" id="stat-image-label">图像与题目</div>
-            <div class="stat-value" id="stat-image-value">947</div>
-            <div class="stat-sub" id="stat-image-sub">每病变 50 张图像，Q1–Q5 评估</div>
+            <div class="stat-value">
+              <span id="stat-image-value">947</span>
+            </div>
+            <div class="stat-sub" id="stat-image-sub">20类病变，Q1-Q5 评估</div>
           </div>
           <div class="stat-card">
             <div class="stat-label" id="stat-eval-label">Likert评估主体</div>
-            <div class="stat-value" id="stat-eval-value">3 + 1</div>
+            <div class="stat-value">
+              <span id="stat-eval-value">3 + 1</span>
+            </div>
             <div class="stat-sub" id="stat-eval-sub">3 名专科医生 + LLM 裁判</div>
           </div>
           <div class="stat-card">
             <div class="stat-label" id="stat-model-label">模型数量</div>
-            <div class="stat-value" id="stat-model-value">12</div>
+            <div class="stat-value">
+              <span id="stat-model-value">12</span>
+            </div>
             <div class="stat-sub" id="stat-model-sub">商业 / 医疗开源 / 开源</div>
           </div>
         </div>
@@ -120,62 +129,63 @@
               </button>
             </div>
             <div class="controls-group">
-              <span class="label" id="label-sort">排序（前端示意）</span>
+              <span class="label" id="label-sort">排序（示意）</span>
               <span class="select-wrap">
                 <select
                   id="sort-select"
                   class="select"
                 >
-                  <option id="sort-opt-q1" value="q1">按 Q1 Macro‑F1</option>
+                  <option id="sort-opt-q1" value="q1">按 Q1 Macro-F1</option>
                   <option id="sort-opt-q2" value="q2">按 Q2 mIoU</option>
-                  <option id="sort-opt-q3" value="q3">按 Q3 Macro‑F1</option>
+                  <option id="sort-opt-q3" value="q3">按 Q3 Macro-F1</option>
                 </select>
               </span>
             </div>
           </div>
 
-          <div class="grid-two">
-            <section class="card">
-              <div class="card-header">
-                <div class="card-title" id="card-title-ranking">模型整体排名</div>
-                <div class="card-subtitle" id="card-subtitle-ranking">
-                  使用 Q1/Q2/Q3 指标生成的示意排序，具体加权方式请参考论文和文档。
+          <section class="card card--paired">
+            <div class="paired-grid">
+              <div class="card-pane">
+                <div class="card-header">
+                  <div class="card-title" id="card-title-ranking">模型整体排名</div>
+                  <div class="card-subtitle" id="card-subtitle-ranking">
+                    使用 Q1/Q2/Q3 指标生成的示意排序，具体加权方式请参考论文和文档。
+                  </div>
+                </div>
+                <div class="table-wrapper">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th id="table-col-model">模型</th>
+                        <th>Q1 Macro-F1</th>
+                        <th>Q2 mIoU</th>
+                        <th>Q3 Macro-F1</th>
+                      </tr>
+                    </thead>
+                    <tbody id="leaderboard-body"></tbody>
+                  </table>
                 </div>
               </div>
-              <div class="table-wrapper">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>#</th>
-                      <th id="table-col-model">模型</th>
-                      <th>Q1 Macro‑F1</th>
-                      <th>Q2 mIoU</th>
-                      <th>Q3 Macro‑F1</th>
-                    </tr>
-                  </thead>
-                  <tbody id="leaderboard-body"></tbody>
-                </table>
-              </div>
-            </section>
-
-            <section class="card">
-              <div class="card-header">
-                <div class="card-title" id="card-title-summary">当前模型概览</div>
+              <div class="card-pane card-pane--summary">
+                <div class="card-header">
+                  <div class="card-title" id="card-title-summary">当前模型概览</div>
+                  <div
+                    id="model-summary-name"
+                    class="card-subtitle"
+                  >
+                    尚未选择模型。
+                  </div>
+                </div>
                 <div
-                  id="model-summary-name"
-                  class="card-subtitle"
-                >
-                  尚未选择模型。
-                </div>
+                  id="model-summary-metrics"
+                  class="model-summary-metrics"
+                ></div>
               </div>
-              <div
-                id="model-summary-metrics"
-                class="model-summary-metrics"
-              ></div>
-            </section>
-          </div>
+            </div>
+          </section>
 
-          <section class="card">
+          <section class="card card--detail">
             <div class="card-header">
               <div class="card-title" id="card-title-detail">按病变 / 区域细节</div>
               <div class="card-subtitle" id="card-subtitle-detail">
@@ -252,14 +262,14 @@
             <div class="controls-group">
               <span class="label" id="label-note">说明</span>
               <span class="controls-note" id="note-human-main">
-                仅展示总体层面的人机差异，可在论文/补充材料中查看更细粒度分析。
+                仅展示总体层面的⼈机差异，可在论文/补充材料中查看更细粒度分析。
               </span>
             </div>
           </div>
 
           <div class="cards-row">
             <section class="card" id="hvm-q1q3-card">
-              <div class="summary-title" id="hvm-q1q3-title">Q1/Q3 选择题（Macro‑F1）</div>
+              <div class="summary-title" id="hvm-q1q3-title">Q1/Q3 选择题（Macro-F1）</div>
               <div class="summary-row">
                 <span id="hvm-q1q3-doctor-label">医生（平均）</span>
                 <span id="hvm-q1q3-doctor-value">–</span>
