@@ -10,6 +10,7 @@ from __future__ import annotations
 import json
 import re
 from datetime import datetime
+from math import sqrt
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
@@ -52,6 +53,22 @@ DISEASE_CATEGORIES: Dict[str, Dict[str, str]] = {
         "炎症性肠病": "Inflammatory bowel disease",
     },
 }
+
+REGION_KEY_TO_DISEASE_CN: Dict[str, List[str]] = {
+    "esophagus": list(DISEASE_CATEGORIES["Esophagus"].keys()),
+    "stomach": list(DISEASE_CATEGORIES["Stomach"].keys()),
+    "colo": list(DISEASE_CATEGORIES["Colorectum"].keys()),
+}
+
+def calculate_standard_error(values: List[float]) -> float:
+    """
+    与评估脚本一致：标准误 = 样本标准差 / sqrt(n)
+    """
+    if not values or len(values) < 2:
+        return 0.0
+    mean = sum(values) / len(values)
+    variance = sum((v - mean) ** 2 for v in values) / (len(values) - 1)
+    return sqrt(variance) / sqrt(len(values))
 
 MODEL_CATEGORIES: Dict[str, List[str]] = {
     "medical_opensource": [
@@ -184,6 +201,90 @@ def normalize_disease_label(raw: str) -> Dict[str, Any]:
     }
 
 
+def location_en_to_region_key(location_en: str) -> str:
+    mapping = {
+        "Esophagus": "esophagus",
+        "Stomach": "stomach",
+        "Colorectum": "colo",
+    }
+    return mapping.get(location_en, (location_en or "").lower())
+
+
+def build_per_disease_f1_se_from_mc(mc_data: Dict[str, Any]) -> Tuple[Dict[str, Dict[str, float]], Dict[str, Dict[str, Dict[str, float]]]]:
+    """
+    从 multiple_choice.json 的题级结果近似计算病变级 F1 标准误（与计算脚本同公式，无额外采样）。
+    Accuracy 不重新计算；F1 标准误基于题级 0/1 正确值。
+    Returns:
+        q1_f1_se[model][disease_cn]
+        q3_f1_se[model][region_key][disease_cn]
+    """
+    q1_f1_se: Dict[str, Dict[str, float]] = {}
+    q3_f1_se: Dict[str, Dict[str, Dict[str, float]]] = {}
+
+    for entry in (mc_data.get("model_disease_results") or {}).values():
+        model_name = normalize_model_name(entry.get("model_name") or "")
+        disease_info = normalize_disease_label(entry.get("disease_type") or "")
+        disease_cn = disease_info["name_cn"]
+        region_key = location_en_to_region_key(disease_info["location_en"])
+
+        detailed_results = entry.get("detailed_results") or {}
+        q1_correct: List[int] = []
+        q3_correct: List[int] = []
+
+        for item in detailed_results.values():
+            anat = item.get("解剖定位")
+            if isinstance(anat, dict) and "is_correct" in anat:
+                q1_correct.append(1 if anat.get("is_correct") else 0)
+            diag = item.get("诊断")
+            if isinstance(diag, dict) and "is_correct" in diag:
+                q3_correct.append(1 if diag.get("is_correct") else 0)
+
+        if q1_correct:
+            q1_f1_se.setdefault(model_name, {})[disease_cn] = calculate_standard_error(q1_correct)
+        if q3_correct:
+            q3_f1_se.setdefault(model_name, {}).setdefault(region_key, {})[disease_cn] = calculate_standard_error(q3_correct)
+
+    return q1_f1_se, q3_f1_se
+
+
+def build_hvm_per_disease_se(comparison_data: Dict[str, Any]) -> Tuple[Dict[str, Dict[str, float]], Dict[str, Dict[str, float]]]:
+    """
+    从人机对比 comparison_results.json 计算病变级 Q1/Q3 标准误。
+    依据题级 is_correct 0/1 序列，标准误与评估脚本一致：样本标准差 / sqrt(n)。
+    Returns:
+        q1_se[disease_cn][participant] -> float
+        q3_se[disease_cn][participant] -> float
+    """
+    q1_se: Dict[str, Dict[str, float]] = {}
+    q3_se: Dict[str, Dict[str, float]] = {}
+
+    def consume_block(block: Dict[str, Any], is_physician: bool) -> None:
+        for name, info in (block or {}).items():
+            normalized_name = normalize_physician_name(normalize_model_name(name)) if is_physician else normalize_model_name(name)
+            detailed = info.get("detailed_results") or []
+            per_disease_q1: Dict[str, List[int]] = {}
+            per_disease_q3: Dict[str, List[int]] = {}
+            for item in detailed:
+                disease_info = normalize_disease_label(item.get("disease_type"))
+                disease_cn = disease_info["name_cn"]
+                if not disease_cn:
+                    continue
+                q_type = item.get("question_type")
+                is_correct = 1 if item.get("is_correct") else 0
+                if q_type == "解剖定位":
+                    per_disease_q1.setdefault(disease_cn, []).append(is_correct)
+                elif q_type == "诊断":
+                    per_disease_q3.setdefault(disease_cn, []).append(is_correct)
+            for d, arr in per_disease_q1.items():
+                q1_se.setdefault(d, {})[normalized_name] = calculate_standard_error(arr)
+            for d, arr in per_disease_q3.items():
+                q3_se.setdefault(d, {})[normalized_name] = calculate_standard_error(arr)
+
+    consume_block(comparison_data.get("physician_results"), is_physician=True)
+    consume_block(comparison_data.get("model_results"), is_physician=False)
+    return q1_se, q3_se
+
+
 def merge_nested_dict(existing: Dict[str, Any], new: Dict[str, Any]) -> Dict[str, Any]:
     if not existing:
         return new or {}
@@ -240,6 +341,7 @@ def build_leaderboard() -> Dict[str, Any]:
         raise FileNotFoundError(f"找不到病变定位整体指标文件：{spatial_overall_path}")
 
     mc_data = load_json(mc_path)
+    q1_f1_se_map, q3_f1_se_map = build_per_disease_f1_se_from_mc(mc_data)
     spatial_overall_raw = load_json(spatial_overall_path)
     spatial_detail = load_json(spatial_path)
 
@@ -288,6 +390,13 @@ def build_leaderboard() -> Dict[str, Any]:
             "location_cn": disease_info["location_cn"],
             "location_en": disease_info["location_en"],
             "overall_avg_iou": entry.get("overall_avg_iou"),
+            "overall_avg_iou_std_error": calculate_standard_error(
+                [
+                    dr.get("病灶定位", {}).get("iou")
+                    for dr in (entry.get("detailed_results") or {}).values()
+                    if isinstance(dr, dict) and isinstance(dr.get("病灶定位", {}), dict) and dr.get("病灶定位", {}).get("iou") is not None
+                ]
+            ),
             "total_questions": entry.get("total_questions"),
             "valid_questions": entry.get("valid_questions"),
             "invalid_questions": entry.get("invalid_questions"),
@@ -336,6 +445,7 @@ def build_leaderboard() -> Dict[str, Any]:
                         "location_en": disease_info["location_en"],
                         "accuracy": d.get("accuracy"),
                         "f1_score": d.get("f1_score"),
+                        "f1_std_error": (q1_f1_se_map.get(model_name, {}) or {}).get(disease_info["name_cn"]),
                     }
                 )
             record["tasks"]["q1_anatomical_robustness"] = {
@@ -368,7 +478,14 @@ def build_leaderboard() -> Dict[str, Any]:
                 per_acc = acc.get("per_disease") or []
                 per_f1 = f1.get("per_disease") or []
                 per_disease = [
-                    {"index": idx, "accuracy": a_val, "f1_score": f_val}
+                    {
+                        "index": idx,
+                        "accuracy": a_val,
+                        "f1_score": f_val,
+                        "f1_std_error": (q3_f1_se_map.get(model_name, {}).get(region_key, {}) or {}).get(
+                            (REGION_KEY_TO_DISEASE_CN.get(region_key, []) or [None] * len(per_acc))[idx - 1]
+                        ),
+                    }
                     for idx, (a_val, f_val) in enumerate(zip(per_acc, per_f1), start=1)
                 ]
                 region_cn, region_en = normalize_location(region_data.get("location_name"))
@@ -429,6 +546,7 @@ def build_leaderboard() -> Dict[str, Any]:
     comparison_path = eval_results_root / "physician_vs_model" / "comparison_results.json"
     if comparison_path.is_file():
         comparison_data = load_json(comparison_path)
+        q1_se_map, q3_se_map = build_hvm_per_disease_se(comparison_data)
         f1_scores = comparison_data.get("f1_scores", {}) or {}
         anatomical_f1 = {
             normalize_disease_label(k).get("name_cn"): remap_participant_scores(v or {})
@@ -440,7 +558,9 @@ def build_leaderboard() -> Dict[str, Any]:
         }
         human_vs_model["q1_q3_multiple_choice"] = {
             "anatomical_location_disease_f1": anatomical_f1,
+            "anatomical_location_disease_f1_std_error": q1_se_map,
             "diagnosis_disease_f1": diagnosis_f1,
+            "diagnosis_disease_f1_std_error": q3_se_map,
             "macro_avg_f1": remap_participant_scores(f1_scores.get("macro_avg_f1") or {}),
             "standard_error_statistics": comparison_data.get("standard_error_statistics"),
         }

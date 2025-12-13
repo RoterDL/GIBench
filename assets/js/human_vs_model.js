@@ -491,8 +491,7 @@ function collectHumanChartItems(hvmData, subtab, option) {
     Object.entries(aggregates || {}).forEach(([name, record]) => {
       const val = safeNumber(record?.mean);
       if (val !== null) {
-        const std = safeNumber(record?.std);
-        items.push({ name, value: val, std: std ?? null });
+        items.push({ name, value: val });
       }
     });
   }
@@ -535,33 +534,9 @@ function renderBarChart(chartEl, items, t, maxValue = 1) {
     }
     track.appendChild(fill);
 
-    const hasStd = typeof item.std === "number" && !Number.isNaN(item.std);
-    const stdVal = hasStd ? Math.max(0, item.std) : null;
-    if (stdVal && stdVal > 0) {
-      const low = clamp(item.value - stdVal);
-      const high = clamp(item.value + stdVal);
-      const start = Math.min(low, high);
-      const end = Math.max(low, high);
-      const widthPct = Math.max((end - start) * 100, 2);
-      const error = document.createElement("div");
-      error.className = "bar-error";
-      error.style.left = `${start * 100}%`;
-      error.style.width = `${widthPct}%`;
-      const line = document.createElement("div");
-      line.className = "bar-error__line";
-      const capStart = document.createElement("div");
-      capStart.className = "bar-error__cap bar-error__cap--start";
-      const capEnd = document.createElement("div");
-      capEnd.className = "bar-error__cap bar-error__cap--end";
-      error.appendChild(line);
-      error.appendChild(capStart);
-      error.appendChild(capEnd);
-      track.appendChild(error);
-    }
-
     const valueEl = document.createElement("div");
     valueEl.className = "bar-value";
-    valueEl.textContent = hasStd && stdVal != null ? `${formatFloat(item.value)} ± ${formatFloat(stdVal)}` : formatFloat(item.value);
+    valueEl.textContent = formatFloat(item.value);
 
     row.appendChild(label);
     row.appendChild(track);
@@ -570,145 +545,12 @@ function renderBarChart(chartEl, items, t, maxValue = 1) {
   });
 }
 
-function renderLikertRadar(radarEl, dims, standards, selectedName, bestNames, isQ4, t, lang) {
-  radarEl.innerHTML = "";
-  if (!dims || (!selectedName && (!bestNames || !bestNames.length))) {
-    const empty = document.createElement("div");
-    empty.className = "detail-empty";
-    empty.textContent = t("human-q4q5-missing");
-    radarEl.appendChild(empty);
-    return;
-  }
-
-  const likertMeta = standards?.likert_dimensions || {};
-  let dimensionKeys = Object.keys(likertMeta).sort((a, b) => (likertMeta[a]?.order || 0) - (likertMeta[b]?.order || 0));
-  if (!dimensionKeys.length) {
-    // fallback: 从维度数据里取键名
-    const firstEntry = Object.values(dims || {})[0] || {};
-    dimensionKeys = Object.keys(firstEntry);
-  }
-  if (!dimensionKeys.length) {
-    radarEl.innerHTML = "";
-    return;
-  }
-
-  const series = [];
-  const addSeries = (name, label, cls) => {
-    const src = dims[name];
-    if (!src) return;
-    const values = dimensionKeys.map((key) => {
-      const v = safeNumber(src[key]);
-      // Likert 1-5 范围
-      return clampToRange(v ?? 0, 0, 5);
-    });
-    series.push({ name, label, cls, values });
-  };
-
-  if (selectedName) {
-    addSeries(selectedName, `${selectedName}`, "radar-line--primary");
-  }
-
-  (bestNames || []).forEach((info) => {
-    if (!info || !info.name) return;
-    addSeries(info.name, info.label || info.name, info.cls || "radar-line--muted");
-  });
-
-  if (!series.length) {
-    const empty = document.createElement("div");
-    empty.className = "detail-empty";
-    empty.textContent = t("human-q4q5-missing");
-    radarEl.appendChild(empty);
-    return;
-  }
-
-  const title = document.createElement("div");
-  title.className = "radar-title";
-  title.textContent = isQ4 ? t("hvm-q4q5-title") : t("hvm-q4q5-title");
-  radarEl.appendChild(title);
-
-  // SVG 雷达图
-  const w = 420;
-  const h = 320;
-  const cx = w / 2;
-  const cy = h / 2 + 10;
-  const radius = Math.min(w, h) / 2 - 50;
-  const step = (Math.PI * 2) / dimensionKeys.length;
-
-  const axisLabels = dimensionKeys.map((key) => (lang === "en" ? likertMeta[key]?.name_en || likertMeta[key]?.name_cn || key : likertMeta[key]?.name_cn || likertMeta[key]?.name_en || key));
-
-  const gridLevels = [1, 0.75, 0.5, 0.25];
-
-  const ptsForValue = (val, idx) => {
-    const ang = -Math.PI / 2 + idx * step;
-    const r = (clampToRange(val, 0, 5) / 5) * radius;
-    return [cx + Math.cos(ang) * r, cy + Math.sin(ang) * r];
-  };
-
-  const polygonPath = (values) => {
-    const pts = values.map((v, idx) => ptsForValue(v, idx));
-    return pts.map((p, i) => `${i === 0 ? "M" : "L"}${p[0]},${p[1]}`).join(" ") + " Z";
-  };
-
-  const axisLines = dimensionKeys
-    .map((_, idx) => {
-      const [x, y] = ptsForValue(5, idx);
-      return `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" class="radar-axis-line" />`;
-    })
-    .join("");
-
-  const gridPolygons = gridLevels
-    .map((level) => {
-      const vals = dimensionKeys.map(() => level * 5);
-      return `<path d="${polygonPath(vals)}" class="radar-gridline" />`;
-    })
-    .join("");
-
-  const seriesPaths = series
-    .map((s, idx) => {
-      const cls = idx === 0 ? "radar-polygon--primary" : "radar-polygon--muted";
-      return `<path d="${polygonPath(s.values)}" class="radar-polygon ${cls}" />`;
-    })
-    .join("");
-
-  const dots = series
-    .map((s, sidx) =>
-      s.values
-        .map((v, idx) => {
-          const [x, y] = ptsForValue(v, idx);
-          const cls = sidx === 0 ? "radar-dot--primary" : "radar-dot--muted";
-          return `<circle cx="${x}" cy="${y}" r="3" class="radar-dot ${cls}" />`;
-        })
-        .join(""),
-    )
-    .join("");
-
-  const axisText = axisLabels
-    .map((label, idx) => {
-      const [x, y] = ptsForValue(5.4, idx);
-      return `<text x="${x}" y="${y}" class="radar-axis-label">${label}</text>`;
-    })
-    .join("");
-
-  const svg = `
-    <svg class="radar-svg" viewBox="0 0 ${w} ${h}" role="img" aria-label="${isQ4 ? "Q4" : "Q5"} Likert radar">
-      <g>${gridPolygons}</g>
-      <g>${axisLines}</g>
-      <g>${seriesPaths}</g>
-      <g>${dots}</g>
-      <g>${axisText}</g>
-    </svg>
-  `;
-
-  radarEl.innerHTML = svg;
-}
-
 function initHumanDetailCard(hvmData, standards, { t, getLang, onLanguageChange }) {
   const selectEl = document.getElementById("human-detail-select");
   const chartEl = document.getElementById("human-detail-chart");
   const tipEl = document.getElementById("human-detail-selected-tip");
-  const radarEl = document.getElementById("human-detail-radar");
   const subtabButtons = document.querySelectorAll(".hvm-subtab-btn");
-  if (!selectEl || !chartEl || !radarEl || !subtabButtons.length) return;
+  if (!selectEl || !chartEl || !subtabButtons.length) return;
   const controlsEl = selectEl.closest(".detail-controls");
 
   const standardOptions = buildDiseaseOptionsFromStandards(standards);
@@ -717,9 +559,6 @@ function initHumanDetailCard(hvmData, standards, { t, getLang, onLanguageChange 
   let currentTab = "q1";
   let currentLang = getLang();
   let currentOptionKey = options[0]?.key || null;
-
-  const likertBlock = hvmData?.q4_q5_likert || {};
-  const { q4Dims, q5Dims } = computeLikertDimensions(likertBlock, standards);
 
   function getCurrentOption() {
     return options.find((opt) => opt.key === currentOptionKey) || null;
@@ -744,7 +583,6 @@ function initHumanDetailCard(hvmData, standards, { t, getLang, onLanguageChange 
       empty.textContent = t("detail-no-option");
       chartEl.appendChild(empty);
       updateTip(null);
-      if (radarEl) radarEl.innerHTML = "";
       return;
     }
 
@@ -754,31 +592,20 @@ function initHumanDetailCard(hvmData, standards, { t, getLang, onLanguageChange 
     if (!isLikert) {
       renderBarChart(chartEl, items, t);
       updateTip(option);
-      if (radarEl) radarEl.innerHTML = "";
       selectEl.disabled = false;
       if (controlsEl) controlsEl.style.display = "";
       return;
     }
 
-    // Q4/Q5：总分条形图 + 雷达图
+    // Q4/Q5：仅总分条形图
     selectEl.disabled = true;
     if (controlsEl) controlsEl.style.display = "none";
     renderBarChart(chartEl, items, t, 5);
     updateTip(null);
 
-    const dims = currentTab === "q4" ? q4Dims : q5Dims;
     // 当前主体：取条形图第一名（用户可通过排序/数据决定）
-    const selectedRowName = items.length ? items[0].name : null;
 
     // 简单策略：选出若干最高分参与者作为“最佳者”，类型区分可以后续细化
-    const topCandidates = items.slice(0, 5);
-    const bestNames = topCandidates.map((it, idx) => ({
-      name: it.name,
-      label: it.name,
-      cls: idx === 0 ? "radar-line--primary" : "radar-line--muted",
-    }));
-
-    renderLikertRadar(radarEl, dims, standards, selectedRowName, bestNames, currentTab === "q4", t, currentLang);
   }
 
   function renderOptions() {
