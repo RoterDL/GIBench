@@ -379,9 +379,6 @@ function renderModelTable(tbody, rows, selectedName, t, columnMax) {
       pill.className = "rank-pill";
       pill.textContent = "1";
       rankWrap.appendChild(pill);
-      const txt = document.createElement("span");
-      txt.textContent = "1st";
-      rankWrap.appendChild(txt);
     } else {
       rankWrap.textContent = String(idx + 1);
     }

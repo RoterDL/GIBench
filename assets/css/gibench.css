@@ -102,6 +102,10 @@ body {
   border-color: rgba(44, 177, 161, 0.8);
 }
 
+.surface-main .tag--primary {
+  color: #0f172a;
+}
+
 .hero-stats {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -452,7 +456,8 @@ tbody tr.is-selected td {
   margin: 6px 0 8px;
 }
 
-.subtab-btn {
+.subtab-btn,
+.hvm-subtab-btn {
   border: none;
   border-radius: 999px;
   padding: 3px 10px;
@@ -462,7 +467,8 @@ tbody tr.is-selected td {
   cursor: pointer;
 }
 
-.subtab-btn.is-active {
+.subtab-btn.is-active,
+.hvm-subtab-btn.is-active {
   background: #ffffff;
   color: var(--accent-primary);
 }

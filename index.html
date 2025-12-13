@@ -262,115 +262,119 @@
             <div class="controls-group">
               <span class="label" id="label-note">说明</span>
               <span class="controls-note" id="note-human-main">
-                仅展示总体层面的⼈机差异，可在论文/补充材料中查看更细粒度分析。
+                仅展示总体层面的人机差异，可在论文/补充材料中查看更细粒度分析。
+              </span>
+            </div>
+            <div class="controls-group">
+              <span class="label" id="label-sort-human">排序（示意）</span>
+              <span class="select-wrap">
+                <select
+                  id="human-sort-select"
+                  class="select"
+                >
+                  <option id="human-sort-opt-q1" value="q1">按 Q1 Macro-F1</option>
+                  <option id="human-sort-opt-q2" value="q2">按 Q2 mIoU</option>
+                  <option id="human-sort-opt-q3" value="q3">按 Q3 Macro-F1</option>
+                  <option id="human-sort-opt-q4" value="q4">按 Q4 Likert</option>
+                  <option id="human-sort-opt-q5" value="q5">按 Q5 Likert</option>
+                </select>
               </span>
             </div>
           </div>
 
-          <div class="cards-row">
-            <section class="card" id="hvm-q1q3-card">
-              <div class="summary-title" id="hvm-q1q3-title">Q1/Q3 选择题（Macro-F1）</div>
-              <div class="summary-row">
-                <span id="hvm-q1q3-doctor-label">医生（平均）</span>
-                <span id="hvm-q1q3-doctor-value">–</span>
+          <section class="card card--paired">
+            <div class="paired-grid">
+              <div class="card-pane">
+                <div class="card-header">
+                  <div class="card-title" id="card-title-human-ranking">人机对比整体排名</div>
+                  <div class="card-subtitle" id="card-subtitle-human-ranking">
+                    使用 Q1/Q2/Q3 指标生成的示意排序，具体加权方式请参考论文和文档。
+                  </div>
+                </div>
+                <div class="table-wrapper">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th id="table-col-participant-human">参与者</th>
+                        <th>Q1 Macro-F1</th>
+                        <th>Q2 mIoU</th>
+                        <th>Q3 Macro-F1</th>
+                        <th>Q4 Likert</th>
+                        <th>Q5 Likert</th>
+                      </tr>
+                    </thead>
+                    <tbody id="human-leaderboard-body"></tbody>
+                  </table>
+                </div>
               </div>
-              <div class="summary-bar-track">
+              <div class="card-pane card-pane--summary">
+                <div class="card-header">
+                  <div class="card-title" id="card-title-human-summary">当前参与者概览</div>
+                  <div
+                    id="human-summary-name"
+                    class="card-subtitle"
+                  >
+                    尚未选择参与者。
+                  </div>
+                </div>
                 <div
-                  id="hvm-q1q3-doctor-bar"
-                  class="summary-bar summary-bar-human"
+                  id="human-summary-metrics"
+                  class="model-summary-metrics"
                 ></div>
               </div>
-              <div class="summary-row">
-                <span id="hvm-q1q3-model-label">最佳模型</span>
-                <span id="hvm-q1q3-model-value">–</span>
-              </div>
-              <div class="summary-bar-track">
-                <div
-                  id="hvm-q1q3-model-bar"
-                  class="summary-bar summary-bar-model"
-                ></div>
-              </div>
-              <div
-                id="hvm-q1q3-note"
-                class="summary-note"
-              >
-                基于宏平均 F1（总体）。
-              </div>
-            </section>
+            </div>
+          </section>
 
-            <section class="card" id="hvm-q2-card">
-              <div class="summary-title" id="hvm-q2-title">Q2 病变定位（mIoU）</div>
-              <div class="summary-row">
-                <span id="hvm-q2-doctor-label">医生（平均）</span>
-                <span id="hvm-q2-doctor-value">–</span>
-              </div>
-              <div class="summary-bar-track">
-                <div
-                  id="hvm-q2-doctor-bar"
-                  class="summary-bar summary-bar-human"
-                ></div>
-              </div>
-              <div class="summary-row">
-                <span id="hvm-q2-model-label">最佳模型</span>
-                <span id="hvm-q2-model-value">–</span>
-              </div>
-              <div class="summary-bar-track">
-                <div
-                  id="hvm-q2-model-bar"
-                  class="summary-bar summary-bar-model"
-                ></div>
-              </div>
-              <div
-                id="hvm-q2-note"
-                class="summary-note"
-              >
-                基于总体 mIoU。
-              </div>
-            </section>
-
-            <section class="card" id="hvm-q4q5-card">
-              <div class="summary-title" id="hvm-q4q5-title">Q4/Q5 简答题（Likert 总分）</div>
-              <div class="summary-row">
-                <span id="hvm-q4q5-doctor-label">医生（平均）</span>
-                <span id="hvm-q4q5-doctor-value">–</span>
-              </div>
-              <div class="summary-bar-track">
-                <div
-                  id="hvm-q4q5-doctor-bar"
-                  class="summary-bar summary-bar-human"
-                ></div>
-              </div>
-              <div class="summary-row">
-                <span id="hvm-q4q5-model-label">最佳模型</span>
-                <span id="hvm-q4q5-model-value">–</span>
-              </div>
-              <div class="summary-bar-track">
-                <div
-                  id="hvm-q4q5-model-bar"
-                  class="summary-bar summary-bar-model"
-                ></div>
-              </div>
-              <div
-                id="hvm-q4q5-note"
-                class="summary-note"
-              >
-                基于“看图说话 / 后续建议”两类问题的 Likert 总分。
-              </div>
-            </section>
-          </div>
-
-          <section class="card">
-            <div class="case-header">
+          <section class="card card--detail">
+            <div class="card-header">
               <div>
-                <div class="card-title" id="case-title">小样本人机案例走查（结构占位）</div>
-                <div class="card-subtitle" id="case-subtitle">
-                  当前版本仅提供总体指标，可在后续版本中将此区替换为具体病例级可视化。
+                <div class="card-title" id="card-title-human-detail">人机对比按病变 / 题型细分</div>
+                <div class="card-subtitle" id="card-subtitle-human-detail">
+                  选择题型与病变，横向查看参与者（医生/模型）的表现差异。
                 </div>
               </div>
             </div>
-            <p class="case-placeholder" id="case-placeholder">
-              这里预留给病例级对比展示（病变图像 + 医生答案 + 模型答案 + LLM 裁判评分）。当前阶段不做实现，仅保留结构占位，保证整体页面布局完整。
-            </p>
+            <div class="subtabs">
+              <button
+                type="button"
+                class="hvm-subtab-btn is-active"
+                data-subtab="q1"
+              >
+                <span id="human-subtab-q1">Q1 按病变</span>
+              </button>
+              <button
+                type="button"
+                class="hvm-subtab-btn"
+                data-subtab="q2"
+              >
+                <span id="human-subtab-q2">Q2 按病变</span>
+              </button>
+              <button
+                type="button"
+                class="hvm-subtab-btn"
+                data-subtab="q3"
+              >
+                <span id="human-subtab-q3">Q3 按病变</span>
+              </button>
+            </div>
+            <div class="detail-controls">
+              <span class="label" id="label-human-disease-select">病变选择</span>
+              <span class="select-wrap">
+                <select
+                  id="human-detail-select"
+                  class="select"
+                ></select>
+              </span>
+              <span
+                id="human-detail-selected-tip"
+                class="detail-selected-tip"
+              ></span>
+            </div>
+            <div
+              id="human-detail-chart"
+              class="bar-chart"
+            ></div>
           </section>
         </section>
       </main>
