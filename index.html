@@ -19,7 +19,7 @@
           <div class="hero-kicker">Endoscopy VQA</div>
           <h1 id="hero-title">GIBench 模型榜</h1>
           <p id="hero-desc">
-            多模态消化内镜 VQA 基准：Q1 解剖定位、Q2 病变定位、Q3 诊断选择、Q4 看图说话 与 Q5
+            多模态消化内镜 VQA 基准：Q1 解剖定位、Q2 病变定位、Q3 诊断、Q4 看图说话 与 Q5
             后续建议，支持模型间与人机对比两种视图。
           </p>
           <div class="tags">
@@ -125,7 +125,7 @@
                 type="button"
                 disabled
               >
-                <span id="task-pill-q3">Q3 诊断选择</span>
+                <span id="task-pill-q3">Q3 诊断</span>
               </button>
             </div>
             <div class="controls-group">
@@ -357,6 +357,20 @@
               >
                 <span id="human-subtab-q3">Q3 按病变</span>
               </button>
+              <button
+                type="button"
+                class="hvm-subtab-btn"
+                data-subtab="q4"
+              >
+                <span id="human-subtab-q4">Q4 看图说话</span>
+              </button>
+              <button
+                type="button"
+                class="hvm-subtab-btn"
+                data-subtab="q5"
+              >
+                <span id="human-subtab-q5">Q5 后续建议</span>
+              </button>
             </div>
             <div class="detail-controls">
               <span class="label" id="label-human-disease-select">病变选择</span>
@@ -374,6 +388,10 @@
             <div
               id="human-detail-chart"
               class="bar-chart"
+            ></div>
+            <div
+              id="human-detail-radar"
+              class="radar-chart"
             ></div>
           </section>
         </section>

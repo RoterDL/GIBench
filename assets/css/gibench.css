@@ -554,7 +554,7 @@ tbody tr.is-selected td {
     ),
     #e2e8f0;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .bar-fill {
@@ -569,6 +569,40 @@ tbody tr.is-selected td {
 
 .bar-fill--muted {
   background: linear-gradient(90deg, #9bbbd4, #6ca5c9);
+}
+
+.bar-error {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 14px;
+  pointer-events: none;
+}
+
+.bar-error__line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 2px;
+  background: #2d3748;
+  transform: translateY(-50%);
+}
+
+.bar-error__cap {
+  position: absolute;
+  width: 2px;
+  height: 14px;
+  background: #2d3748;
+  top: 0;
+}
+
+.bar-error__cap--start {
+  left: 0;
+}
+
+.bar-error__cap--end {
+  right: 0;
 }
 
 .bar-fill--top {
@@ -586,6 +620,142 @@ tbody tr.is-selected td {
   font-size: 11px;
   color: var(--text-muted);
   padding: 4px 0;
+}
+
+/* Radar chart for Q4/Q5 Likert */
+.radar-chart {
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #fafbff;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.radar-title {
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.radar-svg {
+  width: 100%;
+  height: auto;
+}
+
+.radar-gridline {
+  fill: none;
+  stroke: #e2e8f0;
+  stroke-width: 1;
+}
+
+.radar-axis-line {
+  stroke: #cbd5e0;
+  stroke-width: 1;
+}
+
+.radar-axis-label {
+  font-size: 10px;
+  fill: var(--text-muted);
+  text-anchor: middle;
+  dominant-baseline: middle;
+}
+
+.radar-polygon {
+  fill-opacity: 0.08;
+  stroke-width: 2;
+}
+
+.radar-polygon--primary {
+  fill: var(--accent-primary);
+  stroke: var(--accent-primary);
+}
+
+.radar-polygon--muted {
+  fill: #6ca5c9;
+  stroke: #6ca5c9;
+}
+
+.radar-dot {
+  stroke: #fff;
+  stroke-width: 1;
+}
+
+.radar-dot--primary {
+  fill: var(--accent-primary);
+}
+
+.radar-dot--muted {
+  fill: #6ca5c9;
+}
+
+/* Radar chart for Q4/Q5 Likert */
+.radar-chart {
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #fafbff;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.radar-title {
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.radar-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.radar-axes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 8px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.radar-series {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 8px;
+  align-items: center;
+}
+
+.radar-series-label {
+  font-size: 12px;
+  color: var(--text-main);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.radar-bars {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.radar-bar {
+  height: 10px;
+  border-radius: 999px;
+  background: #e2e8f0;
+  position: relative;
+  overflow: hidden;
+}
+
+.radar-line--primary {
+  background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+}
+
+.radar-line--muted {
+  background: linear-gradient(90deg, #9bbbd4, #6ca5c9);
 }
 
 .chart-legend {

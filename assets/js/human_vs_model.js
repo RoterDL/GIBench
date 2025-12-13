@@ -113,6 +113,13 @@ function mean(arr) {
   return s / arr.length;
 }
 
+function clampToRange(value, min, max) {
+  if (typeof value !== "number" || Number.isNaN(value)) return min;
+  if (value < min) return min;
+  if (value > max) return max;
+  return value;
+}
+
 function normalizeLikertType(typeKey) {
   const key = (typeKey || "").toString().toLowerCase();
   if (
@@ -144,26 +151,107 @@ function computeLikertScores(likertBlock) {
     const target = normalized === "q4" ? q4Scores : q5Scores;
     const stats = info?.basic_statistics || {};
     Object.entries(stats).forEach(([name, record]) => {
-      const v = safeNumber(record?.total_score?.mean);
-      if (v == null) return;
+      const meanVal = safeNumber(record?.total_score?.mean);
+      if (meanVal == null) return;
+      const stdVal = safeNumber(record?.total_score?.std);
       const arr = target.get(name) || [];
-      arr.push(v);
+      arr.push({ mean: meanVal, std: stdVal });
       target.set(name, arr);
     });
   });
 
-  const q4Means = {};
-  q4Scores.forEach((arr, name) => {
-    const m = mean(arr);
-    if (m != null) q4Means[name] = m;
-  });
-  const q5Means = {};
-  q5Scores.forEach((arr, name) => {
-    const m = mean(arr);
-    if (m != null) q5Means[name] = m;
+  const aggregateScores = (sourceMap) => {
+    const result = {};
+    sourceMap.forEach((arr, name) => {
+      const meanVals = arr.map((v) => v.mean).filter((v) => typeof v === "number" && !Number.isNaN(v));
+      const stdVals = arr.map((v) => v.std).filter((v) => typeof v === "number" && !Number.isNaN(v));
+      const m = mean(meanVals);
+      const s = mean(stdVals);
+      if (m != null) {
+        result[name] = { mean: m, std: s ?? null };
+      }
+    });
+    return result;
+  };
+
+  const q4Aggregates = aggregateScores(q4Scores);
+  const q5Aggregates = aggregateScores(q5Scores);
+
+  return { q4Aggregates, q5Aggregates };
+}
+
+function computeLikertDimensions(likertBlock, standards) {
+  const q4Dims = {};
+  const q5Dims = {};
+  const likeDimsMeta = standards?.likert_dimensions || {};
+  const seenDimKeys = new Set();
+
+  // helper: 给一个维度记录，尝试按标准维度元数据匹配；若匹配不到，则按键顺序取前 5 个
+  function extractDimValues(dimensions) {
+    const result = { dimension1: null, dimension2: null, dimension3: null, dimension4: null, dimension5: null };
+    const entries = Object.entries(dimensions || {});
+
+    // 优先按标准维度名匹配（中英文）
+    const norm = (s) => (s || "").toString().trim().toLowerCase();
+    Object.entries(likeDimsMeta).forEach(([dimKey, meta]) => {
+      const hit =
+        entries.find(([k]) => norm(k) === norm(meta?.name_cn)) ||
+        entries.find(([k]) => norm(k) === norm(meta?.name_en));
+      if (hit) {
+        const v = safeNumber(hit[1]?.mean ?? hit[1]);
+        if (v != null) result[dimKey] = v;
+        seenDimKeys.add(hit[0]);
+      }
+    });
+
+    // 若仍有空缺，则按原始顺序补齐
+    let idx = 1;
+    entries.forEach(([_, val]) => {
+      seenDimKeys.add(_);
+      const targetKey = `dimension${idx}`;
+      if (result[targetKey] == null && idx <= 5) {
+        const v = safeNumber(val?.mean ?? val);
+        if (v != null) {
+          result[targetKey] = v;
+        }
+        idx += 1;
+      }
+    });
+
+    return result;
+  }
+
+  Object.entries(likertBlock || {}).forEach(([typeKey, info]) => {
+    const normalized = normalizeLikertType(typeKey);
+    if (!normalized) return;
+    const target = normalized === "q4" ? q4Dims : q5Dims;
+    const stats = info?.basic_statistics || {};
+    Object.entries(stats).forEach(([name, record]) => {
+      const dimsRaw = record?.dimensions || {};
+      const dimVals = extractDimValues(dimsRaw);
+      const bucket = target[name] || { dimension1: [], dimension2: [], dimension3: [], dimension4: [], dimension5: [] };
+      Object.entries(dimVals).forEach(([dimKey, v]) => {
+        if (v != null) bucket[dimKey].push(v);
+      });
+      target[name] = bucket;
+    });
   });
 
-  return { q4Means, q5Means };
+  function finalizeBuckets(src) {
+    const out = {};
+    Object.entries(src).forEach(([name, bucket]) => {
+      out[name] = {};
+      Object.entries(bucket).forEach(([dimKey, arr]) => {
+        out[name][dimKey] = mean(arr);
+      });
+    });
+    return out;
+  }
+
+  return {
+    q4Dims: finalizeBuckets(q4Dims),
+    q5Dims: finalizeBuckets(q5Dims),
+  };
 }
 
 function computeParticipantRows(hvmData, standards, sortBy) {
@@ -171,13 +259,13 @@ function computeParticipantRows(hvmData, standards, sortBy) {
   const macro = mcBlock.macro_avg_f1 || {};
   const spatialBlock = hvmData?.q2_spatial_localization || {};
   const participantsQ2 = spatialBlock.participants || {};
-  const { q4Means, q5Means } = computeLikertScores(hvmData?.q4_q5_likert || {});
+  const { q4Aggregates, q5Aggregates } = computeLikertScores(hvmData?.q4_q5_likert || {});
 
   const allNames = new Set([
     ...Object.keys(macro),
     ...Object.keys(participantsQ2),
-    ...Object.keys(q4Means),
-    ...Object.keys(q5Means),
+    ...Object.keys(q4Aggregates),
+    ...Object.keys(q5Aggregates),
   ]);
   if (!allNames.size) return [];
 
@@ -194,8 +282,8 @@ function computeParticipantRows(hvmData, standards, sortBy) {
     ]);
     const q3 = extractMacroValue(macroEntry, ["è¯Šæ–­", "诊断", "diagnosis", "q3"]);
     const q2 = safeNumber(participantsQ2[name]?.metrics?.overall?.mean_iou);
-    const q4 = safeNumber(q4Means[name]);
-    const q5 = safeNumber(q5Means[name]);
+    const q4 = safeNumber(q4Aggregates[name]?.mean);
+    const q5 = safeNumber(q5Aggregates[name]?.mean);
     const type = participantsQ2[name]?.type || null;
     return { name, isDoctor: isDoctor(name), type, q1, q2, q3, q4, q5 };
   });
@@ -304,7 +392,23 @@ function renderParticipantTable(tbody, rows, selectedName, t, columnMax) {
   });
 }
 
-function renderParticipantSummary(row, t) {
+function resolveParticipantTypeLabel(row, { standards, lang, t }) {
+  const typeRaw = (row?.type || "").trim();
+  const mapping = standards?.seniority_names_en || {};
+  const aliases = {
+    "低年资": "住院实习医师",
+    "高年资": "初级内窥镜医师",
+  };
+  const keyCn = aliases[typeRaw] || typeRaw;
+  if (mapping[keyCn]) {
+    return lang === "en" ? mapping[keyCn] : keyCn;
+  }
+  if (typeRaw) return typeRaw;
+  if (row?.isDoctor) return t("participant.doctor");
+  return t("participant.model");
+}
+
+function renderParticipantSummary(row, t, { standards, lang }) {
   const nameEl = document.getElementById("human-summary-name");
   const metricsEl = document.getElementById("human-summary-metrics");
   if (!nameEl || !metricsEl) return;
@@ -315,7 +419,7 @@ function renderParticipantSummary(row, t) {
     return;
   }
 
-  const typeLabel = row.type || (row.isDoctor ? t("participant.doctor") : t("participant.model"));
+  const typeLabel = resolveParticipantTypeLabel(row, { standards, lang, t });
   nameEl.textContent = `${row.name} · ${typeLabel}`;
   metricsEl.innerHTML = "";
 
@@ -351,7 +455,7 @@ function findScoresByDisease(mapping, option) {
 }
 
 function collectHumanChartItems(hvmData, subtab, option) {
-  if (!option) return [];
+  if (!option && (subtab === "q1" || subtab === "q2" || subtab === "q3")) return [];
   const items = [];
   if (subtab === "q1" || subtab === "q3") {
     const block = hvmData?.q1_q3_multiple_choice || {};
@@ -380,12 +484,23 @@ function collectHumanChartItems(hvmData, subtab, option) {
         }
       }
     });
+  } else if (subtab === "q4" || subtab === "q5") {
+    const likertBlock = hvmData?.q4_q5_likert || {};
+    const { q4Aggregates, q5Aggregates } = computeLikertScores(likertBlock);
+    const aggregates = subtab === "q4" ? q4Aggregates : q5Aggregates;
+    Object.entries(aggregates || {}).forEach(([name, record]) => {
+      const val = safeNumber(record?.mean);
+      if (val !== null) {
+        const std = safeNumber(record?.std);
+        items.push({ name, value: val, std: std ?? null });
+      }
+    });
   }
   items.sort((a, b) => (b.value ?? -1) - (a.value ?? -1));
   return items;
 }
 
-function renderBarChart(chartEl, items, t) {
+function renderBarChart(chartEl, items, t, maxValue = 1) {
   chartEl.innerHTML = "";
   if (!items.length) {
     const empty = document.createElement("div");
@@ -394,9 +509,10 @@ function renderBarChart(chartEl, items, t) {
     chartEl.appendChild(empty);
     return;
   }
-  const clamp01 = (val) => {
+  const clamp = (val) => {
     if (typeof val !== "number" || Number.isNaN(val)) return 0;
-    return Math.max(0, Math.min(val, 1));
+    if (maxValue <= 0) return Math.max(0, Math.min(val, 1));
+    return Math.max(0, Math.min(val / maxValue, 1));
   };
   items.forEach((item, idx) => {
     const row = document.createElement("div");
@@ -410,7 +526,8 @@ function renderBarChart(chartEl, items, t) {
     track.className = "bar-track";
     const fill = document.createElement("div");
     fill.className = "bar-fill";
-    fill.style.width = `${clamp01(item.value) * 100}%`;
+    const clampedVal = clamp(item.value);
+    fill.style.width = `${clampedVal * 100}%`;
     if (idx === 0) {
       fill.classList.add("bar-fill--primary", "bar-fill--top");
     } else {
@@ -418,9 +535,33 @@ function renderBarChart(chartEl, items, t) {
     }
     track.appendChild(fill);
 
+    const hasStd = typeof item.std === "number" && !Number.isNaN(item.std);
+    const stdVal = hasStd ? Math.max(0, item.std) : null;
+    if (stdVal && stdVal > 0) {
+      const low = clamp(item.value - stdVal);
+      const high = clamp(item.value + stdVal);
+      const start = Math.min(low, high);
+      const end = Math.max(low, high);
+      const widthPct = Math.max((end - start) * 100, 2);
+      const error = document.createElement("div");
+      error.className = "bar-error";
+      error.style.left = `${start * 100}%`;
+      error.style.width = `${widthPct}%`;
+      const line = document.createElement("div");
+      line.className = "bar-error__line";
+      const capStart = document.createElement("div");
+      capStart.className = "bar-error__cap bar-error__cap--start";
+      const capEnd = document.createElement("div");
+      capEnd.className = "bar-error__cap bar-error__cap--end";
+      error.appendChild(line);
+      error.appendChild(capStart);
+      error.appendChild(capEnd);
+      track.appendChild(error);
+    }
+
     const valueEl = document.createElement("div");
     valueEl.className = "bar-value";
-    valueEl.textContent = formatFloat(item.value);
+    valueEl.textContent = hasStd && stdVal != null ? `${formatFloat(item.value)} ± ${formatFloat(stdVal)}` : formatFloat(item.value);
 
     row.appendChild(label);
     row.appendChild(track);
@@ -429,12 +570,146 @@ function renderBarChart(chartEl, items, t) {
   });
 }
 
+function renderLikertRadar(radarEl, dims, standards, selectedName, bestNames, isQ4, t, lang) {
+  radarEl.innerHTML = "";
+  if (!dims || (!selectedName && (!bestNames || !bestNames.length))) {
+    const empty = document.createElement("div");
+    empty.className = "detail-empty";
+    empty.textContent = t("human-q4q5-missing");
+    radarEl.appendChild(empty);
+    return;
+  }
+
+  const likertMeta = standards?.likert_dimensions || {};
+  let dimensionKeys = Object.keys(likertMeta).sort((a, b) => (likertMeta[a]?.order || 0) - (likertMeta[b]?.order || 0));
+  if (!dimensionKeys.length) {
+    // fallback: 从维度数据里取键名
+    const firstEntry = Object.values(dims || {})[0] || {};
+    dimensionKeys = Object.keys(firstEntry);
+  }
+  if (!dimensionKeys.length) {
+    radarEl.innerHTML = "";
+    return;
+  }
+
+  const series = [];
+  const addSeries = (name, label, cls) => {
+    const src = dims[name];
+    if (!src) return;
+    const values = dimensionKeys.map((key) => {
+      const v = safeNumber(src[key]);
+      // Likert 1-5 范围
+      return clampToRange(v ?? 0, 0, 5);
+    });
+    series.push({ name, label, cls, values });
+  };
+
+  if (selectedName) {
+    addSeries(selectedName, `${selectedName}`, "radar-line--primary");
+  }
+
+  (bestNames || []).forEach((info) => {
+    if (!info || !info.name) return;
+    addSeries(info.name, info.label || info.name, info.cls || "radar-line--muted");
+  });
+
+  if (!series.length) {
+    const empty = document.createElement("div");
+    empty.className = "detail-empty";
+    empty.textContent = t("human-q4q5-missing");
+    radarEl.appendChild(empty);
+    return;
+  }
+
+  const title = document.createElement("div");
+  title.className = "radar-title";
+  title.textContent = isQ4 ? t("hvm-q4q5-title") : t("hvm-q4q5-title");
+  radarEl.appendChild(title);
+
+  // SVG 雷达图
+  const w = 420;
+  const h = 320;
+  const cx = w / 2;
+  const cy = h / 2 + 10;
+  const radius = Math.min(w, h) / 2 - 50;
+  const step = (Math.PI * 2) / dimensionKeys.length;
+
+  const axisLabels = dimensionKeys.map((key) => (lang === "en" ? likertMeta[key]?.name_en || likertMeta[key]?.name_cn || key : likertMeta[key]?.name_cn || likertMeta[key]?.name_en || key));
+
+  const gridLevels = [1, 0.75, 0.5, 0.25];
+
+  const ptsForValue = (val, idx) => {
+    const ang = -Math.PI / 2 + idx * step;
+    const r = (clampToRange(val, 0, 5) / 5) * radius;
+    return [cx + Math.cos(ang) * r, cy + Math.sin(ang) * r];
+  };
+
+  const polygonPath = (values) => {
+    const pts = values.map((v, idx) => ptsForValue(v, idx));
+    return pts.map((p, i) => `${i === 0 ? "M" : "L"}${p[0]},${p[1]}`).join(" ") + " Z";
+  };
+
+  const axisLines = dimensionKeys
+    .map((_, idx) => {
+      const [x, y] = ptsForValue(5, idx);
+      return `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" class="radar-axis-line" />`;
+    })
+    .join("");
+
+  const gridPolygons = gridLevels
+    .map((level) => {
+      const vals = dimensionKeys.map(() => level * 5);
+      return `<path d="${polygonPath(vals)}" class="radar-gridline" />`;
+    })
+    .join("");
+
+  const seriesPaths = series
+    .map((s, idx) => {
+      const cls = idx === 0 ? "radar-polygon--primary" : "radar-polygon--muted";
+      return `<path d="${polygonPath(s.values)}" class="radar-polygon ${cls}" />`;
+    })
+    .join("");
+
+  const dots = series
+    .map((s, sidx) =>
+      s.values
+        .map((v, idx) => {
+          const [x, y] = ptsForValue(v, idx);
+          const cls = sidx === 0 ? "radar-dot--primary" : "radar-dot--muted";
+          return `<circle cx="${x}" cy="${y}" r="3" class="radar-dot ${cls}" />`;
+        })
+        .join(""),
+    )
+    .join("");
+
+  const axisText = axisLabels
+    .map((label, idx) => {
+      const [x, y] = ptsForValue(5.4, idx);
+      return `<text x="${x}" y="${y}" class="radar-axis-label">${label}</text>`;
+    })
+    .join("");
+
+  const svg = `
+    <svg class="radar-svg" viewBox="0 0 ${w} ${h}" role="img" aria-label="${isQ4 ? "Q4" : "Q5"} Likert radar">
+      <g>${gridPolygons}</g>
+      <g>${axisLines}</g>
+      <g>${seriesPaths}</g>
+      <g>${dots}</g>
+      <g>${axisText}</g>
+    </svg>
+  `;
+
+  radarEl.innerHTML = svg;
+}
+
 function initHumanDetailCard(hvmData, standards, { t, getLang, onLanguageChange }) {
   const selectEl = document.getElementById("human-detail-select");
   const chartEl = document.getElementById("human-detail-chart");
   const tipEl = document.getElementById("human-detail-selected-tip");
+  const radarEl = document.getElementById("human-detail-radar");
   const subtabButtons = document.querySelectorAll(".hvm-subtab-btn");
-  if (!selectEl || !chartEl || !subtabButtons.length) return;
+  if (!selectEl || !chartEl || !radarEl || !subtabButtons.length) return;
+  const controlsEl = selectEl.closest(".detail-controls");
 
   const standardOptions = buildDiseaseOptionsFromStandards(standards);
   const options = standardOptions.length ? standardOptions : buildOptionsFromData(hvmData);
@@ -443,13 +718,16 @@ function initHumanDetailCard(hvmData, standards, { t, getLang, onLanguageChange 
   let currentLang = getLang();
   let currentOptionKey = options[0]?.key || null;
 
+  const likertBlock = hvmData?.q4_q5_likert || {};
+  const { q4Dims, q5Dims } = computeLikertDimensions(likertBlock, standards);
+
   function getCurrentOption() {
     return options.find((opt) => opt.key === currentOptionKey) || null;
   }
 
   function updateTip(option) {
     if (!tipEl) return;
-    if (!option) {
+    if (!option || currentTab === "q4" || currentTab === "q5") {
       tipEl.textContent = "";
       return;
     }
@@ -457,19 +735,50 @@ function initHumanDetailCard(hvmData, standards, { t, getLang, onLanguageChange 
   }
 
   function renderChart() {
+    const isLikert = currentTab === "q4" || currentTab === "q5";
     const option = getCurrentOption();
-    if (!option) {
+    if (!isLikert && !option) {
       chartEl.innerHTML = "";
       const empty = document.createElement("div");
       empty.className = "detail-empty";
       empty.textContent = t("detail-no-option");
       chartEl.appendChild(empty);
       updateTip(null);
+      if (radarEl) radarEl.innerHTML = "";
       return;
     }
-    const items = collectHumanChartItems(hvmData, currentTab, option);
-    renderBarChart(chartEl, items, t);
-    updateTip(option);
+
+    const items = collectHumanChartItems(hvmData, currentTab, option || null);
+
+    // 对于 Q1-Q3，仍然是按病变/区域条形图，无雷达图
+    if (!isLikert) {
+      renderBarChart(chartEl, items, t);
+      updateTip(option);
+      if (radarEl) radarEl.innerHTML = "";
+      selectEl.disabled = false;
+      if (controlsEl) controlsEl.style.display = "";
+      return;
+    }
+
+    // Q4/Q5：总分条形图 + 雷达图
+    selectEl.disabled = true;
+    if (controlsEl) controlsEl.style.display = "none";
+    renderBarChart(chartEl, items, t, 5);
+    updateTip(null);
+
+    const dims = currentTab === "q4" ? q4Dims : q5Dims;
+    // 当前主体：取条形图第一名（用户可通过排序/数据决定）
+    const selectedRowName = items.length ? items[0].name : null;
+
+    // 简单策略：选出若干最高分参与者作为“最佳者”，类型区分可以后续细化
+    const topCandidates = items.slice(0, 5);
+    const bestNames = topCandidates.map((it, idx) => ({
+      name: it.name,
+      label: it.name,
+      cls: idx === 0 ? "radar-line--primary" : "radar-line--muted",
+    }));
+
+    renderLikertRadar(radarEl, dims, standards, selectedRowName, bestNames, currentTab === "q4", t, currentLang);
   }
 
   function renderOptions() {
@@ -533,7 +842,7 @@ export function initHumanVsModel(hvmData, options) {
     rows = computeParticipantRows(hvmData, standards, sortBy);
     if (!rows.length) {
       tbody.innerHTML = "";
-      renderParticipantSummary(null, t);
+      renderParticipantSummary(null, t, { standards, lang: getLang() });
       return;
     }
     if (!selectedName || !rows.some((r) => r.name === selectedName)) {
@@ -541,7 +850,10 @@ export function initHumanVsModel(hvmData, options) {
     }
     const columnMax = getColumnMax(rows);
     renderParticipantTable(tbody, rows, selectedName, t, columnMax);
-    renderParticipantSummary(rows.find((r) => r.name === selectedName) || null, t);
+    renderParticipantSummary(rows.find((r) => r.name === selectedName) || null, t, {
+      standards,
+      lang: getLang(),
+    });
   }
 
   sortSelect.addEventListener("change", () => {

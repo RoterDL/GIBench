@@ -155,14 +155,17 @@ function collectChartItems(subtab, option, models) {
   const items = [];
   Object.entries(models || {}).forEach(([modelName, record]) => {
     let value = null;
+    let std = null;
     if (subtab === "q1") {
       const list = record?.tasks?.q1_anatomical_robustness?.per_disease || [];
       const found = list.find((d) => optionKeys.has(normalizeDiseaseKey(d.disease_cn || d.disease || d.disease_type || d.disease_en)));
       value = safeNumber(found?.f1_score);
+      std = safeNumber(found?.f1_std_error ?? found?.std_error);
     } else if (subtab === "q2") {
       const list = record?.tasks?.q2_spatial_localization?.per_disease || [];
       const found = list.find((d) => optionKeys.has(normalizeDiseaseKey(d.disease_cn || d.disease_type || d.disease || d.disease_en)));
       value = safeNumber(found?.overall_avg_iou);
+      std = safeNumber(found?.std_error ?? found?.overall_avg_iou_std_error ?? found?.miou_std_error);
     } else if (subtab === "q3") {
       const regions = record?.tasks?.q3_diagnosis_regional_robustness?.regions || [];
       const region = regions.find((r) => r.region_key === option.region_key);
@@ -170,10 +173,11 @@ function collectChartItems(subtab, option, models) {
         const idx = option.disease_index - 1;
         const entry = region.per_disease[idx];
         value = safeNumber(entry?.f1_score);
+        std = safeNumber(entry?.f1_std_error ?? region?.f1_std_error);
       }
     }
     if (value !== null) {
-      items.push({ model: modelName, value });
+      items.push({ model: modelName, value, std });
     }
   });
   items.sort((a, b) => (b.value ?? -1) - (a.value ?? -1));
@@ -205,7 +209,8 @@ function renderBarChart(chartEl, items, t) {
     track.className = "bar-track";
     const fill = document.createElement("div");
     fill.className = "bar-fill";
-    fill.style.width = `${clamp01(item.value) * 100}%`;
+    const clampedVal = clamp01(item.value);
+    fill.style.width = `${clampedVal * 100}%`;
     if (idx === 0) {
       fill.classList.add("bar-fill--primary", "bar-fill--top");
     } else {
@@ -213,9 +218,33 @@ function renderBarChart(chartEl, items, t) {
     }
     track.appendChild(fill);
 
+    const hasStd = typeof item.std === "number" && !Number.isNaN(item.std);
+    const stdVal = hasStd ? Math.max(0, item.std) : null;
+    if (stdVal && stdVal > 0) {
+      const low = clamp01(item.value - stdVal);
+      const high = clamp01(item.value + stdVal);
+      const start = Math.min(low, high);
+      const end = Math.max(low, high);
+      const widthPct = Math.max((end - start) * 100, 2);
+      const error = document.createElement("div");
+      error.className = "bar-error";
+      error.style.left = `${start * 100}%`;
+      error.style.width = `${widthPct}%`;
+      const line = document.createElement("div");
+      line.className = "bar-error__line";
+      const capStart = document.createElement("div");
+      capStart.className = "bar-error__cap bar-error__cap--start";
+      const capEnd = document.createElement("div");
+      capEnd.className = "bar-error__cap bar-error__cap--end";
+      error.appendChild(line);
+      error.appendChild(capStart);
+      error.appendChild(capEnd);
+      track.appendChild(error);
+    }
+
     const valueEl = document.createElement("div");
     valueEl.className = "bar-value";
-    valueEl.textContent = formatFloat(item.value);
+    valueEl.textContent = hasStd && stdVal != null ? `${formatFloat(item.value)} ± ${formatFloat(stdVal)}` : formatFloat(item.value);
 
     row.appendChild(label);
     row.appendChild(track);
