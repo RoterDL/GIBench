@@ -332,7 +332,7 @@ body {
 
 .paired-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 2.5fr) minmax(0, 0.7fr);
   gap: 12px;
   align-items: stretch;
 }
