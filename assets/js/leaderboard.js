@@ -437,7 +437,7 @@ function renderModelTable(tbody, rows, selectedName, t, columnMax) {
   });
 }
 
-function renderSummary(record, t) {
+function renderSummary(record, t, standards) {
   const nameEl = document.getElementById("model-summary-name");
   const metricsEl = document.getElementById("model-summary-metrics");
   if (!nameEl || !metricsEl) return;
@@ -449,26 +449,33 @@ function renderSummary(record, t) {
   }
 
   nameEl.textContent = record.model_name || t("no-model-selected");
-  const s = record.summary || {};
   metricsEl.innerHTML = "";
 
-  const items = [
-    ["Q1 Macro-F1", safeNumber(s.q1_anatomical_f1_mean)],
-    ["Q2 mIoU", safeNumber(s.q2_spatial_miou)],
-    ["Q3 Macro-F1", safeNumber(s.q3_diagnosis_f1_mean)],
+  const aliasMap = (standards && standards.model_aliases) || {};
+  const infoMap = (standards && standards.model_infos) || {};
+  const canonicalName = aliasMap[record.model_name] || record.model_name;
+  const info = infoMap[canonicalName] || infoMap[record.model_name];
+
+  const infoItems = [
+    [t("model-info.parameters"), info?.parameters || t("model-info.no-info")],
+    [t("model-info.release-date"), info?.release_date || t("model-info.no-info")],
+    [t("model-info.organization"), info?.organization || t("model-info.no-info")],
   ];
 
-  items.forEach(([label, value]) => {
+  const infoWrapper = document.createElement("div");
+  infoWrapper.className = "model-summary-info";
+  infoItems.forEach(([label, value]) => {
     const row = document.createElement("div");
     const spanLabel = document.createElement("span");
     spanLabel.textContent = `${label}：`;
     const spanVal = document.createElement("span");
     spanVal.className = "value";
-    spanVal.textContent = formatFloat(value);
+    spanVal.textContent = value;
     row.appendChild(spanLabel);
     row.appendChild(spanVal);
-    metricsEl.appendChild(row);
+    infoWrapper.appendChild(row);
   });
+  metricsEl.appendChild(infoWrapper);
 }
 
 export function initLeaderboard(rootData, options) {
@@ -493,7 +500,7 @@ export function initLeaderboard(rootData, options) {
     rows = computeModelRows(models, sortBy);
     if (!rows.length) {
       tbody.innerHTML = "";
-      renderSummary(null, t, currentLang);
+      renderSummary(null, t, standards);
       return;
     }
     if (!selectedName || !models[selectedName]) {
@@ -501,7 +508,7 @@ export function initLeaderboard(rootData, options) {
     }
     const columnMax = getColumnMax(rows);
     renderModelTable(tbody, rows, selectedName, t, columnMax);
-    renderSummary(models[selectedName], t, currentLang);
+    renderSummary(models[selectedName], t, standards);
   }
 
   sortSelect.addEventListener("change", () => {

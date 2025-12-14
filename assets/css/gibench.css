@@ -86,6 +86,12 @@ body {
   gap: 8px;
 }
 
+.hero-tags .lang-block {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .tag {
   padding: 4px 10px;
   border-radius: var(--radius-pill);
@@ -104,6 +110,10 @@ body {
 
 .surface-main .tag--primary {
   color: #0f172a;
+}
+
+.is-hidden {
+  display: none !important;
 }
 
 .hero-stats {

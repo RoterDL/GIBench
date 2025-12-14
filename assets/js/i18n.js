@@ -1,7 +1,7 @@
 const UI_TEXTS = {
   "hero-title": { zh: "GIBench 模型榜", en: "GIBench Leaderboard" },
   "hero-desc": {
-    zh: "多模态消化内镜 VQA 基准：Q1 解剖定位、Q2 病变定位、Q3 诊断、Q4 看图说话 与 Q5 后续建议，支持模型榜和人机对比两种视图。",
+    zh: "Q1 解剖定位、Q2 病变定位、Q3 诊断、Q4 看图说话、 Q5 后续建议。",
     en: "Multimodal endoscopy VQA benchmark: Q1 anatomical localization, Q2 lesion localization, Q3 diagnosis, Q4 findings, and Q5 recommendations, supporting model leaderboard and human vs model views.",
   },
   "card-title-human-detail": { zh: "人机对比按病变 / 题型细分", en: "Human vs model by lesion / task" },
@@ -148,11 +148,26 @@ const MESSAGES = {
   "metric.q3": { zh: "Macro-F1", en: "Macro-F1" },
   "metric.q4": { zh: "Likert", en: "Likert" },
   "metric.q5": { zh: "Likert", en: "Likert" },
+  "model-info.parameters": { zh: "参数量", en: "Parameters" },
+  "model-info.release-date": { zh: "发布日期", en: "Release date" },
+  "model-info.organization": { zh: "所属公司/机构", en: "Organization" },
+  "model-info.no-info": { zh: "未提供", en: "Not provided" },
+  "participant-info.role": { zh: "身份", en: "Role" },
+  "participant-info.desc": { zh: "简介", en: "Description" },
+  "participant-info.no-info": { zh: "未提供", en: "Not provided" },
 };
 
 let currentLang = "zh";
 let currentStandards = {};
 const listeners = [];
+
+function updateLangVisibility() {
+  document.querySelectorAll("[data-lang-visible]").forEach((el) => {
+    const visibleLang = el.dataset.langVisible;
+    const shouldShow = visibleLang === currentLang;
+    el.classList.toggle("is-hidden", !shouldShow);
+  });
+}
 
 function applyTranslations() {
   Object.entries(UI_TEXTS).forEach(([id, texts]) => {
@@ -167,6 +182,7 @@ function applyTranslations() {
       btn.classList.toggle("is-active", btn.dataset.lang === currentLang);
     });
   }
+  updateLangVisibility();
 }
 
 export function t(key) {

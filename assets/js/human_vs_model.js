@@ -419,29 +419,68 @@ function renderParticipantSummary(row, t, { standards, lang }) {
     return;
   }
 
-  const typeLabel = resolveParticipantTypeLabel(row, { standards, lang, t });
-  nameEl.textContent = `${row.name} · ${typeLabel}`;
   metricsEl.innerHTML = "";
+  const aliasMap = (standards && standards.model_aliases) || {};
+  const infoMap = (standards && standards.model_infos) || {};
+  const participantInfos = (standards && standards.participant_infos) || {};
+  const seniorityMapEn = (standards && standards.seniority_names_en) || {};
 
-  const items = [
-    { label: "Q1 Macro-F1", value: row.q1, digits: 3 },
-    { label: "Q2 mIoU", value: row.q2, digits: 3 },
-    { label: "Q3 Macro-F1", value: row.q3, digits: 3 },
-    { label: "Q4 Likert", value: row.q4, digits: 2 },
-    { label: "Q5 Likert", value: row.q5, digits: 2 },
+  if (row.isDoctor) {
+    const typeLabel = resolveParticipantTypeLabel(row, { standards, lang, t });
+    const infoKey = seniorityMapEn[typeLabel] || seniorityMapEn[row.type] || typeLabel;
+    const info =
+      participantInfos[infoKey] ||
+      participantInfos[typeLabel] ||
+      participantInfos[row.type] ||
+      participantInfos.doctor_default ||
+      {};
+    const roleText = lang === "en" ? info.role_en || infoKey || typeLabel : info.role_cn || typeLabel;
+    nameEl.textContent = row.name || roleText;
+
+    const infoWrapper = document.createElement("div");
+    infoWrapper.className = "model-summary-info";
+    const items = [
+      [t("participant-info.role"), roleText],
+    ];
+    items.forEach(([label, value]) => {
+      const rowEl = document.createElement("div");
+      const spanLabel = document.createElement("span");
+      spanLabel.textContent = `${label}：`;
+      const spanVal = document.createElement("span");
+      spanVal.className = "value";
+      spanVal.textContent = value;
+      rowEl.appendChild(spanLabel);
+      rowEl.appendChild(spanVal);
+      infoWrapper.appendChild(rowEl);
+    });
+    metricsEl.appendChild(infoWrapper);
+    return;
+  }
+
+  const canonicalName = aliasMap[row.name] || row.name;
+  const info = infoMap[canonicalName] || infoMap[row.name] || {};
+  nameEl.textContent = row.name || t("participant.model");
+
+  const infoItems = [
+    [t("model-info.parameters"), info.parameters || t("model-info.no-info")],
+    [t("model-info.release-date"), info.release_date || t("model-info.no-info")],
+    [t("model-info.organization"), info.organization || t("model-info.no-info")],
   ];
 
-  items.forEach(({ label, value, digits }) => {
+  const infoWrapper = document.createElement("div");
+  infoWrapper.className = "model-summary-info";
+  infoItems.forEach(([label, value]) => {
     const rowEl = document.createElement("div");
     const spanLabel = document.createElement("span");
     spanLabel.textContent = `${label}：`;
     const spanVal = document.createElement("span");
     spanVal.className = "value";
-    spanVal.textContent = formatFloat(value, digits);
+    spanVal.textContent = value;
     rowEl.appendChild(spanLabel);
     rowEl.appendChild(spanVal);
-    metricsEl.appendChild(rowEl);
+    infoWrapper.appendChild(rowEl);
   });
+  metricsEl.appendChild(infoWrapper);
 }
 
 function findScoresByDisease(mapping, option) {
