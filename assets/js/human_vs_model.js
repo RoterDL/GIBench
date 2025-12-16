@@ -524,15 +524,30 @@ function collectHumanChartItems(hvmData, subtab, option) {
       }
     });
   } else if (subtab === "q4" || subtab === "q5") {
-    const likertBlock = hvmData?.q4_q5_likert || {};
-    const { q4Aggregates, q5Aggregates } = computeLikertScores(likertBlock);
-    const aggregates = subtab === "q4" ? q4Aggregates : q5Aggregates;
-    Object.entries(aggregates || {}).forEach(([name, record]) => {
-      const val = safeNumber(record?.mean);
-      if (val !== null) {
-        items.push({ name, value: val });
-      }
-    });
+    const diseaseMap =
+      subtab === "q4"
+        ? hvmData?.q4_q5_likert?.q4_per_disease
+        : hvmData?.q4_q5_likert?.q5_per_disease;
+    const scores = findScoresByDisease(diseaseMap, option);
+    if (scores) {
+      Object.entries(scores).forEach(([name, value]) => {
+        const v = safeNumber(value);
+        if (v !== null) {
+          items.push({ name, value: v });
+        }
+      });
+    } else {
+      // fallback: overall aggregates if按病变数据缺失
+      const likertBlock = hvmData?.q4_q5_likert || {};
+      const { q4Aggregates, q5Aggregates } = computeLikertScores(likertBlock);
+      const aggregates = subtab === "q4" ? q4Aggregates : q5Aggregates;
+      Object.entries(aggregates || {}).forEach(([name, record]) => {
+        const val = safeNumber(record?.mean);
+        if (val !== null) {
+          items.push({ name, value: val });
+        }
+      });
+    }
   }
   items.sort((a, b) => (b.value ?? -1) - (a.value ?? -1));
   return items;
@@ -612,10 +627,21 @@ function initHumanDetailCard(hvmData, standards, { t, getLang, onLanguageChange 
     tipEl.textContent = `${t("detail-current-selection")}：${formatOptionLabel(option, currentLang)}`;
   }
 
+  // patched updateTip: Q4/Q5 也按病变显示提示
+  const updateTipPatched = (option) => {
+    if (!tipEl) return;
+    if (!option) {
+      tipEl.textContent = "";
+      return;
+    }
+    tipEl.textContent = `${t("detail-current-selection")}：${formatOptionLabel(option, currentLang)}`;
+  };
+  updateTip = updateTipPatched;
+
   function renderChart() {
     const isLikert = currentTab === "q4" || currentTab === "q5";
     const option = getCurrentOption();
-    if (!isLikert && !option) {
+    if (!option) {
       chartEl.innerHTML = "";
       const empty = document.createElement("div");
       empty.className = "detail-empty";
@@ -646,6 +672,28 @@ function initHumanDetailCard(hvmData, standards, { t, getLang, onLanguageChange 
 
     // 简单策略：选出若干最高分参与者作为“最佳者”，类型区分可以后续细化
   }
+
+  // patched renderChart: Q4/Q5 也按病变选择，Likert 0-5 量程
+  const renderChartPatched = () => {
+    const isLikert = currentTab === "q4" || currentTab === "q5";
+    const option = getCurrentOption();
+    if (!option) {
+      chartEl.innerHTML = "";
+      const empty = document.createElement("div");
+      empty.className = "detail-empty";
+      empty.textContent = t("detail-no-option");
+      chartEl.appendChild(empty);
+      updateTip(null);
+      return;
+    }
+    const items = collectHumanChartItems(hvmData, currentTab, option || null);
+    const maxValue = isLikert ? 5 : 1;
+    renderBarChart(chartEl, items, t, maxValue);
+    updateTip(option);
+    selectEl.disabled = false;
+    if (controlsEl) controlsEl.style.display = "";
+  };
+  renderChart = renderChartPatched;
 
   function renderOptions() {
     selectEl.innerHTML = "";

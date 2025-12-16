@@ -24,7 +24,7 @@ const UI_TEXTS = {
   "stat-model-label": { zh: "模型数量", en: "Models" },
   "stat-model-sub": { zh: "商业 / 医疗开源 / 开源", en: "Commercial / Medical open source / Open source" },
   "tab-label-model": { zh: "模型榜", en: "Model Leaderboard" },
-  "tab-label-human": { zh: "人机对比", en: "Human vs Model" },
+  "tab-label-human": { zh: "初级临床医生与模型性能对比", en: "Junior Clinician vs. Model Performance" },
   "label-tasks": { zh: "任务", en: "Tasks" },
   "task-pill-q1": { zh: "Q1 解剖定位", en: "Q1 anatomical localization" },
   "task-pill-q2": { zh: "Q2 病变定位", en: "Q2 lesion localization" },

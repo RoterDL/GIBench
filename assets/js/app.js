@@ -1,4 +1,3 @@
-import { initLeaderboard } from "./leaderboard.js";
 import { initHumanVsModel } from "./human_vs_model.js";
 import { initI18n, t, setStandards, getLang, onLanguageChange } from "./i18n.js";
 
@@ -83,8 +82,8 @@ async function loadData() {
     }
     setStandards(standards);
     updateHeroStats(standards);
-    initLeaderboard(data, { getLang, onLanguageChange, t, standards });
-    initHumanVsModel(data.human_vs_model || {}, { getLang, onLanguageChange, t, standards });
+    const humanVsModelData = adaptHumanVsModel(data.human_vs_model || {}, standards);
+    initHumanVsModel(humanVsModelData, { getLang, onLanguageChange, t, standards });
   } catch (err) {
     console.error("加载 gibench_leaderboard.json 失败：", err);
     if (statusEl) {
@@ -103,3 +102,189 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   loadData();
 });
+
+function adaptHumanVsModel(raw = {}, standards = {}) {
+  const num = (v) => (typeof v === "number" && !Number.isNaN(v) ? v : null);
+  const setMap = (map, disease, name, value) => {
+    if (!disease || value == null) return;
+    if (!map[disease]) map[disease] = {};
+    map[disease][name] = value;
+  };
+  const avg = (arr) => {
+    const vals = (arr || []).filter((v) => typeof v === "number" && !Number.isNaN(v));
+    if (!vals.length) return null;
+    return vals.reduce((a, b) => a + b, 0) / vals.length;
+  };
+
+  const diseasesByRegion = {
+    esophagus: Object.keys(standards?.disease_categories?.Esophagus || {}),
+    stomach: Object.keys(standards?.disease_categories?.Stomach || {}),
+    colo: Object.keys(standards?.disease_categories?.Colorectum || {}),
+  };
+
+  const macroAvg = {};
+  const anatomicalMap = {};
+  const diagnosisMap = {};
+  const participantsQ2 = {};
+
+  const ensureMacro = (name) => {
+    if (!macroAvg[name]) macroAvg[name] = {};
+    return macroAvg[name];
+  };
+
+  Object.entries(raw.q1_anatomical_robustness?.models || {}).forEach(([name, info]) => {
+    const entry = ensureMacro(name);
+    const q1 = num(info?.overall?.f1_mean);
+    if (q1 != null) entry.anatomical = q1;
+    (info?.per_disease || []).forEach((d) => {
+      setMap(anatomicalMap, d.disease_cn || d.disease || d.disease_en, name, num(d.f1_score));
+    });
+  });
+
+  Object.entries(raw.q1_anatomical_robustness?.physicians || {}).forEach(([name, info]) => {
+    const entry = ensureMacro(name);
+    const q1 =
+      num(info?.macro_avg_f1?.["解剖定位"]) ??
+      num(info?.macro_avg_f1?.anatomical) ??
+      num(info?.macro_avg_f1?.overall);
+    if (q1 != null) entry.anatomical = q1;
+    Object.entries(info?.per_disease_f1 || {}).forEach(([disease, score]) => {
+      setMap(anatomicalMap, disease, name, num(score));
+    });
+  });
+
+  Object.entries(raw.q3_diagnosis_regional_robustness?.models || {}).forEach(([name, info]) => {
+    const entry = ensureMacro(name);
+    const q3 = num(info?.overall?.f1_mean);
+    if (q3 != null) entry.diagnosis = q3;
+    (info?.regions || []).forEach((region) => {
+      const diseaseList = diseasesByRegion[region.region_key] || [];
+      (region?.per_disease || []).forEach((rec, idx) => {
+        const diseaseName = diseaseList[idx] || rec.disease_cn || rec.disease_type || rec.disease_en;
+        setMap(diagnosisMap, diseaseName, name, num(rec.f1_score));
+      });
+    });
+  });
+
+  Object.entries(raw.q3_diagnosis_regional_robustness?.physicians || {}).forEach(([name, info]) => {
+    const entry = ensureMacro(name);
+    const q3 =
+      num(info?.macro_avg_f1?.["诊断"]) ??
+      num(info?.macro_avg_f1?.diagnosis) ??
+      num(info?.macro_avg_f1?.overall);
+    if (q3 != null) entry.diagnosis = q3;
+    Object.entries(info?.per_disease_f1 || {}).forEach(([disease, score]) => {
+      setMap(diagnosisMap, disease, name, num(score));
+    });
+  });
+
+  Object.entries(raw.q2_spatial_localization?.models || {}).forEach(([name, info]) => {
+    const participant = {
+      type: info?.type || "AI模型",
+      metrics: {
+        overall: { mean_iou: num(info?.overall?.miou ?? info?.overall?.mean_iou ?? info?.overall?.meanIoU) },
+        by_disease: {},
+      },
+    };
+    (info?.per_disease || []).forEach((d) => {
+      const diseaseName = d.disease_cn || d.disease_type || d.disease_en || d.disease;
+      participant.metrics.by_disease[diseaseName] = { mean_iou: num(d.overall_avg_iou ?? d.mean_iou ?? d.miou) };
+    });
+    participantsQ2[name] = participant;
+  });
+
+  Object.entries(raw.q2_spatial_localization?.physicians || {}).forEach(([name, info]) => {
+    const participant = {
+      type: info?.type || "人类专家",
+      metrics: {
+        overall: { mean_iou: num(info?.overall?.mean_iou ?? info?.overall?.miou ?? info?.overall?.meanIoU) },
+        by_disease: {},
+      },
+    };
+    Object.entries(info?.by_disease || {}).forEach(([disease, metrics]) => {
+      participant.metrics.by_disease[disease] = { mean_iou: num(metrics?.mean_iou ?? metrics?.miou ?? metrics?.overall_avg_iou) };
+    });
+    participantsQ2[name] = participant;
+  });
+
+  function collectLikert(rawBlock, diseaseMap) {
+    const agg = new Map();
+    (rawBlock?.diseases || []).forEach((disease) => {
+      const diseaseName = disease?.disease_cn || disease?.disease_en || disease?.disease;
+      (disease?.participants || []).forEach((p) => {
+        const name = p?.name;
+        if (!name) return;
+        const dims = p.dimensions || {};
+        const dimMeans = [];
+        const dimStds = [];
+        const bucket = agg.get(name) || {
+          totalMean: [],
+          totalStd: [],
+          dim: {
+            dimension1: [],
+            dimension2: [],
+            dimension3: [],
+            dimension4: [],
+            dimension5: [],
+          },
+        };
+        Object.values(dims).forEach((dim) => {
+          const m = num(dim?.mean);
+          const s = num(dim?.std);
+          if (m != null) {
+            dimMeans.push(m);
+            const key = `dimension${dim?.order || 1}`;
+            if (bucket.dim[key]) bucket.dim[key].push(m);
+          }
+          if (s != null) {
+            dimStds.push(s);
+          }
+        });
+        const meanVal = avg(dimMeans);
+        const stdVal = avg(dimStds);
+        if (meanVal != null) bucket.totalMean.push(meanVal);
+        if (stdVal != null) bucket.totalStd.push(stdVal);
+        agg.set(name, bucket);
+        if (diseaseName && meanVal != null) {
+          if (!diseaseMap[diseaseName]) diseaseMap[diseaseName] = {};
+          diseaseMap[diseaseName][name] = { mean: meanVal, std: stdVal };
+        }
+      });
+    });
+    const stats = {};
+    agg.forEach((bucket, name) => {
+      stats[name] = {
+        total_score: {
+          mean: avg(bucket.totalMean),
+          std: avg(bucket.totalStd),
+        },
+        dimensions: {},
+      };
+      Object.entries(bucket.dim).forEach(([dimKey, arr]) => {
+        const v = avg(arr);
+        if (v != null) stats[name].dimensions[dimKey] = v;
+      });
+    });
+    return stats;
+  }
+
+  const q4DiseaseScores = {};
+  const q5DiseaseScores = {};
+  const q4Stats = collectLikert(raw.q4_findings_likert || {}, q4DiseaseScores);
+  const q5Stats = collectLikert(raw.q5_recommendations_likert || {}, q5DiseaseScores);
+
+  return {
+    q1_q3_multiple_choice: {
+      macro_avg_f1: macroAvg,
+      anatomical_location_disease_f1: anatomicalMap,
+      diagnosis_disease_f1: diagnosisMap,
+    },
+    q2_spatial_localization: { participants: participantsQ2 },
+    q4_q5_likert: {
+      q4: { basic_statistics: q4Stats },
+      q5: { basic_statistics: q5Stats },
+      q4_per_disease: q4DiseaseScores,
+      q5_per_disease: q5DiseaseScores,
+    },
+  };
+}

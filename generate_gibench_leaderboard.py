@@ -371,7 +371,6 @@ def build_leaderboard() -> Dict[str, Any]:
             alias_sources.setdefault(canonical, []).append(raw_name)
         spatial_overall[canonical] = merge_nested_dict(spatial_overall.get(canonical, {}), value or {})
 
-    # Q2：逐病变 IoU
     spatial_per_disease: Dict[str, List[Dict[str, Any]]] = {}
     for entry in spatial_detail.values():
         if not isinstance(entry, dict):
@@ -392,9 +391,11 @@ def build_leaderboard() -> Dict[str, Any]:
             "overall_avg_iou": entry.get("overall_avg_iou"),
             "overall_avg_iou_std_error": calculate_standard_error(
                 [
-                    dr.get("病灶定位", {}).get("iou")
+                    dr.get("病变定位", {}).get("iou")
                     for dr in (entry.get("detailed_results") or {}).values()
-                    if isinstance(dr, dict) and isinstance(dr.get("病灶定位", {}), dict) and dr.get("病灶定位", {}).get("iou") is not None
+                    if isinstance(dr, dict)
+                    and isinstance(dr.get("病变定位", {}), dict)
+                    and dr.get("病变定位", {}).get("iou") is not None
                 ]
             ),
             "total_questions": entry.get("total_questions"),
@@ -410,13 +411,15 @@ def build_leaderboard() -> Dict[str, Any]:
         spatial_per_disease.keys()
     )
 
+    standards = standards_payload(alias_sources)
+
     leaderboard: Dict[str, Any] = {
         "bench_name": "GIBench",
         "generated_at": datetime.now().isoformat(timespec="seconds"),
         "description": "GIBench 多任务统一模型榜指标（Q1 解剖定位、Q2 病变定位、Q3 诊断）",
-        "models": {},
-        "standards": standards_payload(alias_sources),
     }
+
+    model_records: Dict[str, Any] = {}
 
     for model_name in sorted(models):
         record: Dict[str, Any] = {
@@ -427,7 +430,6 @@ def build_leaderboard() -> Dict[str, Any]:
             "tasks": {},
         }
 
-        # Q1：解剖定位
         if model_name in anatomical:
             a = anatomical[model_name] or {}
             acc = a.get("accuracy", {}) or {}
@@ -463,7 +465,6 @@ def build_leaderboard() -> Dict[str, Any]:
             record["summary"]["q1_anatomical_accuracy_mean"] = acc.get("mean")
             record["summary"]["q1_anatomical_f1_mean"] = f1.get("mean")
 
-        # Q3：诊断区域鲁棒性
         if model_name in diagnosis:
             diag = diagnosis[model_name] or {}
             regions: List[Dict[str, Any]] = []
@@ -513,7 +514,6 @@ def build_leaderboard() -> Dict[str, Any]:
             if sample_total:
                 record["summary"]["q3_diagnosis_f1_mean"] = f1_weighted_sum / sample_total
 
-        # Q2：病变定位整体 + 按病变
         if model_name in spatial_overall:
             s = spatial_overall[model_name] or {}
             record["tasks"].setdefault("q2_spatial_localization", {})
@@ -530,9 +530,59 @@ def build_leaderboard() -> Dict[str, Any]:
             record["tasks"].setdefault("q2_spatial_localization", {})
             record["tasks"]["q2_spatial_localization"]["per_disease"] = spatial_per_disease[model_name]
 
-        leaderboard["models"][model_name] = record
+        model_records[model_name] = record
 
-    # 人机对比汇总
+    q1_models: Dict[str, Any] = {}
+    q2_models: Dict[str, Any] = {}
+    q3_models: Dict[str, Any] = {}
+
+    for model_name, record in model_records.items():
+        tasks = record.get("tasks") or {}
+        summary = record.get("summary") or {}
+
+        q1 = tasks.get("q1_anatomical_robustness") or {}
+        if q1:
+            overall = dict(q1.get("overall") or {})
+            total_samples = overall.get("total_samples")
+            try:
+                overall["sample_size"] = int(total_samples) if total_samples is not None else None
+            except (TypeError, ValueError):
+                overall["sample_size"] = None
+            q1_models[model_name] = {
+                "overall": overall,
+                "per_disease": q1.get("per_disease") or [],
+            }
+
+        q2 = tasks.get("q2_spatial_localization") or {}
+        if q2:
+            overall = dict(q2.get("overall") or {})
+            total_questions = overall.get("total_questions")
+            try:
+                overall["sample_size"] = int(total_questions) if total_questions is not None else None
+            except (TypeError, ValueError):
+                overall["sample_size"] = None
+            q2_models[model_name] = {
+                "overall": overall,
+                "per_disease": q2.get("per_disease") or [],
+            }
+
+        q3 = tasks.get("q3_diagnosis_regional_robustness") or {}
+        if q3:
+            regions = q3.get("regions") or []
+            sample_total = 0
+            for region in regions:
+                try:
+                    sample_total += int(region.get("total_samples") or 0)
+                except (TypeError, ValueError):
+                    continue
+            q3_models[model_name] = {
+                "overall": {
+                    "f1_mean": summary.get("q3_diagnosis_f1_mean"),
+                    "sample_size": sample_total,
+                },
+                "regions": regions,
+            }
+
     eval_results_root = base_dir.parent / "evaluation" / "results"
     human_vs_model: Dict[str, Any] = {}
 
@@ -542,68 +592,267 @@ def build_leaderboard() -> Dict[str, Any]:
             mapped[normalize_physician_name(normalize_model_name(name))] = value
         return mapped
 
-    # Q1/Q3：选择题 F1
     comparison_path = eval_results_root / "physician_vs_model" / "comparison_results.json"
     if comparison_path.is_file():
         comparison_data = load_json(comparison_path)
         q1_se_map, q3_se_map = build_hvm_per_disease_se(comparison_data)
         f1_scores = comparison_data.get("f1_scores", {}) or {}
-        anatomical_f1 = {
-            normalize_disease_label(k).get("name_cn"): remap_participant_scores(v or {})
-            for k, v in (f1_scores.get("anatomical_location_disease_f1") or {}).items()
-        }
-        diagnosis_f1 = {
-            normalize_disease_label(k).get("name_cn"): remap_participant_scores(v or {})
-            for k, v in (f1_scores.get("diagnosis_disease_f1") or {}).items()
-        }
-        human_vs_model["q1_q3_multiple_choice"] = {
-            "anatomical_location_disease_f1": anatomical_f1,
-            "anatomical_location_disease_f1_std_error": q1_se_map,
-            "diagnosis_disease_f1": diagnosis_f1,
-            "diagnosis_disease_f1_std_error": q3_se_map,
-            "macro_avg_f1": remap_participant_scores(f1_scores.get("macro_avg_f1") or {}),
-            "standard_error_statistics": comparison_data.get("standard_error_statistics"),
-        }
+        anatomical_raw = f1_scores.get("anatomical_location_disease_f1") or {}
+        diagnosis_raw = f1_scores.get("diagnosis_disease_f1") or {}
+        macro_raw = f1_scores.get("macro_avg_f1") or {}
 
-    # Q2：病变定位 IoU
+        anatomical_by_disease: Dict[str, Dict[str, float]] = {}
+        for disease_key, participants in anatomical_raw.items():
+            disease_cn = normalize_disease_label(disease_key).get("name_cn")
+            if not disease_cn:
+                continue
+            anatomical_by_disease[disease_cn] = remap_participant_scores(participants or {})
+
+        diagnosis_by_disease: Dict[str, Dict[str, float]] = {}
+        for disease_key, participants in diagnosis_raw.items():
+            disease_cn = normalize_disease_label(disease_key).get("name_cn")
+            if not disease_cn:
+                continue
+            diagnosis_by_disease[disease_cn] = remap_participant_scores(participants or {})
+
+        macro_avg = remap_participant_scores(macro_raw)
+
+        participant_sample_sizes_q1: Dict[str, int] = {}
+        participant_sample_sizes_q3: Dict[str, int] = {}
+
+        def consume_sample_sizes(block: Dict[str, Any], is_physician: bool) -> None:
+            for name, info in (block or {}).items():
+                if not isinstance(info, dict):
+                    continue
+                if is_physician:
+                    normalized = normalize_physician_name(normalize_model_name(name))
+                else:
+                    normalized = normalize_model_name(name)
+                by_qtype = info.get("by_question_type") or {}
+                q1_block = by_qtype.get("解剖定位") or {}
+                q3_block = by_qtype.get("诊断") or {}
+                total_q1 = int(q1_block.get("total") or 0)
+                total_q3 = int(q3_block.get("total") or 0)
+                if not total_q1 and not q1_block:
+                    total_q1 = int(info.get("total_questions") or 0)
+                if not total_q3 and not q3_block:
+                    total_q3 = int(info.get("total_questions") or 0)
+                if total_q1:
+                    participant_sample_sizes_q1[normalized] = total_q1
+                if total_q3:
+                    participant_sample_sizes_q3[normalized] = total_q3
+
+        consume_sample_sizes(comparison_data.get("physician_results"), is_physician=True)
+        consume_sample_sizes(comparison_data.get("model_results"), is_physician=False)
+
+        def is_model_participant(name: str) -> bool:
+            return name in model_records
+
+        q1_physicians: Dict[str, Any] = {}
+        for disease_cn, participants in anatomical_by_disease.items():
+            for participant, f1_val in participants.items():
+                if is_model_participant(participant):
+                    continue
+                entry = q1_physicians.setdefault(
+                    participant,
+                    {
+                        "name": participant,
+                        "per_disease_f1": {},
+                        "per_disease_std_error": {},
+                        "sample_size": participant_sample_sizes_q1.get(participant),
+                        "macro_avg_f1": None,
+                    },
+                )
+                entry["per_disease_f1"][disease_cn] = f1_val
+                se_val = (q1_se_map.get(disease_cn) or {}).get(participant)
+                if se_val is not None:
+                    entry["per_disease_std_error"][disease_cn] = se_val
+
+        for participant, macro_val in macro_avg.items():
+            if is_model_participant(participant):
+                continue
+            if participant not in q1_physicians:
+                q1_physicians[participant] = {
+                    "name": participant,
+                    "per_disease_f1": {},
+                    "per_disease_std_error": {},
+                    "sample_size": participant_sample_sizes_q1.get(participant),
+                }
+            q1_physicians[participant]["macro_avg_f1"] = macro_val
+
+        q3_physicians: Dict[str, Any] = {}
+        for disease_cn, participants in diagnosis_by_disease.items():
+            for participant, f1_val in participants.items():
+                if is_model_participant(participant):
+                    continue
+                entry = q3_physicians.setdefault(
+                    participant,
+                    {
+                        "name": participant,
+                        "per_disease_f1": {},
+                        "per_disease_std_error": {},
+                        "sample_size": participant_sample_sizes_q3.get(participant),
+                        "macro_avg_f1": None,
+                    },
+                )
+                entry["per_disease_f1"][disease_cn] = f1_val
+                se_val = (q3_se_map.get(disease_cn) or {}).get(participant)
+                if se_val is not None:
+                    entry["per_disease_std_error"][disease_cn] = se_val
+
+        for participant, macro_val in macro_avg.items():
+            if is_model_participant(participant):
+                continue
+            if participant not in q3_physicians:
+                q3_physicians[participant] = {
+                    "name": participant,
+                    "per_disease_f1": {},
+                    "per_disease_std_error": {},
+                    "sample_size": participant_sample_sizes_q3.get(participant),
+                }
+            q3_physicians[participant]["macro_avg_f1"] = macro_val
+
+        if q1_models or q1_physicians:
+            block: Dict[str, Any] = {}
+            if q1_models:
+                block["models"] = q1_models
+            if q1_physicians:
+                block["physicians"] = q1_physicians
+            human_vs_model["q1_anatomical_robustness"] = block
+
+        if q3_models or q3_physicians:
+            block: Dict[str, Any] = {}
+            if q3_models:
+                block["models"] = q3_models
+            if q3_physicians:
+                block["physicians"] = q3_physicians
+            human_vs_model["q3_diagnosis_regional_robustness"] = block
+
     spatial_hvm_path = eval_results_root / "physician_vs_model_spatial" / "spatial_metrics.json"
     if spatial_hvm_path.is_file():
         spatial_hvm = load_json(spatial_hvm_path)
         participants = spatial_hvm.get("participants", {}) or {}
-        remapped_participants: Dict[str, Any] = {}
+        q2_physicians: Dict[str, Any] = {}
         for name, info in participants.items():
-            remapped_participants[normalize_physician_name(normalize_model_name(name))] = info
-        human_vs_model["q2_spatial_localization"] = {"participants": remapped_participants}
+            if not isinstance(info, dict):
+                continue
+            canonical = normalize_model_name(name)
+            if canonical in model_records:
+                continue
+            normalized_name = normalize_physician_name(canonical)
+            metrics = info.get("metrics") or {}
+            overall = dict(metrics.get("overall") or {})
+            total_questions = overall.get("total_questions")
+            try:
+                overall["sample_size"] = int(total_questions) if total_questions is not None else None
+            except (TypeError, ValueError):
+                overall["sample_size"] = None
+            q2_physicians[normalized_name] = {
+                "name": normalized_name,
+                "type": info.get("type"),
+                "overall": overall,
+                "by_disease": metrics.get("by_disease") or {},
+            }
+        if q2_models or q2_physicians:
+            block: Dict[str, Any] = {}
+            if q2_models:
+                block["models"] = q2_models
+            if q2_physicians:
+                block["physicians"] = q2_physicians
+            human_vs_model["q2_spatial_localization"] = block
 
-    # Q4/Q5：Likert
     likert_path = (
         eval_results_root
-        / "physician_vs_model_likert_analysis"
-        / "question_type"
-        / "results.json"
+        / "full_dataset_likert_analysis"
+        / "analysis_results.json"
     )
     if likert_path.is_file():
-        likert_data = load_json(likert_path)
-        likert_block: Dict[str, Any] = {}
-        for q_type, q_info in (likert_data or {}).items():
-            if not isinstance(q_info, dict):
+        likert_data = load_json(likert_path) or {}
+        entries = likert_data.get("by_question_and_disease_type") or []
+        likert_grouped: Dict[str, Dict[str, Dict[str, Dict[str, Any]]]] = {}
+        likert_totals: Dict[str, Dict[str, int]] = {}
+        for item in entries:
+            if not isinstance(item, dict):
                 continue
-            basic_stats = {}
-            for name, stat in (q_info.get("basic_statistics") or {}).items():
-                basic_stats[normalize_physician_name(normalize_model_name(name))] = stat
-            likert_block[q_type] = {
-                "summary": q_info.get("summary"),
-                "basic_statistics": basic_stats,
+            q_type_cn = item.get("question_type")
+            disease_raw = item.get("disease_type")
+            participant_raw = item.get("model_name")
+            if not q_type_cn or not disease_raw or not participant_raw:
+                continue
+            normalized_name = normalize_physician_name(normalize_model_name(participant_raw))
+            participant_cn = PHYSICIAN_EN_TO_CN.get(normalized_name)
+            participant_entry = likert_grouped.setdefault(q_type_cn, {}).setdefault(disease_raw, {}).setdefault(
+                normalized_name,
+                {
+                    "name": normalized_name,
+                    "name_cn": participant_cn,
+                    "participant_type": item.get("participant_type"),
+                    "dimensions": {},
+                },
+            )
+            try:
+                n_samples = int(item.get("n_samples") or 0)
+            except (TypeError, ValueError):
+                n_samples = 0
+            if n_samples:
+                participant_entry["sample_size"] = int(participant_entry.get("sample_size") or 0) + n_samples
+                likert_totals.setdefault(q_type_cn, {}).setdefault(normalized_name, 0)
+                likert_totals[q_type_cn][normalized_name] += n_samples
+            for dim_key, meta in LIKERT_DIMENSIONS.items():
+                order = meta.get("order")
+                name_cn = meta.get("name_cn")
+                mean_key = f"维度{order}_{name_cn}_mean"
+                std_key = f"维度{order}_{name_cn}_std"
+                participant_entry["dimensions"][dim_key] = {
+                    "name_cn": name_cn,
+                    "name_en": meta.get("name_en"),
+                    "order": order,
+                    "mean": item.get(mean_key),
+                    "std": item.get(std_key),
+                }
+
+        likert_block: Dict[str, Any] = {}
+        for q_type_cn, disease_block in likert_grouped.items():
+            diseases: List[Dict[str, Any]] = []
+            for disease_key, participants in disease_block.items():
+                disease_info = normalize_disease_label(disease_key)
+                participant_list = sorted(
+                    participants.values(),
+                    key=lambda x: (x.get("name_cn") or x.get("name") or ""),
+                )
+                diseases.append(
+                    {
+                        "disease": disease_info["name_cn"],
+                        "disease_cn": disease_info["name_cn"],
+                        "disease_en": disease_info["name_en"],
+                        "location_cn": disease_info["location_cn"],
+                        "location_en": disease_info["location_en"],
+                        "participants": participant_list,
+                    }
+                )
+            diseases.sort(key=lambda x: x.get("disease") or "")
+            likert_block[q_type_cn] = {
+                "question_type_cn": q_type_cn,
+                "question_type_en": TASK_TYPE_NAMES_EN.get(q_type_cn, q_type_cn),
+                "diseases": diseases,
+                "participant_sample_sizes": likert_totals.get(q_type_cn) or {},
             }
-        human_vs_model["q4_q5_likert"] = likert_block
+        if likert_block:
+            q4_cn = "看图说话"
+            q5_cn = "后续建议"
+            q4_block = likert_block.get(q4_cn)
+            q5_block = likert_block.get(q5_cn)
+            if q4_block:
+                human_vs_model["q4_findings_likert"] = q4_block
+            if q5_block:
+                human_vs_model["q5_recommendations_likert"] = q5_block
 
     if human_vs_model:
         leaderboard["human_vs_model"] = human_vs_model
 
-    # 额外：输出标准对照文件
     standards_out_dir = ensure_data_dir(base_dir)
     with (standards_out_dir / "gibench_standards.json").open("w", encoding="utf-8") as f:
-        json.dump(leaderboard["standards"], f, ensure_ascii=False, indent=2)
+        json.dump(standards, f, ensure_ascii=False, indent=2)
 
     return leaderboard
 
