@@ -12,7 +12,7 @@ import re
 from datetime import datetime
 from math import sqrt
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 # ----------------------------
 # Standard definitions
@@ -319,6 +319,12 @@ def round_metrics(obj: Any, ndigits: int = 3) -> Any:
 
 
 def standards_payload(model_alias_sources: Dict[str, List[str]]) -> Dict[str, Any]:
+    avg_physician_names_en: Dict[str, str] = {
+        f"{name_cn}(平均)": f"{name_en}(Avg)" for name_cn, name_en in SENIORITY_NAMES_EN.items()
+    }
+    avg_physician_en_to_cn: Dict[str, str] = {
+        v: k for k, v in avg_physician_names_en.items()
+    }
     return {
         "location_names_en": LOCATION_NAMES_EN,
         "disease_categories": DISEASE_CATEGORIES,
@@ -326,8 +332,8 @@ def standards_payload(model_alias_sources: Dict[str, List[str]]) -> Dict[str, An
         "model_categories": MODEL_CATEGORIES,
         "model_aliases": MODEL_ALIASES,
         "model_alias_sources": model_alias_sources,
-        "physician_names_en": PHYSICIAN_NAMES_EN,
-        "physician_en_to_cn": PHYSICIAN_EN_TO_CN,
+        "physician_names_en": {**PHYSICIAN_NAMES_EN, **avg_physician_names_en},
+        "physician_en_to_cn": {**PHYSICIAN_EN_TO_CN, **avg_physician_en_to_cn},
         "seniority_names_en": SENIORITY_NAMES_EN,
         "task_type_names_en": TASK_TYPE_NAMES_EN,
         "likert_dimensions": LIKERT_DIMENSIONS,
@@ -609,6 +615,260 @@ def build_leaderboard() -> Dict[str, Any]:
     eval_results_root = base_dir.parent / "evaluation" / "results"
     human_vs_model: Dict[str, Any] = {}
 
+    def safe_float(value: Any) -> Optional[float]:
+        if value is None:
+            return None
+        try:
+            return float(value)
+        except (TypeError, ValueError):
+            return None
+
+    def mean(values: List[float]) -> Optional[float]:
+        if not values:
+            return None
+        return sum(values) / len(values)
+
+    def resolve_seniority_cn(type_raw: Any, participant_name: str) -> Optional[str]:
+        if type_raw is not None:
+            type_str = str(type_raw).strip()
+            aliases = {
+                "低年资": "住院实习医师",
+                "高年资": "初级内窥镜医师",
+            }
+            type_str = aliases.get(type_str, type_str)
+            reverse_mapping = {v: k for k, v in SENIORITY_NAMES_EN.items()}
+            type_str = reverse_mapping.get(type_str, type_str)
+            if type_str in SENIORITY_NAMES_EN:
+                return type_str
+
+        if participant_name:
+            if participant_name.startswith("Trainee-"):
+                return "住院实习医师"
+            if participant_name.startswith("Junior-"):
+                return "初级内窥镜医师"
+        return None
+
+    def group_avg_name(group_cn: str) -> str:
+        group_en = SENIORITY_NAMES_EN.get(group_cn, group_cn)
+        return f"{group_en}(Avg)"
+
+    def build_group_avg_mc(physicians: Dict[str, Any]) -> Dict[str, Any]:
+        group_to_members: Dict[str, List[str]] = {}
+        for name, info in (physicians or {}).items():
+            if not name or name.endswith("(Avg)"):
+                continue
+            group_cn = resolve_seniority_cn((info or {}).get("type"), name)
+            if not group_cn:
+                continue
+            group_to_members.setdefault(group_cn, []).append(name)
+
+        avg_records: Dict[str, Any] = {}
+        for group_cn, members in group_to_members.items():
+            if not members:
+                continue
+            avg_name = group_avg_name(group_cn)
+
+            macro_by_key: Dict[str, List[float]] = {}
+            per_disease_f1: Dict[str, List[float]] = {}
+            per_disease_se: Dict[str, List[float]] = {}
+            sample_size_sum = 0
+
+            for member in members:
+                entry = physicians.get(member) or {}
+                try:
+                    sample_size_sum += int(entry.get("sample_size") or 0)
+                except (TypeError, ValueError):
+                    pass
+
+                macro_val = entry.get("macro_avg_f1")
+                if isinstance(macro_val, dict):
+                    for k, v in macro_val.items():
+                        fv = safe_float(v)
+                        if fv is None:
+                            continue
+                        macro_by_key.setdefault(str(k), []).append(fv)
+                else:
+                    fv = safe_float(macro_val)
+                    if fv is not None:
+                        macro_by_key.setdefault("overall", []).append(fv)
+
+                for disease, score in (entry.get("per_disease_f1") or {}).items():
+                    fv = safe_float(score)
+                    if fv is None:
+                        continue
+                    per_disease_f1.setdefault(str(disease), []).append(fv)
+
+                for disease, se_val in (entry.get("per_disease_std_error") or {}).items():
+                    fv = safe_float(se_val)
+                    if fv is None:
+                        continue
+                    per_disease_se.setdefault(str(disease), []).append(fv)
+
+            macro_avg = {k: mean(vals) for k, vals in macro_by_key.items() if vals}
+            avg_records[avg_name] = {
+                "name": avg_name,
+                "type": group_cn,
+                "per_disease_f1": {k: mean(vals) for k, vals in per_disease_f1.items() if vals},
+                "per_disease_std_error": {k: mean(vals) for k, vals in per_disease_se.items() if vals},
+                "sample_size": sample_size_sum if sample_size_sum else None,
+                "macro_avg_f1": macro_avg or None,
+            }
+        return avg_records
+
+    def build_group_avg_spatial(physicians: Dict[str, Any]) -> Dict[str, Any]:
+        group_to_members: Dict[str, List[str]] = {}
+        for name, info in (physicians or {}).items():
+            if not name or name.endswith("(Avg)"):
+                continue
+            group_cn = resolve_seniority_cn((info or {}).get("type"), name)
+            if not group_cn:
+                continue
+            group_to_members.setdefault(group_cn, []).append(name)
+
+        avg_records: Dict[str, Any] = {}
+        for group_cn, members in group_to_members.items():
+            if not members:
+                continue
+            avg_name = group_avg_name(group_cn)
+
+            overall_mean_iou_vals: List[float] = []
+            sample_size_sum = 0
+            by_disease_mean_iou: Dict[str, List[float]] = {}
+            by_disease_se: Dict[str, List[float]] = {}
+
+            for member in members:
+                entry = physicians.get(member) or {}
+                overall = entry.get("overall") or {}
+                mean_iou_val = safe_float(
+                    overall.get("mean_iou") if isinstance(overall, dict) else None
+                )
+                if mean_iou_val is None and isinstance(overall, dict):
+                    mean_iou_val = safe_float(overall.get("miou"))
+                if mean_iou_val is not None:
+                    overall_mean_iou_vals.append(mean_iou_val)
+
+                if isinstance(overall, dict):
+                    try:
+                        sample_size_sum += int(overall.get("sample_size") or 0)
+                    except (TypeError, ValueError):
+                        pass
+
+                for disease, metrics in (entry.get("by_disease") or {}).items():
+                    if not isinstance(metrics, dict):
+                        continue
+                    mean_iou = safe_float(metrics.get("mean_iou") or metrics.get("miou"))
+                    if mean_iou is not None:
+                        by_disease_mean_iou.setdefault(str(disease), []).append(mean_iou)
+                    se_val = safe_float(
+                        metrics.get("mean_iou_std_error")
+                        or metrics.get("std_error")
+                        or metrics.get("miou_std_error")
+                        or metrics.get("overall_avg_iou_std_error")
+                    )
+                    if se_val is not None:
+                        by_disease_se.setdefault(str(disease), []).append(se_val)
+
+            avg_overall = {
+                "mean_iou": mean(overall_mean_iou_vals),
+                "sample_size": sample_size_sum if sample_size_sum else None,
+            }
+
+            avg_by_disease: Dict[str, Dict[str, Any]] = {}
+            for disease, vals in by_disease_mean_iou.items():
+                avg_by_disease[disease] = {"mean_iou": mean(vals)}
+                se_vals = by_disease_se.get(disease)
+                if se_vals:
+                    avg_by_disease[disease]["mean_iou_std_error"] = mean(se_vals)
+
+            avg_records[avg_name] = {
+                "name": avg_name,
+                "type": group_cn,
+                "overall": avg_overall,
+                "by_disease": avg_by_disease,
+            }
+        return avg_records
+
+    def inject_group_avg_likert(
+        q_type_cn: str,
+        disease_block: Dict[str, Dict[str, Dict[str, Any]]],
+        totals: Dict[str, Dict[str, int]],
+    ) -> None:
+        group_to_names: Dict[str, List[str]] = {}
+        for participants in (disease_block or {}).values():
+            for name, info in (participants or {}).items():
+                if not name or name.endswith("(Avg)"):
+                    continue
+                if name not in PHYSICIAN_EN_TO_CN:
+                    continue
+                group_cn = resolve_seniority_cn((info or {}).get("participant_type"), name)
+                if not group_cn:
+                    continue
+                group_to_names.setdefault(group_cn, [])
+                if name not in group_to_names[group_cn]:
+                    group_to_names[group_cn].append(name)
+
+        if group_to_names:
+            totals.setdefault(q_type_cn, {})
+        for group_cn, names in group_to_names.items():
+            avg_name = group_avg_name(group_cn)
+            totals[q_type_cn][avg_name] = sum(int(totals[q_type_cn].get(n, 0)) for n in names)
+
+        for disease_key, participants in (disease_block or {}).items():
+            if not isinstance(participants, dict):
+                continue
+            group_buckets: Dict[str, Dict[str, Any]] = {}
+            for name, info in participants.items():
+                if not name or name.endswith("(Avg)"):
+                    continue
+                if name not in PHYSICIAN_EN_TO_CN:
+                    continue
+                group_cn = resolve_seniority_cn((info or {}).get("participant_type"), name)
+                if not group_cn:
+                    continue
+                bucket = group_buckets.setdefault(
+                    group_cn,
+                    {"dim_mean": {}, "dim_std": {}, "sample_size": 0},
+                )
+                try:
+                    bucket["sample_size"] += int((info or {}).get("sample_size") or 0)
+                except (TypeError, ValueError):
+                    pass
+                dims = (info or {}).get("dimensions") or {}
+                for dim_key, dim in dims.items():
+                    if not isinstance(dim, dict):
+                        continue
+                    m = safe_float(dim.get("mean"))
+                    s = safe_float(dim.get("std"))
+                    if m is not None:
+                        bucket["dim_mean"].setdefault(dim_key, []).append(m)
+                    if s is not None:
+                        bucket["dim_std"].setdefault(dim_key, []).append(s)
+
+            for group_cn, bucket in group_buckets.items():
+                avg_name = group_avg_name(group_cn)
+                avg_entry = {
+                    "name": avg_name,
+                    "name_cn": f"{group_cn}(平均)",
+                    "participant_type": group_cn,
+                    "dimensions": {},
+                }
+                if bucket.get("sample_size"):
+                    avg_entry["sample_size"] = bucket["sample_size"]
+                for dim_key, meta in LIKERT_DIMENSIONS.items():
+                    dim_mean_vals = bucket["dim_mean"].get(dim_key) or []
+                    dim_std_vals = bucket["dim_std"].get(dim_key) or []
+                    if not dim_mean_vals and not dim_std_vals:
+                        continue
+                    avg_entry["dimensions"][dim_key] = {
+                        "name_cn": meta.get("name_cn"),
+                        "name_en": meta.get("name_en"),
+                        "order": meta.get("order"),
+                        "mean": mean(dim_mean_vals),
+                        "std": mean(dim_std_vals),
+                    }
+                if avg_entry["dimensions"]:
+                    participants[avg_name] = avg_entry
+
     def remap_participant_scores(block: Dict[str, Any]) -> Dict[str, Any]:
         mapped: Dict[str, Any] = {}
         for name, value in (block or {}).items():
@@ -703,6 +963,7 @@ def build_leaderboard() -> Dict[str, Any]:
                     "sample_size": participant_sample_sizes_q1.get(participant),
                 }
             q1_physicians[participant]["macro_avg_f1"] = macro_val
+        q1_physicians.update(build_group_avg_mc(q1_physicians))
 
         q3_physicians: Dict[str, Any] = {}
         for disease_cn, participants in diagnosis_by_disease.items():
@@ -735,6 +996,7 @@ def build_leaderboard() -> Dict[str, Any]:
                     "sample_size": participant_sample_sizes_q3.get(participant),
                 }
             q3_physicians[participant]["macro_avg_f1"] = macro_val
+        q3_physicians.update(build_group_avg_mc(q3_physicians))
 
         if q1_models or q1_physicians:
             block: Dict[str, Any] = {}
@@ -816,6 +1078,7 @@ def build_leaderboard() -> Dict[str, Any]:
                 "overall": overall,
                 "by_disease": by_disease,
             }
+        q2_physicians.update(build_group_avg_spatial(q2_physicians))
         if q2_models or q2_physicians:
             block: Dict[str, Any] = {}
             if q2_models:
@@ -876,6 +1139,7 @@ def build_leaderboard() -> Dict[str, Any]:
 
         likert_block: Dict[str, Any] = {}
         for q_type_cn, disease_block in likert_grouped.items():
+            inject_group_avg_likert(q_type_cn, disease_block, likert_totals)
             diseases: List[Dict[str, Any]] = []
             for disease_key, participants in disease_block.items():
                 disease_info = normalize_disease_label(disease_key)

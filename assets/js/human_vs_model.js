@@ -113,6 +113,10 @@ function mean(arr) {
   return s / arr.length;
 }
 
+function isGroupAverageName(name) {
+  return typeof name === "string" && name.endsWith("(Avg)");
+}
+
 function clampToRange(value, min, max) {
   if (typeof value !== "number" || Number.isNaN(value)) return min;
   if (value < min) return min;
@@ -271,7 +275,7 @@ function computeParticipantRows(hvmData, standards, sortBy) {
 
   const isDoctor = buildPhysicianChecker(standards);
 
-  const rows = Array.from(allNames).map((name) => {
+  let rows = Array.from(allNames).map((name) => {
     const macroEntry = macro[name];
     const q1 = extractMacroValue(macroEntry, [
       "è§£å‰–å®šä½",
@@ -286,6 +290,12 @@ function computeParticipantRows(hvmData, standards, sortBy) {
     const q5 = safeNumber(q5Aggregates[name]?.mean);
     const type = participantsQ2[name]?.type || null;
     return { name, isDoctor: isDoctor(name), type, q1, q2, q3, q4, q5 };
+  });
+
+  // 页面规则：整体排名仅显示人类组均值（Avg），不显示单个医生参与者；模型不受影响
+  rows = rows.filter((row) => {
+    if (!row?.isDoctor) return true;
+    return isGroupAverageName(row.name);
   });
 
   const key =
@@ -558,8 +568,10 @@ function collectHumanChartItems(hvmData, subtab, option) {
       });
     }
   }
-  items.sort((a, b) => (b.value ?? -1) - (a.value ?? -1));
-  return items;
+  // 页面规则：按病变 / 题型细分中隐藏人类组均值（Avg），保留单个医生参与者（模型不受影响）
+  const filtered = items.filter((item) => !isGroupAverageName(item?.name));
+  filtered.sort((a, b) => (b.value ?? -1) - (a.value ?? -1));
+  return filtered;
 }
 
 function renderBarChart(chartEl, items, t, maxValue = 1) {
