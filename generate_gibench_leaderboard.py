@@ -260,7 +260,12 @@ def build_hvm_per_disease_se(comparison_data: Dict[str, Any]) -> Tuple[Dict[str,
 
     def consume_block(block: Dict[str, Any], is_physician: bool) -> None:
         for name, info in (block or {}).items():
-            normalized_name = normalize_physician_name(normalize_model_name(name)) if is_physician else normalize_model_name(name)
+            if is_physician:
+                # 对医生统一使用 physician_name 字段做归一化，确保与 human_vs_model 中的英文代号一致
+                raw_name = info.get("physician_name") or name
+                normalized_name = normalize_physician_name(normalize_model_name(raw_name))
+            else:
+                normalized_name = normalize_model_name(name)
             detailed = info.get("detailed_results") or []
             per_disease_q1: Dict[str, List[int]] = {}
             per_disease_q3: Dict[str, List[int]] = {}
@@ -297,6 +302,20 @@ def merge_nested_dict(existing: Dict[str, Any], new: Dict[str, Any]) -> Dict[str
         elif v is not None:
             merged[k] = v
     return merged
+
+
+def round_metrics(obj: Any, ndigits: int = 3) -> Any:
+    """
+    递归地将所有 float 指标保留到小数点后 ndigits 位。
+    仅对 float 生效，不改变 int / str 等其它类型。
+    """
+    if isinstance(obj, float):
+        return round(obj, ndigits)
+    if isinstance(obj, dict):
+        return {k: round_metrics(v, ndigits) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [round_metrics(v, ndigits) for v in obj]
+    return obj
 
 
 def standards_payload(model_alias_sources: Dict[str, List[str]]) -> Dict[str, Any]:
@@ -382,6 +401,18 @@ def build_leaderboard() -> Dict[str, Any]:
         if model_name != model_name_raw:
             alias_sources.setdefault(model_name, []).append(model_name_raw)
         disease_info = normalize_disease_label(entry.get("disease_type"))
+        detailed_results = entry.get("detailed_results") or {}
+        iou_values: List[float] = []
+        for dr in detailed_results.values():
+            if not isinstance(dr, dict):
+                continue
+            detail = dr.get("病灶定位") or dr.get("病变定位")
+            if not isinstance(detail, dict):
+                continue
+            iou = detail.get("iou")
+            if iou is None:
+                continue
+            iou_values.append(iou)
         record = {
             "disease_type": disease_info["name_cn"],
             "disease_cn": disease_info["name_cn"],
@@ -389,15 +420,7 @@ def build_leaderboard() -> Dict[str, Any]:
             "location_cn": disease_info["location_cn"],
             "location_en": disease_info["location_en"],
             "overall_avg_iou": entry.get("overall_avg_iou"),
-            "overall_avg_iou_std_error": calculate_standard_error(
-                [
-                    dr.get("病变定位", {}).get("iou")
-                    for dr in (entry.get("detailed_results") or {}).values()
-                    if isinstance(dr, dict)
-                    and isinstance(dr.get("病变定位", {}), dict)
-                    and dr.get("病变定位", {}).get("iou") is not None
-                ]
-            ),
+            "overall_avg_iou_std_error": calculate_standard_error(iou_values),
             "total_questions": entry.get("total_questions"),
             "valid_questions": entry.get("valid_questions"),
             "invalid_questions": entry.get("invalid_questions"),
@@ -625,7 +648,8 @@ def build_leaderboard() -> Dict[str, Any]:
                 if not isinstance(info, dict):
                     continue
                 if is_physician:
-                    normalized = normalize_physician_name(normalize_model_name(name))
+                    raw_name = info.get("physician_name") or name
+                    normalized = normalize_physician_name(normalize_model_name(raw_name))
                 else:
                     normalized = normalize_model_name(name)
                 by_qtype = info.get("by_question_type") or {}
@@ -731,6 +755,32 @@ def build_leaderboard() -> Dict[str, Any]:
     spatial_hvm_path = eval_results_root / "physician_vs_model_spatial" / "spatial_metrics.json"
     if spatial_hvm_path.is_file():
         spatial_hvm = load_json(spatial_hvm_path)
+        per_question_iou = spatial_hvm.get("per_question_iou") or {}
+        per_disease_iou_std_error: Dict[str, Dict[str, float]] = {}
+
+        for name, block in per_question_iou.items():
+            normalized_name = normalize_physician_name(normalize_model_name(name))
+            details = block.get("details") or []
+            per_disease_values: Dict[str, List[float]] = {}
+            for item in details:
+                if not isinstance(item, dict):
+                    continue
+                if item.get("is_valid_prediction") is False:
+                    continue
+                try:
+                    iou_val = float(item.get("iou"))
+                except (TypeError, ValueError):
+                    continue
+                disease_info = normalize_disease_label(item.get("disease_type"))
+                disease_cn = disease_info["name_cn"]
+                if not disease_cn:
+                    continue
+                per_disease_values.setdefault(disease_cn, []).append(iou_val)
+            if per_disease_values:
+                per_disease_iou_std_error[normalized_name] = {
+                    disease: calculate_standard_error(values) for disease, values in per_disease_values.items()
+                }
+
         participants = spatial_hvm.get("participants", {}) or {}
         q2_physicians: Dict[str, Any] = {}
         for name, info in participants.items():
@@ -747,11 +797,24 @@ def build_leaderboard() -> Dict[str, Any]:
                 overall["sample_size"] = int(total_questions) if total_questions is not None else None
             except (TypeError, ValueError):
                 overall["sample_size"] = None
+            raw_by_disease = metrics.get("by_disease") or {}
+            by_disease: Dict[str, Dict[str, Any]] = {
+                disease: dict(values) for disease, values in raw_by_disease.items() if isinstance(values, dict)
+            }
+            se_map = per_disease_iou_std_error.get(normalized_name) or {}
+            for disease_cn, se_val in se_map.items():
+                if disease_cn in by_disease:
+                    by_disease[disease_cn]["mean_iou_std_error"] = se_val
+                    continue
+                for bd_key in by_disease.keys():
+                    if normalize_disease_label(bd_key)["name_cn"] == disease_cn:
+                        by_disease[bd_key]["mean_iou_std_error"] = se_val
+                        break
             q2_physicians[normalized_name] = {
                 "name": normalized_name,
                 "type": info.get("type"),
                 "overall": overall,
-                "by_disease": metrics.get("by_disease") or {},
+                "by_disease": by_disease,
             }
         if q2_models or q2_physicians:
             block: Dict[str, Any] = {}
@@ -849,6 +912,9 @@ def build_leaderboard() -> Dict[str, Any]:
 
     if human_vs_model:
         leaderboard["human_vs_model"] = human_vs_model
+
+    # 将所有浮点指标统一保留三位小数
+    leaderboard = round_metrics(leaderboard, ndigits=3)
 
     standards_out_dir = ensure_data_dir(base_dir)
     with (standards_out_dir / "gibench_standards.json").open("w", encoding="utf-8") as f:

@@ -137,7 +137,11 @@ function adaptHumanVsModel(raw = {}, standards = {}) {
     const q1 = num(info?.overall?.f1_mean);
     if (q1 != null) entry.anatomical = q1;
     (info?.per_disease || []).forEach((d) => {
-      setMap(anatomicalMap, d.disease_cn || d.disease || d.disease_en, name, num(d.f1_score));
+      const val = num(d.f1_score);
+      const std = num(d.f1_std_error ?? d.std_error);
+      if (val != null) {
+        setMap(anatomicalMap, d.disease_cn || d.disease || d.disease_en, name, { value: val, std });
+      }
     });
   });
 
@@ -148,8 +152,11 @@ function adaptHumanVsModel(raw = {}, standards = {}) {
       num(info?.macro_avg_f1?.anatomical) ??
       num(info?.macro_avg_f1?.overall);
     if (q1 != null) entry.anatomical = q1;
+    const stdMap = info?.per_disease_std_error || {};
     Object.entries(info?.per_disease_f1 || {}).forEach(([disease, score]) => {
-      setMap(anatomicalMap, disease, name, num(score));
+      const val = num(score);
+      const stdVal = num(stdMap[disease]);
+      if (val != null) setMap(anatomicalMap, disease, name, { value: val, std: stdVal });
     });
   });
 
@@ -161,7 +168,9 @@ function adaptHumanVsModel(raw = {}, standards = {}) {
       const diseaseList = diseasesByRegion[region.region_key] || [];
       (region?.per_disease || []).forEach((rec, idx) => {
         const diseaseName = diseaseList[idx] || rec.disease_cn || rec.disease_type || rec.disease_en;
-        setMap(diagnosisMap, diseaseName, name, num(rec.f1_score));
+        const val = num(rec.f1_score);
+        const std = num(rec.f1_std_error ?? region?.f1_std_error);
+        if (val != null) setMap(diagnosisMap, diseaseName, name, { value: val, std });
       });
     });
   });
@@ -173,8 +182,11 @@ function adaptHumanVsModel(raw = {}, standards = {}) {
       num(info?.macro_avg_f1?.diagnosis) ??
       num(info?.macro_avg_f1?.overall);
     if (q3 != null) entry.diagnosis = q3;
+    const stdMap = info?.per_disease_std_error || {};
     Object.entries(info?.per_disease_f1 || {}).forEach(([disease, score]) => {
-      setMap(diagnosisMap, disease, name, num(score));
+      const val = num(score);
+      const stdVal = num(stdMap[disease]);
+      if (val != null) setMap(diagnosisMap, disease, name, { value: val, std: stdVal });
     });
   });
 
@@ -188,7 +200,10 @@ function adaptHumanVsModel(raw = {}, standards = {}) {
     };
     (info?.per_disease || []).forEach((d) => {
       const diseaseName = d.disease_cn || d.disease_type || d.disease_en || d.disease;
-      participant.metrics.by_disease[diseaseName] = { mean_iou: num(d.overall_avg_iou ?? d.mean_iou ?? d.miou) };
+      participant.metrics.by_disease[diseaseName] = {
+        mean_iou: num(d.overall_avg_iou ?? d.mean_iou ?? d.miou),
+        std: num(d.mean_iou_std_error ?? d.overall_avg_iou_std_error ?? d.std_error ?? d.miou_std_error),
+      };
     });
     participantsQ2[name] = participant;
   });
@@ -202,7 +217,15 @@ function adaptHumanVsModel(raw = {}, standards = {}) {
       },
     };
     Object.entries(info?.by_disease || {}).forEach(([disease, metrics]) => {
-      participant.metrics.by_disease[disease] = { mean_iou: num(metrics?.mean_iou ?? metrics?.miou ?? metrics?.overall_avg_iou) };
+      participant.metrics.by_disease[disease] = {
+        mean_iou: num(metrics?.mean_iou ?? metrics?.miou ?? metrics?.overall_avg_iou),
+        std: num(
+          metrics?.mean_iou_std_error ??
+            metrics?.std_error ??
+            metrics?.miou_std_error ??
+            metrics?.overall_avg_iou_std_error,
+        ),
+      };
     });
     participantsQ2[name] = participant;
   });

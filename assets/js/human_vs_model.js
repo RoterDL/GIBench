@@ -502,9 +502,10 @@ function collectHumanChartItems(hvmData, subtab, option) {
     const scores = findScoresByDisease(mapping, option);
     if (scores) {
       Object.entries(scores).forEach(([name, value]) => {
-        const v = safeNumber(value);
+        const v = safeNumber(value?.value ?? value);
+        const std = safeNumber(value?.std);
         if (v !== null) {
-          items.push({ name, value: v });
+          items.push({ name, value: v, std });
         }
       });
     }
@@ -516,8 +517,15 @@ function collectHumanChartItems(hvmData, subtab, option) {
       for (const [diseaseName, metrics] of Object.entries(diseases)) {
         if (targetKeys.has(normalizeDiseaseKey(diseaseName))) {
           const v = safeNumber(metrics?.mean_iou ?? metrics?.overall?.mean_iou ?? metrics?.meanIoU);
+          const std = safeNumber(
+            metrics?.std_error ??
+              metrics?.overall_avg_iou_std_error ??
+              metrics?.mean_iou_std_error ??
+              metrics?.miou_std_error ??
+              metrics?.std,
+          );
           if (v !== null) {
-            items.push({ name, value: v });
+            items.push({ name, value: v, std });
           }
           break;
         }
@@ -531,20 +539,21 @@ function collectHumanChartItems(hvmData, subtab, option) {
     const scores = findScoresByDisease(diseaseMap, option);
     if (scores) {
       Object.entries(scores).forEach(([name, value]) => {
-        const v = safeNumber(value);
+        const v = safeNumber(value?.mean ?? value);
+        const std = safeNumber(value?.std);
         if (v !== null) {
-          items.push({ name, value: v });
+          items.push({ name, value: v, std });
         }
       });
     } else {
-      // fallback: overall aggregates if按病变数据缺失
       const likertBlock = hvmData?.q4_q5_likert || {};
       const { q4Aggregates, q5Aggregates } = computeLikertScores(likertBlock);
       const aggregates = subtab === "q4" ? q4Aggregates : q5Aggregates;
       Object.entries(aggregates || {}).forEach(([name, record]) => {
         const val = safeNumber(record?.mean);
+        const std = safeNumber(record?.std);
         if (val !== null) {
-          items.push({ name, value: val });
+          items.push({ name, value: val, std });
         }
       });
     }
@@ -588,9 +597,34 @@ function renderBarChart(chartEl, items, t, maxValue = 1) {
     }
     track.appendChild(fill);
 
+    // error bar if std exists
+    if (item.std != null && !Number.isNaN(item.std)) {
+      const errStart = clamp(item.value - item.std);
+      const errEnd = clamp(item.value + item.std);
+      const err = document.createElement("div");
+      err.className = "bar-error";
+      err.style.left = `${errStart * 100}%`;
+      err.style.width = `${Math.max(0, errEnd - errStart) * 100}%`;
+      const errLine = document.createElement("div");
+      errLine.className = "bar-error__line";
+      const capStart = document.createElement("div");
+      capStart.className = "bar-error__cap bar-error__cap--start";
+      const capEnd = document.createElement("div");
+      capEnd.className = "bar-error__cap bar-error__cap--end";
+      err.appendChild(errLine);
+      err.appendChild(capStart);
+      err.appendChild(capEnd);
+      track.appendChild(err);
+    }
+
     const valueEl = document.createElement("div");
     valueEl.className = "bar-value";
-    valueEl.textContent = formatFloat(item.value);
+    if (item.std != null && !Number.isNaN(item.std)) {
+      const digits = maxValue > 1 ? 2 : 3;
+      valueEl.textContent = `${formatFloat(item.value, digits)} ± ${formatFloat(item.std, digits)}`;
+    } else {
+      valueEl.textContent = formatFloat(item.value);
+    }
 
     row.appendChild(label);
     row.appendChild(track);
