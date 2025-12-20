@@ -45,8 +45,8 @@ function updateHeroStats(standards = {}) {
   });
   setHeroStatValue("stat-model-value", modelSet.size || null, "model_categories");
 
-  // 评估主体固定为 3+1（3 名医生 + 1 LLM）
-  setHeroStatValue("stat-eval-value", "3 + 1");
+  // 评估主体固定为 1 LLM
+  setHeroStatValue("stat-eval-value", "1");
 
   const datasetOverview = standards.dataset_overview || {};
   setHeroStatValue("stat-image-value", datasetOverview.image_question_count, "dataset_overview.image_question_count");

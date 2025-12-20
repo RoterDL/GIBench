@@ -92,6 +92,28 @@ function buildPhysicianChecker(standards) {
   return (name) => physicianIds.has(name) || physicianIds2.has(name);
 }
 
+function getDisplayName(name, lang, standards) {
+  if (!name) return name;
+  const physicianNamesEn = standards?.physician_names_en || {};
+  const physicianEnToCn = standards?.physician_en_to_cn || {};
+
+  if (lang === "zh") {
+    // 英文名 -> 中文名
+    if (physicianEnToCn[name]) {
+      return physicianEnToCn[name];
+    }
+    // 已经是中文名
+    return name;
+  } else {
+    // 中文名 -> 英文名
+    if (physicianNamesEn[name]) {
+      return physicianNamesEn[name];
+    }
+    // 已经是英文名
+    return name;
+  }
+}
+
 function extractMacroValue(entry, candidates) {
   if (entry == null) return null;
   const numeric = safeNumber(entry);
@@ -331,7 +353,7 @@ function getColumnMax(rows) {
   return { maxQ1, maxQ2, maxQ3, maxQ4, maxQ5 };
 }
 
-function renderParticipantTable(tbody, rows, selectedName, t, columnMax) {
+function renderParticipantTable(tbody, rows, selectedName, t, columnMax, { lang, standards }) {
   tbody.innerHTML = "";
   rows.forEach((row, idx) => {
     const tr = document.createElement("tr");
@@ -360,7 +382,7 @@ function renderParticipantTable(tbody, rows, selectedName, t, columnMax) {
     const nameWrap = document.createElement("div");
     nameWrap.className = "tags";
     const nameText = document.createElement("span");
-    nameText.textContent = row.name;
+    nameText.textContent = getDisplayName(row.name, lang, standards);
     nameWrap.appendChild(nameText);
     const tag = document.createElement("span");
     tag.className = row.isDoctor ? "tag tag--primary" : "tag";
@@ -445,7 +467,7 @@ function renderParticipantSummary(row, t, { standards, lang }) {
       participantInfos.doctor_default ||
       {};
     const roleText = lang === "en" ? info.role_en || infoKey || typeLabel : info.role_cn || typeLabel;
-    nameEl.textContent = row.name || roleText;
+    nameEl.textContent = getDisplayName(row.name, lang, standards) || roleText;
 
     const infoWrapper = document.createElement("div");
     infoWrapper.className = "model-summary-info";
@@ -469,7 +491,7 @@ function renderParticipantSummary(row, t, { standards, lang }) {
 
   const canonicalName = aliasMap[row.name] || row.name;
   const info = infoMap[canonicalName] || infoMap[row.name] || {};
-  nameEl.textContent = row.name || t("participant.model");
+  nameEl.textContent = getDisplayName(row.name, lang, standards) || t("participant.model");
 
   const infoItems = [
     [t("model-info.parameters"), info.parameters || t("model-info.no-info")],
@@ -574,7 +596,7 @@ function collectHumanChartItems(hvmData, subtab, option) {
   return filtered;
 }
 
-function renderBarChart(chartEl, items, t, maxValue = 1) {
+function renderBarChart(chartEl, items, t, maxValue = 1, { lang, standards } = {}) {
   chartEl.innerHTML = "";
   if (!items.length) {
     const empty = document.createElement("div");
@@ -594,7 +616,7 @@ function renderBarChart(chartEl, items, t, maxValue = 1) {
 
     const label = document.createElement("div");
     label.className = "bar-label";
-    label.textContent = item.name;
+    label.textContent = getDisplayName(item.name, lang, standards);
 
     const track = document.createElement("div");
     track.className = "bar-track";
@@ -701,7 +723,7 @@ function initHumanDetailCard(hvmData, standards, { t, getLang, onLanguageChange 
 
     // 对于 Q1-Q3，仍然是按病变/区域条形图，无雷达图
     if (!isLikert) {
-      renderBarChart(chartEl, items, t);
+      renderBarChart(chartEl, items, t, 1, { lang: currentLang, standards });
       updateTip(option);
       selectEl.disabled = false;
       if (controlsEl) controlsEl.style.display = "";
@@ -711,7 +733,7 @@ function initHumanDetailCard(hvmData, standards, { t, getLang, onLanguageChange 
     // Q4/Q5：仅总分条形图
     selectEl.disabled = true;
     if (controlsEl) controlsEl.style.display = "none";
-    renderBarChart(chartEl, items, t, 5);
+    renderBarChart(chartEl, items, t, 5, { lang: currentLang, standards });
     updateTip(null);
 
     // 当前主体：取条形图第一名（用户可通过排序/数据决定）
@@ -734,7 +756,7 @@ function initHumanDetailCard(hvmData, standards, { t, getLang, onLanguageChange 
     }
     const items = collectHumanChartItems(hvmData, currentTab, option || null);
     const maxValue = isLikert ? 5 : 1;
-    renderBarChart(chartEl, items, t, maxValue);
+    renderBarChart(chartEl, items, t, maxValue, { lang: currentLang, standards });
     updateTip(option);
     selectEl.disabled = false;
     if (controlsEl) controlsEl.style.display = "";
@@ -809,7 +831,7 @@ export function initHumanVsModel(hvmData, options) {
       selectedName = rows[0].name;
     }
     const columnMax = getColumnMax(rows);
-    renderParticipantTable(tbody, rows, selectedName, t, columnMax);
+    renderParticipantTable(tbody, rows, selectedName, t, columnMax, { lang: getLang(), standards });
     renderParticipantSummary(rows.find((r) => r.name === selectedName) || null, t, {
       standards,
       lang: getLang(),
