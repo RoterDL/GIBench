@@ -148,7 +148,7 @@
                 <div class="card-header">
                   <div class="card-title" id="card-title-ranking">模型整体排名</div>
                   <div class="card-subtitle" id="card-subtitle-ranking">
-                    使用 Q1/Q2/Q3 指标生成的示意排序，具体加权方式请参考论文和文档。
+                    具体加权方式请参考论文和文档。
                   </div>
                 </div>
                 <div class="table-wrapper">
@@ -242,44 +242,6 @@
         >
           <div class="controls">
             <div class="controls-group">
-              <span class="label" id="label-human-tasks">任务</span>
-              <button
-                class="pill-toggle is-active"
-                type="button"
-                disabled
-              >
-                <span id="human-task-q1">Q1 解剖定位</span>
-              </button>
-              <button
-                class="pill-toggle is-active"
-                type="button"
-                disabled
-              >
-                <span id="human-task-q2">Q2 病变定位</span>
-              </button>
-              <button
-                class="pill-toggle is-active"
-                type="button"
-                disabled
-              >
-                <span id="human-task-q3">Q3 诊断</span>
-              </button>
-              <button
-                class="pill-toggle is-active"
-                type="button"
-                disabled
-              >
-                <span id="human-task-q4">Q4 看图说话</span>
-              </button>
-              <button
-                class="pill-toggle is-active"
-                type="button"
-                disabled
-              >
-                <span id="human-task-q5">Q5 后续建议</span>
-              </button>
-            </div>
-            <div class="controls-group">
               <span class="label" id="label-note">说明：</span>
               <span class="controls-note" id="note-human-main">
                 仅展示总体层面的人机差异，可在论文/补充材料中查看更细粒度分析。
@@ -308,9 +270,11 @@
                 <div class="card-header">
                   <div class="card-title" id="card-title-human-ranking">人机对比整体排名</div>
                   <div class="card-subtitle" id="card-subtitle-human-ranking">
-                    使用 Q1/Q2/Q3 指标生成的示意排序，具体加权方式请参考论文和文档。
+                    具体加权方式请参考论文和文档。
                   </div>
                 </div>
+                <!-- 分组图例 -->
+                <div id="human-category-legend" class="category-legend"></div>
                 <div class="table-wrapper">
                   <table>
                     <thead>

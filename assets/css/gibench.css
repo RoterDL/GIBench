@@ -7,6 +7,12 @@
   --accent-primary: #124f6e;
   --accent-secondary: #2cb1a1;
   --accent-human: #e3a530;
+  /* 分组颜色 */
+  --category-closed: #124f6e;
+  --category-medical-opensource: #2cb1a1;
+  --category-opensource: #5b8def;
+  --category-junior: #e3a530;
+  --category-trainee: #f59e0b;
   --radius-lg: 16px;
   --radius-md: 10px;
   --radius-pill: 999px;
@@ -827,4 +833,84 @@ td,
     flex-direction: column;
     align-items: flex-start;
   }
+}
+
+/* ========== 分组色块 ========== */
+.category-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  margin-right: 6px;
+  flex-shrink: 0;
+}
+.category-dot--closed {
+  background-color: var(--category-closed);
+}
+.category-dot--medical-opensource {
+  background-color: var(--category-medical-opensource);
+}
+.category-dot--opensource {
+  background-color: var(--category-opensource);
+}
+.category-dot--junior-endoscopist {
+  background-color: var(--category-junior);
+}
+.category-dot--residency-trainee {
+  background-color: var(--category-trainee);
+}
+
+/* ========== 样本量角标 ========== */
+.sample-size {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-left: 4px;
+  font-weight: normal;
+}
+
+/* ========== 图例 ========== */
+.category-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  background: rgba(244, 247, 252, 0.8);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+}
+.category-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.category-legend-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-right: 4px;
+}
+.category-legend-separator {
+  margin: 0 8px;
+  color: var(--border-subtle);
+}
+
+/* ========== 条形图分组颜色 ========== */
+.bar-fill--closed {
+  background: linear-gradient(90deg, #124f6e, #1a6b94);
+}
+.bar-fill--medical-opensource {
+  background: linear-gradient(90deg, #2cb1a1, #3ed4c0);
+}
+.bar-fill--opensource {
+  background: linear-gradient(90deg, #5b8def, #7aa5f5);
+}
+.bar-fill--junior-endoscopist {
+  background: linear-gradient(90deg, #e3a530, #f2c94c);
+}
+.bar-fill--residency-trainee {
+  background: linear-gradient(90deg, #f59e0b, #fbbf24);
 }

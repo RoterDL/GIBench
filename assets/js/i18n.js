@@ -48,8 +48,8 @@ const UI_TEXTS = {
   "table-col-q5": { zh: "Q5 后续建议", en: "Q5 Recommendations" },
   "card-title-ranking": { zh: "模型整体排名", en: "Model Overall Ranking" },
   "card-subtitle-ranking": {
-    zh: "使用 Q1/Q2/Q3 指标生成的示意排序，具体加权方式请参考论文和文档。",
-    en: "Illustrative ordering using Q1/Q2/Q3 metrics; see paper/docs for weighting details.",
+    zh: "具体加权方式请参考论文和文档。",
+    en: "See paper/docs for weighting details.",
   },
   "card-title-summary": { zh: "当前模型概览", en: "Current Model Summary" },
   "card-title-human-ranking": {
@@ -57,8 +57,8 @@ const UI_TEXTS = {
     en: "Overall ranking (Human vs Model)",
   },
   "card-subtitle-human-ranking": {
-    zh: "使用 Q1/Q2/Q3 指标生成的示意排序，具体加权方式请参考论文和文档。",
-    en: "Illustrative ordering across participants using Q1/Q2/Q3 metrics; see paper/docs for weighting details.",
+    zh: "具体加权方式请参考论文和文档。",
+    en: "See paper/docs for weighting details.",
   },
   "card-title-human-summary": { zh: "当前参与者概览", en: "Current Participant Summary" },
   "card-title-detail": { zh: "按病变 / 区域细节", en: "Per-disease / region details" },
@@ -160,6 +160,13 @@ const MESSAGES = {
   "participant-info.role": { zh: "身份", en: "Role" },
   "participant-info.desc": { zh: "简介", en: "Description" },
   "participant-info.no-info": { zh: "未提供", en: "Not provided" },
+  "legend.models": { zh: "模型", en: "Models" },
+  "legend.doctors": { zh: "医生", en: "Doctors" },
+  "legend.closed": { zh: "商业", en: "Commercial" },
+  "legend.medical-opensource": { zh: "医疗开源", en: "Medical Open Source" },
+  "legend.opensource": { zh: "开源", en: "Open Source" },
+  "legend.junior-endoscopist": { zh: "初级内窥镜医师", en: "Junior Endoscopists" },
+  "legend.residency-trainee": { zh: "住院实习医师", en: "Residency Trainees" },
 };
 
 let currentLang = "zh";

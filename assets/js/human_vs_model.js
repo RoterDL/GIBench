@@ -8,6 +8,36 @@ function formatFloat(value, digits = 3) {
   return v.toFixed(digits);
 }
 
+/**
+ * 根据参与者信息返回分组类别（用于色块和条形图颜色）
+ * @returns 'closed' | 'medical-opensource' | 'opensource' | 'junior-endoscopist' | 'residency-trainee'
+ */
+function getParticipantCategory(name, isDoctor, type, standards) {
+  if (isDoctor) {
+    // 医生分组：根据 type 字段判断
+    const typeStr = (type || "").toString().trim();
+    if (
+      typeStr === "初级内窥镜医师" ||
+      typeStr === "Junior Endoscopists" ||
+      typeStr === "高年资" ||
+      typeStr.includes("初级") ||
+      typeStr.includes("Junior")
+    ) {
+      return "junior-endoscopist";
+    }
+    return "residency-trainee";
+  }
+  // 模型分组：从 standards.model_categories 中查找
+  const categories = standards?.model_categories || {};
+  for (const [cat, models] of Object.entries(categories)) {
+    if (Array.isArray(models) && models.includes(name)) {
+      // 将 'medical_opensource' 转为 'medical-opensource'
+      return cat.replace(/_/g, "-");
+    }
+  }
+  return "opensource"; // 默认归类为开源
+}
+
 function normalizeDiseaseKey(name) {
   return (name || "")
     .toString()
@@ -94,24 +124,8 @@ function buildPhysicianChecker(standards) {
 
 function getDisplayName(name, lang, standards) {
   if (!name) return name;
-  const physicianNamesEn = standards?.physician_names_en || {};
-  const physicianEnToCn = standards?.physician_en_to_cn || {};
-
-  if (lang === "zh") {
-    // 英文名 -> 中文名
-    if (physicianEnToCn[name]) {
-      return physicianEnToCn[name];
-    }
-    // 已经是中文名
-    return name;
-  } else {
-    // 中文名 -> 英文名
-    if (physicianNamesEn[name]) {
-      return physicianNamesEn[name];
-    }
-    // 已经是英文名
-    return name;
-  }
+  // 医生参与者名称不做语言转换，始终保持原始格式（如 Junior-01, Trainee-01）
+  return name;
 }
 
 function extractMacroValue(entry, candidates) {
@@ -381,13 +395,32 @@ function renderParticipantTable(tbody, rows, selectedName, t, columnMax, { lang,
     const nameCell = document.createElement("td");
     const nameWrap = document.createElement("div");
     nameWrap.className = "tags";
+
+    // 分组色块
+    const categoryDot = document.createElement("span");
+    const category = getParticipantCategory(row.name, row.isDoctor, row.type, standards);
+    categoryDot.className = `category-dot category-dot--${category}`;
+    nameWrap.appendChild(categoryDot);
+
+    // 名称
     const nameText = document.createElement("span");
     nameText.textContent = getDisplayName(row.name, lang, standards);
     nameWrap.appendChild(nameText);
+
+    // 医生样本量角标
+    if (row.isDoctor) {
+      const sampleSize = document.createElement("span");
+      sampleSize.className = "sample-size";
+      sampleSize.textContent = "(n=60)";
+      nameWrap.appendChild(sampleSize);
+    }
+
+    // 身份标签
     const tag = document.createElement("span");
     tag.className = row.isDoctor ? "tag tag--primary" : "tag";
     tag.textContent = row.isDoctor ? t("participant.doctor") : t("participant.model");
     nameWrap.appendChild(tag);
+
     nameCell.appendChild(nameWrap);
     tr.appendChild(nameCell);
 
@@ -525,9 +558,13 @@ function findScoresByDisease(mapping, option) {
   return null;
 }
 
-function collectHumanChartItems(hvmData, subtab, option) {
+function collectHumanChartItems(hvmData, subtab, option, standards) {
   if (!option && (subtab === "q1" || subtab === "q2" || subtab === "q3")) return [];
   const items = [];
+  const isPhysician = buildPhysicianChecker(standards);
+  // 用于获取医生的 type 字段
+  const participantsQ2 = hvmData?.q2_spatial_localization?.participants || {};
+
   if (subtab === "q1" || subtab === "q3") {
     const block = hvmData?.q1_q3_multiple_choice || {};
     const mapping = subtab === "q1" ? block.anatomical_location_disease_f1 : block.diagnosis_disease_f1;
@@ -537,7 +574,9 @@ function collectHumanChartItems(hvmData, subtab, option) {
         const v = safeNumber(value?.value ?? value);
         const std = safeNumber(value?.std);
         if (v !== null) {
-          items.push({ name, value: v, std });
+          const isDoctor = isPhysician(name);
+          const type = participantsQ2[name]?.type || null;
+          items.push({ name, value: v, std, isDoctor, type });
         }
       });
     }
@@ -557,7 +596,9 @@ function collectHumanChartItems(hvmData, subtab, option) {
               metrics?.std,
           );
           if (v !== null) {
-            items.push({ name, value: v, std });
+            const isDoctor = isPhysician(name);
+            const type = info?.type || null;
+            items.push({ name, value: v, std, isDoctor, type });
           }
           break;
         }
@@ -574,7 +615,9 @@ function collectHumanChartItems(hvmData, subtab, option) {
         const v = safeNumber(value?.mean ?? value);
         const std = safeNumber(value?.std);
         if (v !== null) {
-          items.push({ name, value: v, std });
+          const isDoctor = isPhysician(name);
+          const type = participantsQ2[name]?.type || null;
+          items.push({ name, value: v, std, isDoctor, type });
         }
       });
     } else {
@@ -585,7 +628,9 @@ function collectHumanChartItems(hvmData, subtab, option) {
         const val = safeNumber(record?.mean);
         const std = safeNumber(record?.std);
         if (val !== null) {
-          items.push({ name, value: val, std });
+          const isDoctor = isPhysician(name);
+          const type = participantsQ2[name]?.type || null;
+          items.push({ name, value: val, std, isDoctor, type });
         }
       });
     }
@@ -614,9 +659,25 @@ function renderBarChart(chartEl, items, t, maxValue = 1, { lang, standards } = {
     const row = document.createElement("div");
     row.className = "bar-row";
 
+    // 标签：色块 + 名称 + 角标
     const label = document.createElement("div");
     label.className = "bar-label";
-    label.textContent = getDisplayName(item.name, lang, standards);
+
+    const categoryDot = document.createElement("span");
+    const category = getParticipantCategory(item.name, item.isDoctor, item.type, standards);
+    categoryDot.className = `category-dot category-dot--${category}`;
+    label.appendChild(categoryDot);
+
+    const nameSpan = document.createElement("span");
+    nameSpan.textContent = getDisplayName(item.name, lang, standards);
+    label.appendChild(nameSpan);
+
+    if (item.isDoctor) {
+      const sampleSize = document.createElement("span");
+      sampleSize.className = "sample-size";
+      sampleSize.textContent = "(n=60)";
+      label.appendChild(sampleSize);
+    }
 
     const track = document.createElement("div");
     track.className = "bar-track";
@@ -624,10 +685,10 @@ function renderBarChart(chartEl, items, t, maxValue = 1, { lang, standards } = {
     fill.className = "bar-fill";
     const clampedVal = clamp(item.value);
     fill.style.width = `${clampedVal * 100}%`;
+    // 条形图颜色按分组区分
+    fill.classList.add(`bar-fill--${category}`);
     if (idx === 0) {
-      fill.classList.add("bar-fill--primary", "bar-fill--top");
-    } else {
-      fill.classList.add("bar-fill--muted");
+      fill.classList.add("bar-fill--top");
     }
     track.appendChild(fill);
 
@@ -667,6 +728,66 @@ function renderBarChart(chartEl, items, t, maxValue = 1, { lang, standards } = {
   });
 }
 
+/**
+ * 渲染分组图例
+ */
+function renderCategoryLegend(containerEl, t) {
+  if (!containerEl) return;
+  containerEl.innerHTML = "";
+
+  const legendItems = [
+    { category: "closed", key: "legend.closed" },
+    { category: "medical-opensource", key: "legend.medical-opensource" },
+    { category: "opensource", key: "legend.opensource" },
+    { category: "junior-endoscopist", key: "legend.junior-endoscopist" },
+    { category: "residency-trainee", key: "legend.residency-trainee" },
+  ];
+
+  // 模型组标题
+  const modelTitle = document.createElement("span");
+  modelTitle.className = "category-legend-title";
+  modelTitle.textContent = t("legend.models");
+  containerEl.appendChild(modelTitle);
+
+  // 模型分类图例
+  legendItems.slice(0, 3).forEach(({ category, key }) => {
+    const item = document.createElement("div");
+    item.className = "category-legend-item";
+    const dot = document.createElement("span");
+    dot.className = `category-dot category-dot--${category}`;
+    item.appendChild(dot);
+    const label = document.createElement("span");
+    label.textContent = t(key);
+    item.appendChild(label);
+    containerEl.appendChild(item);
+  });
+
+  // 分隔符
+  const separator = document.createElement("span");
+  separator.className = "category-legend-separator";
+  separator.textContent = "|";
+  containerEl.appendChild(separator);
+
+  // 医生组标题
+  const doctorTitle = document.createElement("span");
+  doctorTitle.className = "category-legend-title";
+  doctorTitle.textContent = t("legend.doctors");
+  containerEl.appendChild(doctorTitle);
+
+  // 医生分类图例
+  legendItems.slice(3).forEach(({ category, key }) => {
+    const item = document.createElement("div");
+    item.className = "category-legend-item";
+    const dot = document.createElement("span");
+    dot.className = `category-dot category-dot--${category}`;
+    item.appendChild(dot);
+    const label = document.createElement("span");
+    label.textContent = t(key);
+    item.appendChild(label);
+    containerEl.appendChild(item);
+  });
+}
+
 function initHumanDetailCard(hvmData, standards, { t, getLang, onLanguageChange }) {
   const selectEl = document.getElementById("human-detail-select");
   const chartEl = document.getElementById("human-detail-chart");
@@ -679,7 +800,6 @@ function initHumanDetailCard(hvmData, standards, { t, getLang, onLanguageChange 
   const options = standardOptions.length ? standardOptions : buildOptionsFromData(hvmData);
 
   let currentTab = "q1";
-  let currentLang = getLang();
   let currentOptionKey = options[0]?.key || null;
 
   function getCurrentOption() {
@@ -692,7 +812,7 @@ function initHumanDetailCard(hvmData, standards, { t, getLang, onLanguageChange 
       tipEl.textContent = "";
       return;
     }
-    tipEl.textContent = `${t("detail-current-selection")}：${formatOptionLabel(option, currentLang)}`;
+    tipEl.textContent = `${t("detail-current-selection")}：${formatOptionLabel(option, getLang())}`;
   }
 
   // patched updateTip: Q4/Q5 也按病变显示提示
@@ -702,7 +822,7 @@ function initHumanDetailCard(hvmData, standards, { t, getLang, onLanguageChange 
       tipEl.textContent = "";
       return;
     }
-    tipEl.textContent = `${t("detail-current-selection")}：${formatOptionLabel(option, currentLang)}`;
+    tipEl.textContent = `${t("detail-current-selection")}：${formatOptionLabel(option, getLang())}`;
   };
   updateTip = updateTipPatched;
 
@@ -719,11 +839,11 @@ function initHumanDetailCard(hvmData, standards, { t, getLang, onLanguageChange 
       return;
     }
 
-    const items = collectHumanChartItems(hvmData, currentTab, option || null);
+    const items = collectHumanChartItems(hvmData, currentTab, option || null, standards);
 
     // 对于 Q1-Q3，仍然是按病变/区域条形图，无雷达图
     if (!isLikert) {
-      renderBarChart(chartEl, items, t, 1, { lang: currentLang, standards });
+      renderBarChart(chartEl, items, t, 1, { lang: getLang(), standards });
       updateTip(option);
       selectEl.disabled = false;
       if (controlsEl) controlsEl.style.display = "";
@@ -733,7 +853,7 @@ function initHumanDetailCard(hvmData, standards, { t, getLang, onLanguageChange 
     // Q4/Q5：仅总分条形图
     selectEl.disabled = true;
     if (controlsEl) controlsEl.style.display = "none";
-    renderBarChart(chartEl, items, t, 5, { lang: currentLang, standards });
+    renderBarChart(chartEl, items, t, 5, { lang: getLang(), standards });
     updateTip(null);
 
     // 当前主体：取条形图第一名（用户可通过排序/数据决定）
@@ -754,9 +874,9 @@ function initHumanDetailCard(hvmData, standards, { t, getLang, onLanguageChange 
       updateTip(null);
       return;
     }
-    const items = collectHumanChartItems(hvmData, currentTab, option || null);
+    const items = collectHumanChartItems(hvmData, currentTab, option || null, standards);
     const maxValue = isLikert ? 5 : 1;
-    renderBarChart(chartEl, items, t, maxValue, { lang: currentLang, standards });
+    renderBarChart(chartEl, items, t, maxValue, { lang: getLang(), standards });
     updateTip(option);
     selectEl.disabled = false;
     if (controlsEl) controlsEl.style.display = "";
@@ -773,7 +893,7 @@ function initHumanDetailCard(hvmData, standards, { t, getLang, onLanguageChange 
     options.forEach((opt) => {
       const o = document.createElement("option");
       o.value = opt.key;
-      o.textContent = formatOptionLabel(opt, currentLang);
+      o.textContent = formatOptionLabel(opt, getLang());
       selectEl.appendChild(o);
     });
     if (!options.some((opt) => opt.key === currentOptionKey)) {
@@ -799,7 +919,6 @@ function initHumanDetailCard(hvmData, standards, { t, getLang, onLanguageChange 
   });
 
   onLanguageChange(() => {
-    currentLang = getLang();
     renderOptions();
   });
 
@@ -850,7 +969,18 @@ export function initHumanVsModel(hvmData, options) {
     refresh();
   });
 
-  onLanguageChange(() => refresh());
+  // 图例渲染
+  const legendEl = document.getElementById("human-category-legend");
+  function refreshLegend() {
+    renderCategoryLegend(legendEl, t);
+  }
+
+  onLanguageChange(() => {
+    refresh();
+    refreshLegend();
+  });
+
   refresh();
+  refreshLegend();
   initHumanDetailCard(hvmData, standards, { t, getLang, onLanguageChange });
 }
