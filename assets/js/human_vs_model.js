@@ -569,6 +569,8 @@ function collectHumanChartItems(hvmData, subtab, option, standards) {
     const block = hvmData?.q1_q3_multiple_choice || {};
     const mapping = subtab === "q1" ? block.anatomical_location_disease_f1 : block.diagnosis_disease_f1;
     const scores = findScoresByDisease(mapping, option);
+    // 从 Q1/Q3 数据中获取每个病变的样本量（每个病变固定3张）
+    const perDiseaseSampleSize = 3;
     if (scores) {
       Object.entries(scores).forEach(([name, value]) => {
         const v = safeNumber(value?.value ?? value);
@@ -576,7 +578,9 @@ function collectHumanChartItems(hvmData, subtab, option, standards) {
         if (v !== null) {
           const isDoctor = isPhysician(name);
           const type = participantsQ2[name]?.type || null;
-          items.push({ name, value: v, std, isDoctor, type });
+          // 医生有样本量角标，模型没有
+          const sampleSize = isDoctor ? perDiseaseSampleSize : null;
+          items.push({ name, value: v, std, isDoctor, type, sampleSize });
         }
       });
     }
@@ -598,7 +602,9 @@ function collectHumanChartItems(hvmData, subtab, option, standards) {
           if (v !== null) {
             const isDoctor = isPhysician(name);
             const type = info?.type || null;
-            items.push({ name, value: v, std, isDoctor, type });
+            // 从数据中获取每个病变的样本量
+            const sampleSize = isDoctor ? (metrics?.total ?? 3) : null;
+            items.push({ name, value: v, std, isDoctor, type, sampleSize });
           }
           break;
         }
@@ -610,6 +616,8 @@ function collectHumanChartItems(hvmData, subtab, option, standards) {
         ? hvmData?.q4_q5_likert?.q4_per_disease
         : hvmData?.q4_q5_likert?.q5_per_disease;
     const scores = findScoresByDisease(diseaseMap, option);
+    // Q4/Q5 每个病变固定3张
+    const perDiseaseSampleSize = 3;
     if (scores) {
       Object.entries(scores).forEach(([name, value]) => {
         const v = safeNumber(value?.mean ?? value);
@@ -617,7 +625,9 @@ function collectHumanChartItems(hvmData, subtab, option, standards) {
         if (v !== null) {
           const isDoctor = isPhysician(name);
           const type = participantsQ2[name]?.type || null;
-          items.push({ name, value: v, std, isDoctor, type });
+          // 按病变细分时，医生使用每个病变的样本量
+          const sampleSize = isDoctor ? (value?.sample_size ?? perDiseaseSampleSize) : null;
+          items.push({ name, value: v, std, isDoctor, type, sampleSize });
         }
       });
     } else {
@@ -630,7 +640,8 @@ function collectHumanChartItems(hvmData, subtab, option, standards) {
         if (val !== null) {
           const isDoctor = isPhysician(name);
           const type = participantsQ2[name]?.type || null;
-          items.push({ name, value: val, std, isDoctor, type });
+          // 总体聚合时不显示样本量角标（在细分页使用）
+          items.push({ name, value: val, std, isDoctor, type, sampleSize: null });
         }
       });
     }
@@ -672,10 +683,10 @@ function renderBarChart(chartEl, items, t, maxValue = 1, { lang, standards } = {
     nameSpan.textContent = getDisplayName(item.name, lang, standards);
     label.appendChild(nameSpan);
 
-    if (item.isDoctor) {
+    if (item.isDoctor && item.sampleSize != null) {
       const sampleSize = document.createElement("span");
       sampleSize.className = "sample-size";
-      sampleSize.textContent = "(n=60)";
+      sampleSize.textContent = `(n=${item.sampleSize})`;
       label.appendChild(sampleSize);
     }
 
