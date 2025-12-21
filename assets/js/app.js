@@ -43,7 +43,14 @@ function updateHeroStats(standards = {}) {
   Object.values(modelCategories).forEach((list) => {
     (list || []).forEach((name) => modelSet.add(name));
   });
-  setHeroStatValue("stat-model-value", modelSet.size || null, "model_categories");
+  // 计算医师数量（排除平均值行）
+  const physicianMap = standards.physician_names_en || standards.physician_en_to_cn || {};
+  const physicianCount = Object.keys(physicianMap).filter(
+    (name) => !name.includes("(平均)") && !name.includes("(Avg)")
+  ).length;
+  // 参与者总数 = 模型数量 + 医师数量
+  const totalParticipants = (modelSet.size || 0) + physicianCount;
+  setHeroStatValue("stat-model-value", totalParticipants || null, "model_categories + physicians");
 
   // 评估主体固定为 1 LLM
   setHeroStatValue("stat-eval-value", "1");
