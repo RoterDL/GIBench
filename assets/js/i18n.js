@@ -41,11 +41,11 @@ const UI_TEXTS = {
   "human-sort-opt-q5": { zh: "Q5 后续建议-Likert", en: "Q5 recommendations-Likert" },
   "table-col-model": { zh: "模型", en: "Model" },
   "table-col-participant-human": { zh: "参与者", en: "Participant" },
-  "table-col-q1": { zh: "Q1 解剖定位", en: "Q1 Anatomical" },
-  "table-col-q2": { zh: "Q2 病变定位", en: "Q2 Localization" },
-  "table-col-q3": { zh: "Q3 诊断", en: "Q3 Diagnosis" },
-  "table-col-q4": { zh: "Q4 看图说话", en: "Q4 Findings" },
-  "table-col-q5": { zh: "Q5 后续建议", en: "Q5 Recommendations" },
+  "table-col-q1": { zh: "Q1<br>解剖定位", en: "Q1<br>Anatomical" },
+  "table-col-q2": { zh: "Q2<br>病变定位", en: "Q2<br>Localization" },
+  "table-col-q3": { zh: "Q3<br>诊断", en: "Q3<br>Diagnosis" },
+  "table-col-q4": { zh: "Q4<br>看图说话", en: "Q4<br>Findings" },
+  "table-col-q5": { zh: "Q5<br>后续建议", en: "Q5<br>Recommendations" },
   "card-title-ranking": { zh: "模型整体排名", en: "Model Overall Ranking" },
   "card-subtitle-ranking": {
     zh: "具体加权方式请参考论文和文档。",
@@ -185,7 +185,7 @@ function applyTranslations() {
   Object.entries(UI_TEXTS).forEach(([id, texts]) => {
     const el = document.getElementById(id);
     if (el) {
-      el.textContent = texts[currentLang] || texts.zh || "";
+      el.innerHTML = texts[currentLang] || texts.zh || "";
     }
   });
   const toggle = document.getElementById("lang-toggle");
