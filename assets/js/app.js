@@ -65,7 +65,7 @@ async function loadData() {
     statusEl.textContent = t("load.loading");
   }
   try {
-    const resp = await fetch("assets/data/leaderboard.json", {
+    const resp = await fetch("./assets/data/leaderboard.json", {
       cache: "no-cache",
     });
     if (!resp.ok) {
@@ -75,7 +75,7 @@ async function loadData() {
     let standards = data.standards || {};
     if (!standards.dataset_overview) {
       try {
-        const stdResp = await fetch("assets/data/gibench_standards.json", { cache: "no-cache" });
+        const stdResp = await fetch("./assets/data/gibench_standards.json", { cache: "no-cache" });
         if (stdResp.ok) {
           const stdData = await stdResp.json();
           standards = { ...stdData, ...standards };
