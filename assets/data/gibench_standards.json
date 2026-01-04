@@ -1,0 +1,295 @@
+{
+  "dataset_overview": {
+    "image_question_count": 947
+  },
+  "location_names_en": {
+    "食管": "Esophagus",
+    "胃": "Stomach",
+    "肠": "Colorectum",
+    "全部": "All"
+  },
+  "disease_categories": {
+    "Esophagus": {
+      "食管静脉曲张": "Esophageal varices",
+      "反流性食管炎": "Reflux esophagitis",
+      "Barrett食管": "Barrett esophagus",
+      "食管黏膜下肿瘤": "Esophageal submucosal lesion",
+      "食管异物": "Esophageal foreign body",
+      "食管早期肿瘤": "Early esophageal cancer",
+      "食管进展期肿瘤": "Advanced esophageal cancer"
+    },
+    "Stomach": {
+      "胃底静脉曲张": "Fundic varices",
+      "胃良性息肉": "Benign gastric polyp",
+      "早期胃癌": "Early gastric cancer",
+      "进展期胃癌": "Advanced gastric cancer",
+      "胃黏膜下肿瘤": "Gastric submucosal tumor",
+      "消化性溃疡": "Peptic ulcer"
+    },
+    "Colorectum": {
+      "增生性息肉": "Hyperplastic polyp",
+      "腺瘤性息肉": "Adenomatous polyp",
+      "锯齿状病变": "Serrated lesion",
+      "结直肠黏膜下肿瘤": "Colorectal submucosal tumor",
+      "进展期结直肠癌": "Advanced colorectal cancer",
+      "结肠憩室": "Colonic diverticulum",
+      "炎症性肠病": "Inflammatory bowel disease"
+    }
+  },
+  "disease_name_map": {
+    "食管静脉曲张": {
+      "name_cn": "食管静脉曲张",
+      "name_en": "Esophageal varices",
+      "location_en": "Esophagus",
+      "location_cn": "食管"
+    },
+    "反流性食管炎": {
+      "name_cn": "反流性食管炎",
+      "name_en": "Reflux esophagitis",
+      "location_en": "Esophagus",
+      "location_cn": "食管"
+    },
+    "Barrett食管": {
+      "name_cn": "Barrett食管",
+      "name_en": "Barrett esophagus",
+      "location_en": "Esophagus",
+      "location_cn": "食管"
+    },
+    "食管黏膜下肿瘤": {
+      "name_cn": "食管黏膜下肿瘤",
+      "name_en": "Esophageal submucosal lesion",
+      "location_en": "Esophagus",
+      "location_cn": "食管"
+    },
+    "食管异物": {
+      "name_cn": "食管异物",
+      "name_en": "Esophageal foreign body",
+      "location_en": "Esophagus",
+      "location_cn": "食管"
+    },
+    "食管早期肿瘤": {
+      "name_cn": "食管早期肿瘤",
+      "name_en": "Early esophageal cancer",
+      "location_en": "Esophagus",
+      "location_cn": "食管"
+    },
+    "食管进展期肿瘤": {
+      "name_cn": "食管进展期肿瘤",
+      "name_en": "Advanced esophageal cancer",
+      "location_en": "Esophagus",
+      "location_cn": "食管"
+    },
+    "胃底静脉曲张": {
+      "name_cn": "胃底静脉曲张",
+      "name_en": "Fundic varices",
+      "location_en": "Stomach",
+      "location_cn": "胃"
+    },
+    "胃良性息肉": {
+      "name_cn": "胃良性息肉",
+      "name_en": "Benign gastric polyp",
+      "location_en": "Stomach",
+      "location_cn": "胃"
+    },
+    "早期胃癌": {
+      "name_cn": "早期胃癌",
+      "name_en": "Early gastric cancer",
+      "location_en": "Stomach",
+      "location_cn": "胃"
+    },
+    "进展期胃癌": {
+      "name_cn": "进展期胃癌",
+      "name_en": "Advanced gastric cancer",
+      "location_en": "Stomach",
+      "location_cn": "胃"
+    },
+    "胃黏膜下肿瘤": {
+      "name_cn": "胃黏膜下肿瘤",
+      "name_en": "Gastric submucosal tumor",
+      "location_en": "Stomach",
+      "location_cn": "胃"
+    },
+    "消化性溃疡": {
+      "name_cn": "消化性溃疡",
+      "name_en": "Peptic ulcer",
+      "location_en": "Stomach",
+      "location_cn": "胃"
+    },
+    "增生性息肉": {
+      "name_cn": "增生性息肉",
+      "name_en": "Hyperplastic polyp",
+      "location_en": "Colorectum",
+      "location_cn": "肠"
+    },
+    "腺瘤性息肉": {
+      "name_cn": "腺瘤性息肉",
+      "name_en": "Adenomatous polyp",
+      "location_en": "Colorectum",
+      "location_cn": "肠"
+    },
+    "锯齿状病变": {
+      "name_cn": "锯齿状病变",
+      "name_en": "Serrated lesion",
+      "location_en": "Colorectum",
+      "location_cn": "肠"
+    },
+    "结直肠黏膜下肿瘤": {
+      "name_cn": "结直肠黏膜下肿瘤",
+      "name_en": "Colorectal submucosal tumor",
+      "location_en": "Colorectum",
+      "location_cn": "肠"
+    },
+    "进展期结直肠癌": {
+      "name_cn": "进展期结直肠癌",
+      "name_en": "Advanced colorectal cancer",
+      "location_en": "Colorectum",
+      "location_cn": "肠"
+    },
+    "结肠憩室": {
+      "name_cn": "结肠憩室",
+      "name_en": "Colonic diverticulum",
+      "location_en": "Colorectum",
+      "location_cn": "肠"
+    },
+    "炎症性肠病": {
+      "name_cn": "炎症性肠病",
+      "name_en": "Inflammatory bowel disease",
+      "location_en": "Colorectum",
+      "location_cn": "肠"
+    }
+  },
+  "model_categories": {
+    "medical_opensource": [
+      "medgemma-27b-it",
+      "HuatuoGPT-Vision-34B",
+      "Lingshu-32B"
+    ],
+    "opensource": [
+      "ERNIE-4.5-Turbo-VL-32K",
+      "GLM-4.5V",
+      "Qwen2.5-VL-72B-Instruct",
+      "qwen3-vl-plus"
+    ],
+    "closed": [
+      "claude-sonnet-4-5",
+      "gemini-2.5-pro",
+      "gemini-3-pro",
+      "gpt-4o",
+      "gpt-5"
+    ]
+  },
+  "model_aliases": {
+    "gemini-3-pro-preview": "gemini-3-pro",
+    "gemini-2.5-pro-thinking": "gemini-2.5-pro"
+  },
+  "model_alias_sources": {
+    "gemini-3-pro": [
+      "gemini-3-pro-preview",
+      "gemini-3-pro-preview",
+      "gemini-3-pro-preview",
+      "gemini-3-pro-preview",
+      "gemini-3-pro-preview",
+      "gemini-3-pro-preview",
+      "gemini-3-pro-preview",
+      "gemini-3-pro-preview",
+      "gemini-3-pro-preview",
+      "gemini-3-pro-preview",
+      "gemini-3-pro-preview",
+      "gemini-3-pro-preview",
+      "gemini-3-pro-preview",
+      "gemini-3-pro-preview",
+      "gemini-3-pro-preview",
+      "gemini-3-pro-preview",
+      "gemini-3-pro-preview",
+      "gemini-3-pro-preview",
+      "gemini-3-pro-preview",
+      "gemini-3-pro-preview",
+      "gemini-3-pro-preview",
+      "gemini-3-pro-preview",
+      "gemini-3-pro-preview"
+    ],
+    "gemini-2.5-pro": [
+      "gemini-2.5-pro-thinking",
+      "gemini-2.5-pro-thinking",
+      "gemini-2.5-pro-thinking",
+      "gemini-2.5-pro-thinking",
+      "gemini-2.5-pro-thinking",
+      "gemini-2.5-pro-thinking",
+      "gemini-2.5-pro-thinking",
+      "gemini-2.5-pro-thinking",
+      "gemini-2.5-pro-thinking",
+      "gemini-2.5-pro-thinking",
+      "gemini-2.5-pro-thinking",
+      "gemini-2.5-pro-thinking",
+      "gemini-2.5-pro-thinking",
+      "gemini-2.5-pro-thinking",
+      "gemini-2.5-pro-thinking",
+      "gemini-2.5-pro-thinking",
+      "gemini-2.5-pro-thinking",
+      "gemini-2.5-pro-thinking",
+      "gemini-2.5-pro-thinking",
+      "gemini-2.5-pro-thinking",
+      "gemini-2.5-pro-thinking",
+      "gemini-2.5-pro-thinking",
+      "gemini-2.5-pro-thinking"
+    ]
+  },
+  "physician_names_en": {
+    "马丽云": "Junior-01",
+    "许佳琪": "Junior-02",
+    "耿子寒": "Junior-03",
+    "屈一帆": "Trainee-01",
+    "苏伟": "Trainee-02",
+    "姚璐": "Trainee-03",
+    "初级内窥镜医师(平均)": "Junior Endoscopists(Avg)",
+    "住院实习医师(平均)": "Residency Trainees(Avg)"
+  },
+  "physician_en_to_cn": {
+    "Junior-01": "马丽云",
+    "Junior-02": "许佳琪",
+    "Junior-03": "耿子寒",
+    "Trainee-01": "屈一帆",
+    "Trainee-02": "苏伟",
+    "Trainee-03": "姚璐",
+    "Junior Endoscopists(Avg)": "初级内窥镜医师(平均)",
+    "Residency Trainees(Avg)": "住院实习医师(平均)"
+  },
+  "seniority_names_en": {
+    "初级内窥镜医师": "Junior Endoscopists",
+    "住院实习医师": "Residency Trainees"
+  },
+  "task_type_names_en": {
+    "解剖定位": "Anatomical Localization",
+    "病变定位": "Lesion Localization",
+    "诊断": "Diagnosis",
+    "看图说话": "Findings",
+    "后续建议": "Recommendations"
+  },
+  "likert_dimensions": {
+    "dimension1": {
+      "name_cn": "语言表达与可读性",
+      "name_en": "Language Expression",
+      "order": 1
+    },
+    "dimension2": {
+      "name_cn": "图像证据利用与可视要点覆盖",
+      "name_en": "Image Evidence",
+      "order": 2
+    },
+    "dimension3": {
+      "name_cn": "事实准确性与临床正确性",
+      "name_en": "Factual Accuracy",
+      "order": 3
+    },
+    "dimension4": {
+      "name_cn": "可操作性与规范性",
+      "name_en": "Actionability",
+      "order": 4
+    },
+    "dimension5": {
+      "name_cn": "安全性与风险控制",
+      "name_en": "Safety",
+      "order": 5
+    }
+  }
+}

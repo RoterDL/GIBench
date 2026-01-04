@@ -1,6 +1,5 @@
 .codex
 __pycache__
-assets/data
 .claude
 generate_gibench_leaderboard.py
 image.png
