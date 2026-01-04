@@ -114,17 +114,17 @@ const UI_TEXTS = {
 
 const MESSAGES = {
   "load.waiting": {
-    zh: "等待加载 gibench_leaderboard.json...",
-    en: "Waiting to load gibench_leaderboard.json...",
+    zh: "等待加载数据...",
+    en: "Waiting to load data...",
   },
   "load.loading": {
-    zh: "正在加载 gibench_leaderboard.json...",
-    en: "Loading gibench_leaderboard.json...",
+    zh: "正在加载数据...",
+    en: "Loading data...",
   },
   "load.success": { zh: "数据加载完成。", en: "Data loaded." },
   "load.error": {
-    zh: "加载 gibench_leaderboard.json 失败，请检查路径或在本地通过 HTTP 访问。",
-    en: "Failed to load gibench_leaderboard.json. Please check the path or access via local HTTP.",
+    zh: "数据加载失败，请检查路径或在本地通过 HTTP 访问。",
+    en: "Failed to load data. Please check the path or access via local HTTP.",
   },
   "no-model-selected": { zh: "尚未选择模型。", en: "No model selected." },
   "no-participant-selected": { zh: "尚未选择参与者。", en: "No participant selected." },

@@ -415,10 +415,10 @@ function renderParticipantTable(tbody, rows, selectedName, t, columnMax, { lang,
       nameWrap.appendChild(sampleSize);
     }
 
-    // 身份标签
+    // 身份标签（根据分类显示不同样式）
     const tag = document.createElement("span");
-    tag.className = row.isDoctor ? "tag tag--primary" : "tag";
-    tag.textContent = row.isDoctor ? t("participant.doctor") : t("participant.model");
+    tag.className = `tag tag--${category}`;
+    tag.textContent = t(`legend.${category}`);
     nameWrap.appendChild(tag);
 
     nameCell.appendChild(nameWrap);

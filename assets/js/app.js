@@ -65,7 +65,7 @@ async function loadData() {
     statusEl.textContent = t("load.loading");
   }
   try {
-    const resp = await fetch("gibench_leaderboard.json", {
+    const resp = await fetch("assets/data/leaderboard.json", {
       cache: "no-cache",
     });
     if (!resp.ok) {
@@ -92,7 +92,7 @@ async function loadData() {
     const humanVsModelData = adaptHumanVsModel(data.human_vs_model || {}, standards);
     initHumanVsModel(humanVsModelData, { getLang, onLanguageChange, t, standards });
   } catch (err) {
-    console.error("加载 gibench_leaderboard.json 失败：", err);
+    console.error("加载 leaderboard.json 失败：", err);
     if (statusEl) {
       statusEl.textContent = t("load.error");
       statusEl.classList.add("status-error");

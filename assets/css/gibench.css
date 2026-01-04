@@ -914,3 +914,50 @@ td,
 .bar-fill--residency-trainee {
   background: linear-gradient(90deg, #f59e0b, #fbbf24);
 }
+
+/* ========== 模型分类标签样式 ========== */
+.tag--closed {
+  background: rgba(18, 79, 110, 0.15);
+  border-color: var(--category-closed);
+  color: var(--category-closed);
+}
+
+.tag--medical-opensource {
+  background: rgba(44, 177, 161, 0.15);
+  border-color: var(--category-medical-opensource);
+  color: #1a8a7d;
+}
+
+.tag--opensource {
+  background: rgba(91, 141, 239, 0.15);
+  border-color: var(--category-opensource);
+  color: #4070d0;
+}
+
+.tag--junior-endoscopist {
+  background: rgba(227, 165, 48, 0.15);
+  border-color: var(--category-junior);
+  color: #b8860b;
+}
+
+.tag--residency-trainee {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: var(--category-trainee);
+  color: #c27d0e;
+}
+
+/* ========== 表头固定 ========== */
+.table-wrapper {
+  position: relative;
+}
+
+.table-wrapper table thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.table-wrapper table thead th {
+  background: #f7fafc;
+  box-shadow: 0 1px 0 0 #e2e8f0;
+}
