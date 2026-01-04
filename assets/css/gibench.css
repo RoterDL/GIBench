@@ -98,6 +98,22 @@ body {
   gap: 8px;
 }
 
+/* 让 ENDOSCOPY VQA 单独一行，Q1-Q5 换行显示 */
+.hero-tags .lang-block::before {
+  content: '';
+  flex-basis: 100%;
+  height: 0;
+  order: 0;
+}
+
+.hero-tags .lang-block .tag--primary {
+  order: -1;
+}
+
+.hero-tags .lang-block .tag:not(.tag--primary) {
+  order: 1;
+}
+
 .tag {
   padding: 4px 10px;
   border-radius: var(--radius-pill);
@@ -341,6 +357,11 @@ body {
   grid-template-columns: minmax(0, 2.5fr) minmax(0, 0.7fr);
   gap: 12px;
   align-items: stretch;
+}
+
+/* 当 paired-grid 中只有一个 card-pane 时，让其铺满整个宽度 */
+.paired-grid > .card-pane:only-child {
+  grid-column: 1 / -1;
 }
 
 .card-pane {
@@ -944,6 +965,12 @@ td,
   background: rgba(245, 158, 11, 0.15);
   border-color: var(--category-trainee);
   color: #c27d0e;
+}
+
+/* 英文模式下标签字号稍小，保持视觉一致 */
+html[lang="en"] .tag {
+  font-size: 10px;
+  letter-spacing: 0.05em;
 }
 
 /* ========== 表头固定 ========== */

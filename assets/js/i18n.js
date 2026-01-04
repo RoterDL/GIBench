@@ -60,7 +60,6 @@ const UI_TEXTS = {
     zh: "具体加权方式请参考论文和文档。",
     en: "See paper/docs for weighting details.",
   },
-  "card-title-human-summary": { zh: "当前参与者概览", en: "Current Participant Summary" },
   "card-title-detail": { zh: "按病变 / 区域细节", en: "Per-disease / region details" },
   "card-subtitle-detail": {
     zh: "选择子任务与病变，对比所有模型在对应指标下的表现。",
@@ -127,7 +126,6 @@ const MESSAGES = {
     en: "Failed to load data. Please check the path or access via local HTTP.",
   },
   "no-model-selected": { zh: "尚未选择模型。", en: "No model selected." },
-  "no-participant-selected": { zh: "尚未选择参与者。", en: "No participant selected." },
   "participant.doctor": { zh: "医生", en: "Doctor" },
   "participant.model": { zh: "模型", en: "Model" },
   "no-q1-data": { zh: "当前模型无 Q1 按病变结果。", en: "No Q1 per-disease results for this model." },
@@ -157,9 +155,6 @@ const MESSAGES = {
   "model-info.release-date": { zh: "发布日期", en: "Release date" },
   "model-info.organization": { zh: "所属公司/机构", en: "Organization" },
   "model-info.no-info": { zh: "未提供", en: "Not provided" },
-  "participant-info.role": { zh: "身份", en: "Role" },
-  "participant-info.desc": { zh: "简介", en: "Description" },
-  "participant-info.no-info": { zh: "未提供", en: "Not provided" },
   "legend.models": { zh: "模型", en: "Models" },
   "legend.doctors": { zh: "医生", en: "Doctors" },
   "legend.closed": { zh: "商业", en: "Commercial" },
@@ -213,6 +208,8 @@ export function setLanguage(lang) {
   const next = lang === "en" ? "en" : "zh";
   if (next === currentLang) return;
   currentLang = next;
+  // 更新 html lang 属性，用于 CSS 选择器
+  document.documentElement.lang = next;
   applyTranslations();
   listeners.forEach((fn) => {
     try {
@@ -239,6 +236,8 @@ export function getStandards() {
 
 export function initI18n(standards = {}) {
   currentStandards = standards || {};
+  // 初始化时设置 html lang 属性
+  document.documentElement.lang = currentLang;
   applyTranslations();
   const toggle = document.getElementById("lang-toggle");
   if (toggle) {

@@ -124,8 +124,8 @@ function buildPhysicianChecker(standards) {
 
 function getDisplayName(name, lang, standards) {
   if (!name) return name;
-  // 医生参与者名称不做语言转换，始终保持原始格式（如 Junior-01, Trainee-01）
-  return name;
+  // 去掉名称中的 (Avg) 后缀
+  return name.replace(/\(Avg\)$/i, "").trim();
 }
 
 function extractMacroValue(entry, candidates) {
@@ -471,81 +471,6 @@ function resolveParticipantTypeLabel(row, { standards, lang, t }) {
   if (typeRaw) return typeRaw;
   if (row?.isDoctor) return t("participant.doctor");
   return t("participant.model");
-}
-
-function renderParticipantSummary(row, t, { standards, lang }) {
-  const nameEl = document.getElementById("human-summary-name");
-  const metricsEl = document.getElementById("human-summary-metrics");
-  if (!nameEl || !metricsEl) return;
-
-  if (!row) {
-    nameEl.textContent = t("no-participant-selected");
-    metricsEl.innerHTML = "";
-    return;
-  }
-
-  metricsEl.innerHTML = "";
-  const aliasMap = (standards && standards.model_aliases) || {};
-  const infoMap = (standards && standards.model_infos) || {};
-  const participantInfos = (standards && standards.participant_infos) || {};
-  const seniorityMapEn = (standards && standards.seniority_names_en) || {};
-
-  if (row.isDoctor) {
-    const typeLabel = resolveParticipantTypeLabel(row, { standards, lang, t });
-    const infoKey = seniorityMapEn[typeLabel] || seniorityMapEn[row.type] || typeLabel;
-    const info =
-      participantInfos[infoKey] ||
-      participantInfos[typeLabel] ||
-      participantInfos[row.type] ||
-      participantInfos.doctor_default ||
-      {};
-    const roleText = lang === "en" ? info.role_en || infoKey || typeLabel : info.role_cn || typeLabel;
-    nameEl.textContent = getDisplayName(row.name, lang, standards) || roleText;
-
-    const infoWrapper = document.createElement("div");
-    infoWrapper.className = "model-summary-info";
-    const items = [
-      [t("participant-info.role"), roleText],
-    ];
-    items.forEach(([label, value]) => {
-      const rowEl = document.createElement("div");
-      const spanLabel = document.createElement("span");
-      spanLabel.textContent = `${label}：`;
-      const spanVal = document.createElement("span");
-      spanVal.className = "value";
-      spanVal.textContent = value;
-      rowEl.appendChild(spanLabel);
-      rowEl.appendChild(spanVal);
-      infoWrapper.appendChild(rowEl);
-    });
-    metricsEl.appendChild(infoWrapper);
-    return;
-  }
-
-  const canonicalName = aliasMap[row.name] || row.name;
-  const info = infoMap[canonicalName] || infoMap[row.name] || {};
-  nameEl.textContent = getDisplayName(row.name, lang, standards) || t("participant.model");
-
-  const infoItems = [
-    [t("model-info.parameters"), info.parameters || t("model-info.no-info")],
-    [t("model-info.release-date"), info.release_date || t("model-info.no-info")],
-    [t("model-info.organization"), info.organization || t("model-info.no-info")],
-  ];
-
-  const infoWrapper = document.createElement("div");
-  infoWrapper.className = "model-summary-info";
-  infoItems.forEach(([label, value]) => {
-    const rowEl = document.createElement("div");
-    const spanLabel = document.createElement("span");
-    spanLabel.textContent = `${label}：`;
-    const spanVal = document.createElement("span");
-    spanVal.className = "value";
-    spanVal.textContent = value;
-    rowEl.appendChild(spanLabel);
-    rowEl.appendChild(spanVal);
-    infoWrapper.appendChild(rowEl);
-  });
-  metricsEl.appendChild(infoWrapper);
 }
 
 function findScoresByDisease(mapping, option) {
@@ -954,7 +879,6 @@ export function initHumanVsModel(hvmData, options) {
     rows = computeParticipantRows(hvmData, standards, sortBy);
     if (!rows.length) {
       tbody.innerHTML = "";
-      renderParticipantSummary(null, t, { standards, lang: getLang() });
       return;
     }
     if (!selectedName || !rows.some((r) => r.name === selectedName)) {
@@ -962,10 +886,6 @@ export function initHumanVsModel(hvmData, options) {
     }
     const columnMax = getColumnMax(rows);
     renderParticipantTable(tbody, rows, selectedName, t, columnMax, { lang: getLang(), standards });
-    renderParticipantSummary(rows.find((r) => r.name === selectedName) || null, t, {
-      standards,
-      lang: getLang(),
-    });
   }
 
   sortSelect.addEventListener("change", () => {
