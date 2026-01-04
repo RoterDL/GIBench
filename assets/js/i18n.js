@@ -169,7 +169,7 @@ const MESSAGES = {
   "legend.residency-trainee": { zh: "住院实习医师", en: "Residency Trainees" },
 };
 
-let currentLang = "zh";
+let currentLang = "en";
 let currentStandards = {};
 const listeners = [];
 
