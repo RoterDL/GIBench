@@ -10,19 +10,19 @@ GIBench benchmarks **12 AI models** against **6 physicians** across **5 clinical
 
 ### Evaluation Tasks
 
-| Task | Description | Metric |
-|------|-------------|--------|
-| **Q1** | Anatomical Localization | F1 Score |
-| **Q2** | Lesion Localization | mIoU |
-| **Q3** | Diagnosis | F1 Score |
-| **Q4** | Clinical Findings | Likert Score |
-| **Q5** | Recommendations | Likert Score |
+| Task         | Description             | Metric       |
+| ------------ | ----------------------- | ------------ |
+| **Q1** | Anatomical Localization | F1 Score     |
+| **Q2** | Lesion Localization     | mIoU         |
+| **Q3** | Diagnosis               | F1 Score     |
+| **Q4** | Clinical Findings       | Likert Score |
+| **Q5** | Recommendations         | Likert Score |
 
 ### Models Evaluated
 
-- **Closed-source**: Claude-3.5-Sonnet, Gemini-2.0-Flash, Gemini-2.5-Pro, GPT-4o, GPT-4.1
+- **Closed-source**: claude-sonnet-4-5, gemini-2.5-pro, gemini-3-pro, gpt-4o, gpt-5
 - **Medical Open-source**: medgemma-27b-it, HuatuoGPT-Vision-34B, Lingshu-32B
-- **General Open-source**: ERNIE-4.5-VL-28B, GLM-4.5V-9B, Qwen2.5-VL-32B, Qwen2.5-VL-72B
+- **General Open-source**: ERNIE-4.5-Turbo-VL-32K, GLM-4.5V, Qwen2.5-VL-72B-Instruct, qwen3-vl-plus
 
 ### Physician Participants
 
@@ -31,18 +31,18 @@ GIBench benchmarks **12 AI models** against **6 physicians** across **5 clinical
 
 ## Features
 
-- **Dual View Modes**: Model Leaderboard & Human vs. Model Comparison
-- **Bilingual Support**: English and Chinese interface
-- **Interactive Visualizations**: Bar charts with error bars, participant info panels
-- **Lesion-level Analysis**: Performance breakdown by 20 lesion types across 3 regions
-- **Statistical Rigor**: Standard error calculations for all metrics
+- **Human-Model Comparison**: Comprehensive performance comparison between junior clinicians and AI models
+- **Bilingual Interface**: One-click switch between Chinese and English
+- **Multi-metric Sorting**: Sort by Q1-Q5 metrics (Macro-F1, mIoU, Likert scores)
+- **Per-lesion Analysis**: Detailed breakdown by lesion type for each evaluation task (Q1-Q5)
+- **Interactive Leaderboard**: Tabular display of all participants with evaluation metrics
+- **Statistics Overview**: Key metrics including lesion types, image count, and participant numbers
 
 ## Project Structure
 
 ```
 GIBench/
 ├── index.html                          # Main page
-├── generate_gibench_leaderboard.py     # Data generation script
 ├── assets/
 │   ├── css/
 │   │   └── gibench.css                 # Stylesheet
@@ -60,18 +60,11 @@ GIBench/
 
 ### View the Leaderboard
 
-Simply open `index.html` in a modern web browser. No server required.
-
-### Regenerate Data
-
-```bash
-python generate_gibench_leaderboard.py
-```
+Visit [https://roterdl.github.io/GIBench/](https://roterdl.github.io/GIBench/)
 
 ## Tech Stack
 
 - **Frontend**: HTML5, CSS3, JavaScript (ES6 Modules)
-- **Backend**: Python (data preprocessing)
 - **Data Format**: JSON
 
 ## License
