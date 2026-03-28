@@ -1,6 +1,6 @@
 {
   "bench_name": "GIBench",
-  "generated_at": "2026-03-28T11:18:59",
+  "generated_at": "2026-03-28T16:06:06",
   "description": "GIBench 多任务统一模型榜指标（Q1 解剖定位、Q2 病变定位、Q3 诊断）",
   "human_vs_model": {
     "q1_anatomical_robustness": {
@@ -10185,6 +10185,257 @@
               "total_questions": 49,
               "valid_questions": 36,
               "invalid_questions": 13
+            }
+          ]
+        },
+        "qwen3.5-plus": {
+          "overall": {
+            "miou": 0.243,
+            "recall_05": 0.219,
+            "recall_075": 0.036,
+            "total_questions": 947,
+            "sample_size": 947
+          },
+          "per_disease": [
+            {
+              "disease_type": "Barrett食管",
+              "disease_cn": "Barrett食管",
+              "disease_en": "Barrett esophagus",
+              "location_cn": "食管",
+              "location_en": "Esophagus",
+              "overall_avg_iou": 0.293,
+              "overall_avg_iou_std_error": 0.044,
+              "total_questions": 50,
+              "valid_questions": 30,
+              "invalid_questions": 20
+            },
+            {
+              "disease_type": "反流性食管炎",
+              "disease_cn": "反流性食管炎",
+              "disease_en": "Reflux esophagitis",
+              "location_cn": "食管",
+              "location_en": "Esophagus",
+              "overall_avg_iou": 0.157,
+              "overall_avg_iou_std_error": 0.033,
+              "total_questions": 47,
+              "valid_questions": 27,
+              "invalid_questions": 20
+            },
+            {
+              "disease_type": "增生性息肉",
+              "disease_cn": "增生性息肉",
+              "disease_en": "Hyperplastic polyp",
+              "location_cn": "肠",
+              "location_en": "Colorectum",
+              "overall_avg_iou": 0.157,
+              "overall_avg_iou_std_error": 0.029,
+              "total_questions": 50,
+              "valid_questions": 36,
+              "invalid_questions": 14
+            },
+            {
+              "disease_type": "早期胃癌",
+              "disease_cn": "早期胃癌",
+              "disease_en": "Early gastric cancer",
+              "location_cn": "胃",
+              "location_en": "Stomach",
+              "overall_avg_iou": 0.018,
+              "overall_avg_iou_std_error": 0.007,
+              "total_questions": 49,
+              "valid_questions": 30,
+              "invalid_questions": 19
+            },
+            {
+              "disease_type": "消化性溃疡",
+              "disease_cn": "消化性溃疡",
+              "disease_en": "Peptic ulcer",
+              "location_cn": "胃",
+              "location_en": "Stomach",
+              "overall_avg_iou": 0.1,
+              "overall_avg_iou_std_error": 0.02,
+              "total_questions": 47,
+              "valid_questions": 40,
+              "invalid_questions": 7
+            },
+            {
+              "disease_type": "炎症性肠病",
+              "disease_cn": "炎症性肠病",
+              "disease_en": "Inflammatory bowel disease",
+              "location_cn": "肠",
+              "location_en": "Colorectum",
+              "overall_avg_iou": 0.2,
+              "overall_avg_iou_std_error": 0.037,
+              "total_questions": 50,
+              "valid_questions": 36,
+              "invalid_questions": 14
+            },
+            {
+              "disease_type": "结直肠黏膜下肿瘤",
+              "disease_cn": "结直肠黏膜下肿瘤",
+              "disease_en": "Colorectal submucosal tumor",
+              "location_cn": "肠",
+              "location_en": "Colorectum",
+              "overall_avg_iou": 0.327,
+              "overall_avg_iou_std_error": 0.038,
+              "total_questions": 50,
+              "valid_questions": 39,
+              "invalid_questions": 11
+            },
+            {
+              "disease_type": "结肠憩室",
+              "disease_cn": "结肠憩室",
+              "disease_en": "Colonic diverticulum",
+              "location_cn": "肠",
+              "location_en": "Colorectum",
+              "overall_avg_iou": 0.106,
+              "overall_avg_iou_std_error": 0.03,
+              "total_questions": 50,
+              "valid_questions": 26,
+              "invalid_questions": 24
+            },
+            {
+              "disease_type": "胃底静脉曲张",
+              "disease_cn": "胃底静脉曲张",
+              "disease_en": "Fundic varices",
+              "location_cn": "胃",
+              "location_en": "Stomach",
+              "overall_avg_iou": 0.083,
+              "overall_avg_iou_std_error": 0.025,
+              "total_questions": 47,
+              "valid_questions": 14,
+              "invalid_questions": 33
+            },
+            {
+              "disease_type": "胃良性息肉",
+              "disease_cn": "胃良性息肉",
+              "disease_en": "Benign gastric polyp",
+              "location_cn": "胃",
+              "location_en": "Stomach",
+              "overall_avg_iou": 0.064,
+              "overall_avg_iou_std_error": 0.013,
+              "total_questions": 43,
+              "valid_questions": 36,
+              "invalid_questions": 7
+            },
+            {
+              "disease_type": "胃黏膜下肿瘤",
+              "disease_cn": "胃黏膜下肿瘤",
+              "disease_en": "Gastric submucosal tumor",
+              "location_cn": "胃",
+              "location_en": "Stomach",
+              "overall_avg_iou": 0.245,
+              "overall_avg_iou_std_error": 0.038,
+              "total_questions": 48,
+              "valid_questions": 35,
+              "invalid_questions": 13
+            },
+            {
+              "disease_type": "腺瘤性息肉",
+              "disease_cn": "腺瘤性息肉",
+              "disease_en": "Adenomatous polyp",
+              "location_cn": "肠",
+              "location_en": "Colorectum",
+              "overall_avg_iou": 0.409,
+              "overall_avg_iou_std_error": 0.037,
+              "total_questions": 48,
+              "valid_questions": 46,
+              "invalid_questions": 2
+            },
+            {
+              "disease_type": "进展期结直肠癌",
+              "disease_cn": "进展期结直肠癌",
+              "disease_en": "Advanced colorectal cancer",
+              "location_cn": "肠",
+              "location_en": "Colorectum",
+              "overall_avg_iou": 0.499,
+              "overall_avg_iou_std_error": 0.034,
+              "total_questions": 43,
+              "valid_questions": 43,
+              "invalid_questions": 0
+            },
+            {
+              "disease_type": "进展期胃癌",
+              "disease_cn": "进展期胃癌",
+              "disease_en": "Advanced gastric cancer",
+              "location_cn": "胃",
+              "location_en": "Stomach",
+              "overall_avg_iou": 0.431,
+              "overall_avg_iou_std_error": 0.03,
+              "total_questions": 39,
+              "valid_questions": 39,
+              "invalid_questions": 0
+            },
+            {
+              "disease_type": "锯齿状病变",
+              "disease_cn": "锯齿状病变",
+              "disease_en": "Serrated lesion",
+              "location_cn": "肠",
+              "location_en": "Colorectum",
+              "overall_avg_iou": 0.268,
+              "overall_avg_iou_std_error": 0.036,
+              "total_questions": 49,
+              "valid_questions": 31,
+              "invalid_questions": 18
+            },
+            {
+              "disease_type": "食管异物",
+              "disease_cn": "食管异物",
+              "disease_en": "Esophageal foreign body",
+              "location_cn": "食管",
+              "location_en": "Esophagus",
+              "overall_avg_iou": 0.34,
+              "overall_avg_iou_std_error": 0.043,
+              "total_questions": 48,
+              "valid_questions": 35,
+              "invalid_questions": 13
+            },
+            {
+              "disease_type": "食管早期肿瘤",
+              "disease_cn": "食管早期肿瘤",
+              "disease_en": "Early esophageal cancer",
+              "location_cn": "食管",
+              "location_en": "Esophagus",
+              "overall_avg_iou": 0.237,
+              "overall_avg_iou_std_error": 0.036,
+              "total_questions": 49,
+              "valid_questions": 44,
+              "invalid_questions": 5
+            },
+            {
+              "disease_type": "食管进展期肿瘤",
+              "disease_cn": "食管进展期肿瘤",
+              "disease_en": "Advanced esophageal cancer",
+              "location_cn": "食管",
+              "location_en": "Esophagus",
+              "overall_avg_iou": 0.437,
+              "overall_avg_iou_std_error": 0.032,
+              "total_questions": 46,
+              "valid_questions": 46,
+              "invalid_questions": 0
+            },
+            {
+              "disease_type": "食管静脉曲张",
+              "disease_cn": "食管静脉曲张",
+              "disease_en": "Esophageal varices",
+              "location_cn": "食管",
+              "location_en": "Esophagus",
+              "overall_avg_iou": 0.165,
+              "overall_avg_iou_std_error": 0.03,
+              "total_questions": 45,
+              "valid_questions": 27,
+              "invalid_questions": 18
+            },
+            {
+              "disease_type": "食管黏膜下肿瘤",
+              "disease_cn": "食管黏膜下肿瘤",
+              "disease_en": "Esophageal submucosal lesion",
+              "location_cn": "食管",
+              "location_en": "Esophagus",
+              "overall_avg_iou": 0.373,
+              "overall_avg_iou_std_error": 0.03,
+              "total_questions": 49,
+              "valid_questions": 44,
+              "invalid_questions": 5
             }
           ]
         }

@@ -22,7 +22,7 @@ const UI_TEXTS = {
   "stat-eval-label": { zh: "Likert评估主体", en: "Likert Evaluators" },
   "stat-eval-sub": { zh: "LLM 裁判", en: "LLM judge" },
   "stat-model-label": { zh: "参与者数量", en: "Participants" },
-  "stat-model-sub": { zh: "12 模型 + 6 医师", en: "12 Models + 6 Physicians" },
+  "stat-model-sub": { zh: "15 模型 + 6 医师", en: "15 Models + 6 Physicians" },
   "tab-label-model": { zh: "模型榜", en: "Model Leaderboard" },
   "tab-label-human": { zh: "初级临床医生与模型性能对比", en: "Junior Clinician vs. Model Performance" },
   "label-tasks": { zh: "任务", en: "Tasks" },

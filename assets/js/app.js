@@ -51,6 +51,14 @@ function updateHeroStats(standards = {}) {
   // 参与者总数 = 模型数量 + 医师数量
   const totalParticipants = (modelSet.size || 0) + physicianCount;
   setHeroStatValue("stat-model-value", totalParticipants || null, "model_categories + physicians");
+  // 动态更新参与者子标题
+  const subEl = document.getElementById("stat-model-sub");
+  if (subEl) {
+    const lang = getLang();
+    subEl.textContent = lang === "zh"
+      ? `${modelSet.size} 模型 + ${physicianCount} 医师`
+      : `${modelSet.size} Models + ${physicianCount} Physicians`;
+  }
 
   // 评估主体固定为 1 LLM
   setHeroStatValue("stat-eval-value", "1");
@@ -89,6 +97,7 @@ async function loadData() {
     }
     setStandards(standards);
     updateHeroStats(standards);
+    onLanguageChange(() => updateHeroStats(standards));
     const humanVsModelData = adaptHumanVsModel(data.human_vs_model || {}, standards);
     initHumanVsModel(humanVsModelData, { getLang, onLanguageChange, t, standards });
   } catch (err) {
