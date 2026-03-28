@@ -1,6 +1,6 @@
 {
   "bench_name": "GIBench",
-  "generated_at": "2026-03-27T23:15:48",
+  "generated_at": "2026-03-28T08:54:40",
   "description": "GIBench 多任务统一模型榜指标（Q1 解剖定位、Q2 病变定位、Q3 诊断）",
   "human_vs_model": {
     "q1_anatomical_robustness": {
@@ -5718,101 +5718,6 @@
                   "accuracy": 0.553,
                   "f1_score": 0.612,
                   "f1_std_error": 0.073
-                }
-              ]
-            }
-          ]
-        },
-        "gpt-5.4-2026-03-05-short-api-ev3": {
-          "overall": {
-            "f1_mean": 0.536,
-            "sample_size": 321
-          },
-          "regions": [
-            {
-              "region_key": "colo",
-              "region_name": "肠",
-              "region_name_cn": "肠",
-              "region_name_en": "Colorectum",
-              "accuracy_mean": 0.383,
-              "accuracy_std_error": 0.104,
-              "f1_mean": 0.465,
-              "f1_std_error": 0.111,
-              "num_diseases": 7,
-              "num_valid_samples": 4,
-              "total_samples": 191,
-              "per_disease": [
-                {
-                  "index": 1,
-                  "accuracy": 0.12,
-                  "f1_score": 0.194,
-                  "f1_std_error": 0.046
-                },
-                {
-                  "index": 2,
-                  "accuracy": 0.312,
-                  "f1_score": 0.405,
-                  "f1_std_error": 0.068
-                },
-                {
-                  "index": 3,
-                  "accuracy": 0.54,
-                  "f1_score": 0.545,
-                  "f1_std_error": null
-                },
-                {
-                  "index": 4,
-                  "accuracy": 0.558,
-                  "f1_score": 0.716,
-                  "f1_std_error": 0.071
-                }
-              ]
-            },
-            {
-              "region_key": "esophagus",
-              "region_name": "食管",
-              "region_name_cn": "食管",
-              "region_name_en": "Esophagus",
-              "accuracy_mean": 0.417,
-              "accuracy_std_error": 0.0,
-              "f1_mean": 0.588,
-              "f1_std_error": 0.0,
-              "num_diseases": 7,
-              "num_valid_samples": 1,
-              "total_samples": 48,
-              "per_disease": [
-                {
-                  "index": 1,
-                  "accuracy": 0.417,
-                  "f1_score": 0.588,
-                  "f1_std_error": null
-                }
-              ]
-            },
-            {
-              "region_key": "stomach",
-              "region_name": "胃",
-              "region_name_cn": "胃",
-              "region_name_en": "Stomach",
-              "accuracy_mean": 0.535,
-              "accuracy_std_error": 0.209,
-              "f1_mean": 0.672,
-              "f1_std_error": 0.181,
-              "num_diseases": 6,
-              "num_valid_samples": 2,
-              "total_samples": 82,
-              "per_disease": [
-                {
-                  "index": 1,
-                  "accuracy": 0.326,
-                  "f1_score": 0.491,
-                  "f1_std_error": null
-                },
-                {
-                  "index": 2,
-                  "accuracy": 0.744,
-                  "f1_score": 0.853,
-                  "f1_std_error": 0.072
                 }
               ]
             }
@@ -14943,49 +14848,6 @@
               "sample_size": 50
             },
             {
-              "name": "低年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 2.778,
-                  "std": 0.509
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.556,
-                  "std": 0.192
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 1.333,
-                  "std": 0.577
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.111,
-                  "std": 0.192
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 1.222,
-                  "std": 0.192
-                }
-              },
-              "sample_size": 3
-            },
-            {
               "name": "Residency Trainees(Avg)",
               "name_cn": "住院实习医师(平均)",
               "participant_type": "住院实习医师",
@@ -15325,49 +15187,6 @@
                   "order": 5,
                   "mean": 1.333,
                   "std": 0.577
-                }
-              },
-              "sample_size": 3
-            },
-            {
-              "name": "高年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 2.444,
-                  "std": 0.192
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.333,
-                  "std": 0.333
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 2.0,
-                  "std": 0.667
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.111,
-                  "std": 0.192
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 1.667,
-                  "std": 0.0
                 }
               },
               "sample_size": 3
@@ -15898,49 +15717,6 @@
               "sample_size": 47
             },
             {
-              "name": "低年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.111,
-                  "std": 0.192
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.556,
-                  "std": 0.192
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 2.333,
-                  "std": 0.333
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.556,
-                  "std": 0.192
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 2.111,
-                  "std": 0.192
-                }
-              },
-              "sample_size": 3
-            },
-            {
               "name": "Residency Trainees(Avg)",
               "name_cn": "住院实习医师(平均)",
               "participant_type": "住院实习医师",
@@ -16280,49 +16056,6 @@
                   "order": 5,
                   "mean": 2.667,
                   "std": 0.577
-                }
-              },
-              "sample_size": 3
-            },
-            {
-              "name": "高年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.444,
-                  "std": 0.385
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.667,
-                  "std": 0.0
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 3.778,
-                  "std": 0.694
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.778,
-                  "std": 0.192
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 2.667,
-                  "std": 0.0
                 }
               },
               "sample_size": 3
@@ -16853,49 +16586,6 @@
               "sample_size": 50
             },
             {
-              "name": "低年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.889,
-                  "std": 0.192
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 2.556,
-                  "std": 0.192
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 2.333,
-                  "std": 1.202
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 2.333,
-                  "std": 0.333
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 2.556,
-                  "std": 0.77
-                }
-              },
-              "sample_size": 3
-            },
-            {
               "name": "Residency Trainees(Avg)",
               "name_cn": "住院实习医师(平均)",
               "participant_type": "住院实习医师",
@@ -17235,49 +16925,6 @@
                   "order": 5,
                   "mean": 3.0,
                   "std": 1.0
-                }
-              },
-              "sample_size": 3
-            },
-            {
-              "name": "高年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.667,
-                  "std": 0.333
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 2.222,
-                  "std": 0.192
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 3.333,
-                  "std": 0.882
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 2.111,
-                  "std": 0.385
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 2.889,
-                  "std": 0.509
                 }
               },
               "sample_size": 3
@@ -17808,49 +17455,6 @@
               "sample_size": 49
             },
             {
-              "name": "低年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 4.0,
-                  "std": 0.577
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 2.333,
-                  "std": 0.0
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 1.889,
-                  "std": 0.192
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.778,
-                  "std": 0.509
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 2.0,
-                  "std": 0.333
-                }
-              },
-              "sample_size": 3
-            },
-            {
               "name": "Residency Trainees(Avg)",
               "name_cn": "住院实习医师(平均)",
               "participant_type": "住院实习医师",
@@ -18190,49 +17794,6 @@
                   "order": 5,
                   "mean": 1.667,
                   "std": 0.577
-                }
-              },
-              "sample_size": 3
-            },
-            {
-              "name": "高年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.333,
-                  "std": 0.0
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.889,
-                  "std": 0.192
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 1.667,
-                  "std": 0.333
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.667,
-                  "std": 0.333
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 1.667,
-                  "std": 0.333
                 }
               },
               "sample_size": 3
@@ -18763,49 +18324,6 @@
               "sample_size": 47
             },
             {
-              "name": "低年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.222,
-                  "std": 0.509
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 2.0,
-                  "std": 0.667
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 1.556,
-                  "std": 0.509
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.667,
-                  "std": 0.577
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 1.889,
-                  "std": 0.77
-                }
-              },
-              "sample_size": 3
-            },
-            {
               "name": "Residency Trainees(Avg)",
               "name_cn": "住院实习医师(平均)",
               "participant_type": "住院实习医师",
@@ -19145,49 +18663,6 @@
                   "order": 5,
                   "mean": 2.667,
                   "std": 0.577
-                }
-              },
-              "sample_size": 3
-            },
-            {
-              "name": "高年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.111,
-                  "std": 0.192
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.889,
-                  "std": 0.192
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 2.333,
-                  "std": 0.333
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.556,
-                  "std": 0.192
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 2.111,
-                  "std": 0.192
                 }
               },
               "sample_size": 3
@@ -19718,49 +19193,6 @@
               "sample_size": 50
             },
             {
-              "name": "低年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.333,
-                  "std": 0.667
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 2.111,
-                  "std": 0.509
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 2.222,
-                  "std": 1.018
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.667,
-                  "std": 0.333
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 2.222,
-                  "std": 0.694
-                }
-              },
-              "sample_size": 3
-            },
-            {
               "name": "Residency Trainees(Avg)",
               "name_cn": "住院实习医师(平均)",
               "participant_type": "住院实习医师",
@@ -20100,49 +19532,6 @@
                   "order": 5,
                   "mean": 3.333,
                   "std": 0.577
-                }
-              },
-              "sample_size": 3
-            },
-            {
-              "name": "高年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.556,
-                  "std": 0.192
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 2.0,
-                  "std": 0.333
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 2.556,
-                  "std": 1.018
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.889,
-                  "std": 0.192
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 2.889,
-                  "std": 0.509
                 }
               },
               "sample_size": 3
@@ -20673,49 +20062,6 @@
               "sample_size": 50
             },
             {
-              "name": "低年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.667,
-                  "std": 0.577
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 2.333,
-                  "std": 0.333
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 3.111,
-                  "std": 0.694
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 2.0,
-                  "std": 0.333
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 2.889,
-                  "std": 0.509
-                }
-              },
-              "sample_size": 3
-            },
-            {
               "name": "Residency Trainees(Avg)",
               "name_cn": "住院实习医师(平均)",
               "participant_type": "住院实习医师",
@@ -21055,49 +20401,6 @@
                   "order": 5,
                   "mean": 2.0,
                   "std": 1.732
-                }
-              },
-              "sample_size": 3
-            },
-            {
-              "name": "高年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.444,
-                  "std": 0.509
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.889,
-                  "std": 0.509
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 3.222,
-                  "std": 1.072
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.444,
-                  "std": 0.385
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 2.333,
-                  "std": 0.882
                 }
               },
               "sample_size": 3
@@ -21628,49 +20931,6 @@
               "sample_size": 50
             },
             {
-              "name": "低年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.222,
-                  "std": 0.385
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.778,
-                  "std": 0.385
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 3.0,
-                  "std": 1.453
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.778,
-                  "std": 0.385
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 2.333,
-                  "std": 0.882
-                }
-              },
-              "sample_size": 3
-            },
-            {
               "name": "Residency Trainees(Avg)",
               "name_cn": "住院实习医师(平均)",
               "participant_type": "住院实习医师",
@@ -22010,49 +21270,6 @@
                   "order": 5,
                   "mean": 3.333,
                   "std": 0.577
-                }
-              },
-              "sample_size": 3
-            },
-            {
-              "name": "高年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.778,
-                  "std": 0.192
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 2.0,
-                  "std": 0.333
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 4.222,
-                  "std": 0.509
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.889,
-                  "std": 0.385
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 2.556,
-                  "std": 0.385
                 }
               },
               "sample_size": 3
@@ -22583,49 +21800,6 @@
               "sample_size": 47
             },
             {
-              "name": "低年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.222,
-                  "std": 0.385
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.778,
-                  "std": 0.509
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 3.444,
-                  "std": 1.262
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.556,
-                  "std": 0.509
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 1.889,
-                  "std": 0.77
-                }
-              },
-              "sample_size": 3
-            },
-            {
               "name": "Residency Trainees(Avg)",
               "name_cn": "住院实习医师(平均)",
               "participant_type": "住院实习医师",
@@ -22965,49 +22139,6 @@
                   "order": 5,
                   "mean": 3.0,
                   "std": 1.0
-                }
-              },
-              "sample_size": 3
-            },
-            {
-              "name": "高年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.444,
-                  "std": 0.192
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 2.111,
-                  "std": 0.192
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 3.667,
-                  "std": 0.667
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 2.111,
-                  "std": 0.192
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 2.889,
-                  "std": 0.192
                 }
               },
               "sample_size": 3
@@ -23538,49 +22669,6 @@
               "sample_size": 43
             },
             {
-              "name": "低年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.889,
-                  "std": 0.192
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 2.444,
-                  "std": 0.192
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 2.222,
-                  "std": 0.385
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 2.0,
-                  "std": 0.333
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 2.778,
-                  "std": 0.192
-                }
-              },
-              "sample_size": 3
-            },
-            {
               "name": "Residency Trainees(Avg)",
               "name_cn": "住院实习医师(平均)",
               "participant_type": "住院实习医师",
@@ -23913,49 +23001,6 @@
                   "order": 4,
                   "mean": 1.667,
                   "std": 0.577
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 2.667,
-                  "std": 0.577
-                }
-              },
-              "sample_size": 3
-            },
-            {
-              "name": "高年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.333,
-                  "std": 0.667
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 2.111,
-                  "std": 0.192
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 3.333,
-                  "std": 0.882
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.889,
-                  "std": 0.509
                 },
                 "dimension5": {
                   "name_cn": "安全性与风险控制",
@@ -24493,49 +23538,6 @@
               "sample_size": 48
             },
             {
-              "name": "低年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.556,
-                  "std": 0.192
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 2.222,
-                  "std": 0.192
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 2.0,
-                  "std": 0.333
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.667,
-                  "std": 0.0
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 2.111,
-                  "std": 0.192
-                }
-              },
-              "sample_size": 3
-            },
-            {
               "name": "Residency Trainees(Avg)",
               "name_cn": "住院实习医师(平均)",
               "participant_type": "住院实习医师",
@@ -24875,49 +23877,6 @@
                   "order": 5,
                   "mean": 2.667,
                   "std": 1.155
-                }
-              },
-              "sample_size": 3
-            },
-            {
-              "name": "高年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.444,
-                  "std": 0.192
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 2.222,
-                  "std": 0.385
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 3.222,
-                  "std": 1.347
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.889,
-                  "std": 0.192
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 2.444,
-                  "std": 0.192
                 }
               },
               "sample_size": 3
@@ -25448,49 +24407,6 @@
               "sample_size": 48
             },
             {
-              "name": "低年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.667,
-                  "std": 0.0
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 2.889,
-                  "std": 0.192
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 2.333,
-                  "std": 0.333
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 2.333,
-                  "std": 0.577
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 2.778,
-                  "std": 0.192
-                }
-              },
-              "sample_size": 3
-            },
-            {
               "name": "Residency Trainees(Avg)",
               "name_cn": "住院实习医师(平均)",
               "participant_type": "住院实习医师",
@@ -25830,49 +24746,6 @@
                   "order": 5,
                   "mean": 2.333,
                   "std": 0.577
-                }
-              },
-              "sample_size": 3
-            },
-            {
-              "name": "高年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.333,
-                  "std": 0.333
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 2.333,
-                  "std": 0.0
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 3.222,
-                  "std": 0.192
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.889,
-                  "std": 0.192
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 2.667,
-                  "std": 0.0
                 }
               },
               "sample_size": 3
@@ -26403,49 +25276,6 @@
               "sample_size": 43
             },
             {
-              "name": "低年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.889,
-                  "std": 0.385
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 2.778,
-                  "std": 0.694
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 2.778,
-                  "std": 0.694
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 2.0,
-                  "std": 0.577
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 2.444,
-                  "std": 0.962
-                }
-              },
-              "sample_size": 3
-            },
-            {
               "name": "Residency Trainees(Avg)",
               "name_cn": "住院实习医师(平均)",
               "participant_type": "住院实习医师",
@@ -26785,49 +25615,6 @@
                   "order": 5,
                   "mean": 2.667,
                   "std": 1.528
-                }
-              },
-              "sample_size": 3
-            },
-            {
-              "name": "高年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.222,
-                  "std": 0.385
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 2.111,
-                  "std": 0.509
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 2.889,
-                  "std": 1.171
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.667,
-                  "std": 0.333
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 2.111,
-                  "std": 1.018
                 }
               },
               "sample_size": 3
@@ -27358,49 +26145,6 @@
               "sample_size": 39
             },
             {
-              "name": "低年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.778,
-                  "std": 0.192
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 2.0,
-                  "std": 0.577
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 1.889,
-                  "std": 0.694
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.667,
-                  "std": 0.333
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 2.111,
-                  "std": 0.509
-                }
-              },
-              "sample_size": 3
-            },
-            {
               "name": "Residency Trainees(Avg)",
               "name_cn": "住院实习医师(平均)",
               "participant_type": "住院实习医师",
@@ -27740,49 +26484,6 @@
                   "order": 5,
                   "mean": 2.333,
                   "std": 0.577
-                }
-              },
-              "sample_size": 3
-            },
-            {
-              "name": "高年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.333,
-                  "std": 0.0
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 2.0,
-                  "std": 0.333
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 2.444,
-                  "std": 0.192
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.667,
-                  "std": 0.333
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 2.333,
-                  "std": 0.333
                 }
               },
               "sample_size": 3
@@ -28313,49 +27014,6 @@
               "sample_size": 49
             },
             {
-              "name": "低年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 4.222,
-                  "std": 0.192
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.889,
-                  "std": 0.509
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 1.667,
-                  "std": 0.577
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.778,
-                  "std": 0.385
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 1.889,
-                  "std": 0.385
-                }
-              },
-              "sample_size": 3
-            },
-            {
               "name": "Residency Trainees(Avg)",
               "name_cn": "住院实习医师(平均)",
               "participant_type": "住院实习医师",
@@ -28695,49 +27353,6 @@
                   "order": 5,
                   "mean": 3.0,
                   "std": 1.0
-                }
-              },
-              "sample_size": 3
-            },
-            {
-              "name": "高年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.778,
-                  "std": 0.385
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.556,
-                  "std": 0.192
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 2.222,
-                  "std": 0.192
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.667,
-                  "std": 0.333
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 1.889,
-                  "std": 0.509
                 }
               },
               "sample_size": 3
@@ -29268,49 +27883,6 @@
               "sample_size": 48
             },
             {
-              "name": "低年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.111,
-                  "std": 0.509
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.444,
-                  "std": 0.509
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 1.556,
-                  "std": 0.694
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.333,
-                  "std": 0.333
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 1.556,
-                  "std": 0.509
-                }
-              },
-              "sample_size": 3
-            },
-            {
               "name": "Residency Trainees(Avg)",
               "name_cn": "住院实习医师(平均)",
               "participant_type": "住院实习医师",
@@ -29650,49 +28222,6 @@
                   "order": 5,
                   "mean": 3.0,
                   "std": 1.0
-                }
-              },
-              "sample_size": 3
-            },
-            {
-              "name": "高年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.444,
-                  "std": 0.192
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.667,
-                  "std": 0.333
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 3.556,
-                  "std": 0.509
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.778,
-                  "std": 0.192
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 2.333,
-                  "std": 0.333
                 }
               },
               "sample_size": 3
@@ -30223,49 +28752,6 @@
               "sample_size": 49
             },
             {
-              "name": "低年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 2.889,
-                  "std": 0.192
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.778,
-                  "std": 0.192
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 2.0,
-                  "std": 0.882
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.444,
-                  "std": 0.192
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 1.667,
-                  "std": 0.333
-                }
-              },
-              "sample_size": 3
-            },
-            {
               "name": "Residency Trainees(Avg)",
               "name_cn": "住院实习医师(平均)",
               "participant_type": "住院实习医师",
@@ -30591,49 +29077,6 @@
                   "order": 3,
                   "mean": 1.333,
                   "std": 0.577
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.0,
-                  "std": 0.0
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 1.333,
-                  "std": 0.577
-                }
-              },
-              "sample_size": 3
-            },
-            {
-              "name": "高年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 2.889,
-                  "std": 0.385
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.333,
-                  "std": 0.333
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 1.778,
-                  "std": 0.192
                 },
                 "dimension4": {
                   "name_cn": "可操作性与规范性",
@@ -31178,49 +29621,6 @@
               "sample_size": 46
             },
             {
-              "name": "低年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.778,
-                  "std": 0.385
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.889,
-                  "std": 0.192
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 1.778,
-                  "std": 0.192
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.444,
-                  "std": 0.192
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 1.667,
-                  "std": 0.333
-                }
-              },
-              "sample_size": 3
-            },
-            {
               "name": "Residency Trainees(Avg)",
               "name_cn": "住院实习医师(平均)",
               "participant_type": "住院实习医师",
@@ -31560,49 +29960,6 @@
                   "order": 5,
                   "mean": 1.667,
                   "std": 0.577
-                }
-              },
-              "sample_size": 3
-            },
-            {
-              "name": "高年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.0,
-                  "std": 0.577
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.778,
-                  "std": 0.192
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 2.111,
-                  "std": 0.192
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.444,
-                  "std": 0.385
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 1.889,
-                  "std": 0.509
                 }
               },
               "sample_size": 3
@@ -32133,49 +30490,6 @@
               "sample_size": 45
             },
             {
-              "name": "低年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.556,
-                  "std": 0.192
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 2.111,
-                  "std": 0.192
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 3.778,
-                  "std": 0.192
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.889,
-                  "std": 0.192
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 2.444,
-                  "std": 0.385
-                }
-              },
-              "sample_size": 3
-            },
-            {
               "name": "Residency Trainees(Avg)",
               "name_cn": "住院实习医师(平均)",
               "participant_type": "住院实习医师",
@@ -32515,49 +30829,6 @@
                   "order": 5,
                   "mean": 3.333,
                   "std": 1.155
-                }
-              },
-              "sample_size": 3
-            },
-            {
-              "name": "高年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.333,
-                  "std": 0.333
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.667,
-                  "std": 0.333
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 3.444,
-                  "std": 0.77
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.667,
-                  "std": 0.333
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 2.667,
-                  "std": 0.0
                 }
               },
               "sample_size": 3
@@ -33088,49 +31359,6 @@
               "sample_size": 49
             },
             {
-              "name": "低年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 4.0,
-                  "std": 0.333
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 2.667,
-                  "std": 0.0
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 2.667,
-                  "std": 0.882
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.778,
-                  "std": 0.192
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 3.0,
-                  "std": 0.577
-                }
-              },
-              "sample_size": 3
-            },
-            {
               "name": "Residency Trainees(Avg)",
               "name_cn": "住院实习医师(平均)",
               "participant_type": "住院实习医师",
@@ -33473,49 +31701,6 @@
                 }
               },
               "sample_size": 3
-            },
-            {
-              "name": "高年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.667,
-                  "std": 0.333
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.889,
-                  "std": 0.192
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 3.889,
-                  "std": 1.171
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.778,
-                  "std": 0.192
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 2.778,
-                  "std": 0.192
-                }
-              },
-              "sample_size": 3
             }
           ]
         }
@@ -33539,8 +31724,6 @@
         "Junior-02": 60,
         "Junior-01": 60,
         "qwen3-vl-plus": 947,
-        "高年资医生组": 60,
-        "低年资医生组": 60,
         "Residency Trainees(Avg)": 180,
         "Junior Endoscopists(Avg)": 180
       }
@@ -34073,49 +32256,6 @@
               "sample_size": 50
             },
             {
-              "name": "低年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.333,
-                  "std": 0.0
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.111,
-                  "std": 0.192
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 1.667,
-                  "std": 0.577
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.222,
-                  "std": 0.385
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 1.222,
-                  "std": 0.385
-                }
-              },
-              "sample_size": 3
-            },
-            {
               "name": "Residency Trainees(Avg)",
               "name_cn": "住院实习医师(平均)",
               "participant_type": "住院实习医师",
@@ -34455,49 +32595,6 @@
                   "order": 5,
                   "mean": 1.333,
                   "std": 0.577
-                }
-              },
-              "sample_size": 3
-            },
-            {
-              "name": "高年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 2.222,
-                  "std": 0.192
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.0,
-                  "std": 0.0
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 1.667,
-                  "std": 0.333
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.0,
-                  "std": 0.0
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 1.111,
-                  "std": 0.192
                 }
               },
               "sample_size": 3
@@ -35028,49 +33125,6 @@
               "sample_size": 47
             },
             {
-              "name": "低年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.667,
-                  "std": 0.333
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.0,
-                  "std": 0.0
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 1.444,
-                  "std": 0.192
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.0,
-                  "std": 0.0
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 1.0,
-                  "std": 0.0
-                }
-              },
-              "sample_size": 3
-            },
-            {
               "name": "Residency Trainees(Avg)",
               "name_cn": "住院实习医师(平均)",
               "participant_type": "住院实习医师",
@@ -35410,49 +33464,6 @@
                   "order": 5,
                   "mean": 1.667,
                   "std": 0.577
-                }
-              },
-              "sample_size": 3
-            },
-            {
-              "name": "高年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 2.556,
-                  "std": 0.385
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.0,
-                  "std": 0.0
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 2.444,
-                  "std": 0.192
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.0,
-                  "std": 0.0
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 1.667,
-                  "std": 0.0
                 }
               },
               "sample_size": 3
@@ -35983,49 +33994,6 @@
               "sample_size": 50
             },
             {
-              "name": "低年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.222,
-                  "std": 0.192
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.222,
-                  "std": 0.192
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 2.333,
-                  "std": 0.577
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 2.0,
-                  "std": 0.0
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 2.0,
-                  "std": 0.333
-                }
-              },
-              "sample_size": 3
-            },
-            {
               "name": "Residency Trainees(Avg)",
               "name_cn": "住院实习医师(平均)",
               "participant_type": "住院实习医师",
@@ -36365,49 +34333,6 @@
                   "order": 5,
                   "mean": 2.0,
                   "std": 0.0
-                }
-              },
-              "sample_size": 3
-            },
-            {
-              "name": "高年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.333,
-                  "std": 0.333
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.0,
-                  "std": 0.0
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 3.556,
-                  "std": 0.509
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.889,
-                  "std": 0.385
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 1.889,
-                  "std": 0.192
                 }
               },
               "sample_size": 3
@@ -36938,49 +34863,6 @@
               "sample_size": 49
             },
             {
-              "name": "低年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.556,
-                  "std": 0.192
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 2.0,
-                  "std": 0.333
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 2.667,
-                  "std": 0.333
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 2.556,
-                  "std": 0.385
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 2.222,
-                  "std": 0.385
-                }
-              },
-              "sample_size": 3
-            },
-            {
               "name": "Residency Trainees(Avg)",
               "name_cn": "住院实习医师(平均)",
               "participant_type": "住院实习医师",
@@ -37320,49 +35202,6 @@
                   "order": 5,
                   "mean": 1.667,
                   "std": 0.577
-                }
-              },
-              "sample_size": 3
-            },
-            {
-              "name": "高年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 2.667,
-                  "std": 0.333
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.333,
-                  "std": 0.333
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 2.444,
-                  "std": 0.509
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.889,
-                  "std": 0.192
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 1.778,
-                  "std": 0.192
                 }
               },
               "sample_size": 3
@@ -37893,49 +35732,6 @@
               "sample_size": 47
             },
             {
-              "name": "低年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 2.889,
-                  "std": 0.694
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.0,
-                  "std": 0.0
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 1.222,
-                  "std": 0.385
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.111,
-                  "std": 0.192
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 1.111,
-                  "std": 0.192
-                }
-              },
-              "sample_size": 3
-            },
-            {
               "name": "Residency Trainees(Avg)",
               "name_cn": "住院实习医师(平均)",
               "participant_type": "住院实习医师",
@@ -38275,49 +36071,6 @@
                   "order": 5,
                   "mean": 1.333,
                   "std": 0.577
-                }
-              },
-              "sample_size": 3
-            },
-            {
-              "name": "高年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 2.667,
-                  "std": 0.0
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.0,
-                  "std": 0.0
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 2.333,
-                  "std": 0.333
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.222,
-                  "std": 0.192
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 1.222,
-                  "std": 0.192
                 }
               },
               "sample_size": 3
@@ -38848,49 +36601,6 @@
               "sample_size": 50
             },
             {
-              "name": "低年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.222,
-                  "std": 0.509
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.333,
-                  "std": 0.333
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 2.333,
-                  "std": 0.882
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.667,
-                  "std": 0.577
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 2.0,
-                  "std": 0.333
-                }
-              },
-              "sample_size": 3
-            },
-            {
               "name": "Residency Trainees(Avg)",
               "name_cn": "住院实习医师(平均)",
               "participant_type": "住院实习医师",
@@ -39229,49 +36939,6 @@
                   "name_en": "Safety",
                   "order": 5,
                   "mean": 2.333,
-                  "std": 0.577
-                }
-              },
-              "sample_size": 3
-            },
-            {
-              "name": "高年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 2.889,
-                  "std": 0.192
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.0,
-                  "std": 0.0
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 2.667,
-                  "std": 0.0
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.444,
-                  "std": 0.385
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 2.0,
                   "std": 0.577
                 }
               },
@@ -39803,49 +37470,6 @@
               "sample_size": 50
             },
             {
-              "name": "低年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.556,
-                  "std": 0.192
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.667,
-                  "std": 0.333
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 2.333,
-                  "std": 0.667
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 2.333,
-                  "std": 0.333
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 2.0,
-                  "std": 0.333
-                }
-              },
-              "sample_size": 3
-            },
-            {
               "name": "Residency Trainees(Avg)",
               "name_cn": "住院实习医师(平均)",
               "participant_type": "住院实习医师",
@@ -40185,49 +37809,6 @@
                   "order": 5,
                   "mean": 1.667,
                   "std": 0.577
-                }
-              },
-              "sample_size": 3
-            },
-            {
-              "name": "高年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 2.556,
-                  "std": 0.694
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.111,
-                  "std": 0.192
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 2.444,
-                  "std": 0.509
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.556,
-                  "std": 0.385
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 1.444,
-                  "std": 0.509
                 }
               },
               "sample_size": 3
@@ -40758,49 +38339,6 @@
               "sample_size": 50
             },
             {
-              "name": "低年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.111,
-                  "std": 0.509
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.444,
-                  "std": 0.385
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 2.444,
-                  "std": 0.694
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.444,
-                  "std": 0.385
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 1.667,
-                  "std": 0.667
-                }
-              },
-              "sample_size": 3
-            },
-            {
               "name": "Residency Trainees(Avg)",
               "name_cn": "住院实习医师(平均)",
               "participant_type": "住院实习医师",
@@ -41140,49 +38678,6 @@
                   "order": 5,
                   "mean": 1.0,
                   "std": 0.0
-                }
-              },
-              "sample_size": 3
-            },
-            {
-              "name": "高年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 2.889,
-                  "std": 0.192
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.0,
-                  "std": 0.0
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 2.778,
-                  "std": 0.192
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.444,
-                  "std": 0.385
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 1.556,
-                  "std": 0.192
                 }
               },
               "sample_size": 3
@@ -41713,49 +39208,6 @@
               "sample_size": 47
             },
             {
-              "name": "低年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.333,
-                  "std": 0.0
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.111,
-                  "std": 0.192
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 2.111,
-                  "std": 0.192
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.444,
-                  "std": 0.192
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 1.222,
-                  "std": 0.192
-                }
-              },
-              "sample_size": 3
-            },
-            {
               "name": "Residency Trainees(Avg)",
               "name_cn": "住院实习医师(平均)",
               "participant_type": "住院实习医师",
@@ -42095,49 +39547,6 @@
                   "order": 5,
                   "mean": 1.333,
                   "std": 0.577
-                }
-              },
-              "sample_size": 3
-            },
-            {
-              "name": "高年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 2.333,
-                  "std": 0.333
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.0,
-                  "std": 0.0
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 2.111,
-                  "std": 0.192
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.111,
-                  "std": 0.192
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 1.111,
-                  "std": 0.192
                 }
               },
               "sample_size": 3
@@ -42668,49 +40077,6 @@
               "sample_size": 43
             },
             {
-              "name": "低年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.778,
-                  "std": 0.192
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.556,
-                  "std": 0.192
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 2.889,
-                  "std": 0.509
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 2.333,
-                  "std": 0.333
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 2.444,
-                  "std": 0.192
-                }
-              },
-              "sample_size": 3
-            },
-            {
               "name": "Residency Trainees(Avg)",
               "name_cn": "住院实习医师(平均)",
               "participant_type": "住院实习医师",
@@ -43050,49 +40416,6 @@
                   "order": 5,
                   "mean": 1.667,
                   "std": 0.577
-                }
-              },
-              "sample_size": 3
-            },
-            {
-              "name": "高年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 2.889,
-                  "std": 0.192
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.111,
-                  "std": 0.192
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 3.222,
-                  "std": 0.509
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.778,
-                  "std": 0.192
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 2.0,
-                  "std": 0.333
                 }
               },
               "sample_size": 3
@@ -43623,49 +40946,6 @@
               "sample_size": 48
             },
             {
-              "name": "低年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.667,
-                  "std": 0.333
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.333,
-                  "std": 0.0
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 3.222,
-                  "std": 0.192
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 2.222,
-                  "std": 0.192
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 2.222,
-                  "std": 0.192
-                }
-              },
-              "sample_size": 3
-            },
-            {
               "name": "Residency Trainees(Avg)",
               "name_cn": "住院实习医师(平均)",
               "participant_type": "住院实习医师",
@@ -44005,49 +41285,6 @@
                   "order": 5,
                   "mean": 2.0,
                   "std": 0.0
-                }
-              },
-              "sample_size": 3
-            },
-            {
-              "name": "高年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.0,
-                  "std": 0.577
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.0,
-                  "std": 0.0
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 3.111,
-                  "std": 0.192
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.556,
-                  "std": 0.192
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 1.444,
-                  "std": 0.192
                 }
               },
               "sample_size": 3
@@ -44578,49 +41815,6 @@
               "sample_size": 48
             },
             {
-              "name": "低年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.667,
-                  "std": 0.333
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.667,
-                  "std": 0.333
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 3.333,
-                  "std": 0.0
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 2.778,
-                  "std": 0.509
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 2.556,
-                  "std": 0.385
-                }
-              },
-              "sample_size": 3
-            },
-            {
               "name": "Residency Trainees(Avg)",
               "name_cn": "住院实习医师(平均)",
               "participant_type": "住院实习医师",
@@ -44960,49 +42154,6 @@
                   "order": 5,
                   "mean": 2.0,
                   "std": 0.0
-                }
-              },
-              "sample_size": 3
-            },
-            {
-              "name": "高年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 2.778,
-                  "std": 0.385
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.0,
-                  "std": 0.0
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 4.0,
-                  "std": 0.0
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.778,
-                  "std": 0.385
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 1.667,
-                  "std": 0.333
                 }
               },
               "sample_size": 3
@@ -45533,49 +42684,6 @@
               "sample_size": 43
             },
             {
-              "name": "低年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.556,
-                  "std": 0.192
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.333,
-                  "std": 0.333
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 2.444,
-                  "std": 0.962
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.444,
-                  "std": 0.509
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 1.667,
-                  "std": 0.577
-                }
-              },
-              "sample_size": 3
-            },
-            {
               "name": "Residency Trainees(Avg)",
               "name_cn": "住院实习医师(平均)",
               "participant_type": "住院实习医师",
@@ -45915,49 +43023,6 @@
                   "order": 5,
                   "mean": 2.667,
                   "std": 0.577
-                }
-              },
-              "sample_size": 3
-            },
-            {
-              "name": "高年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.222,
-                  "std": 0.385
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.111,
-                  "std": 0.192
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 2.667,
-                  "std": 0.667
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.667,
-                  "std": 0.0
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 2.222,
-                  "std": 0.509
                 }
               },
               "sample_size": 3
@@ -46488,49 +43553,6 @@
               "sample_size": 39
             },
             {
-              "name": "低年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.444,
-                  "std": 0.192
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.111,
-                  "std": 0.192
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 1.889,
-                  "std": 0.694
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.444,
-                  "std": 0.509
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 1.444,
-                  "std": 0.77
-                }
-              },
-              "sample_size": 3
-            },
-            {
               "name": "Residency Trainees(Avg)",
               "name_cn": "住院实习医师(平均)",
               "participant_type": "住院实习医师",
@@ -46870,49 +43892,6 @@
                   "order": 5,
                   "mean": 2.333,
                   "std": 0.577
-                }
-              },
-              "sample_size": 3
-            },
-            {
-              "name": "高年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 2.889,
-                  "std": 0.192
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.0,
-                  "std": 0.0
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 2.667,
-                  "std": 0.333
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.667,
-                  "std": 0.333
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 1.889,
-                  "std": 0.385
                 }
               },
               "sample_size": 3
@@ -47443,49 +44422,6 @@
               "sample_size": 49
             },
             {
-              "name": "低年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.667,
-                  "std": 0.333
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.556,
-                  "std": 0.192
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 2.333,
-                  "std": 0.333
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.778,
-                  "std": 0.192
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 2.111,
-                  "std": 0.509
-                }
-              },
-              "sample_size": 3
-            },
-            {
               "name": "Residency Trainees(Avg)",
               "name_cn": "住院实习医师(平均)",
               "participant_type": "住院实习医师",
@@ -47825,49 +44761,6 @@
                   "order": 5,
                   "mean": 2.333,
                   "std": 0.577
-                }
-              },
-              "sample_size": 3
-            },
-            {
-              "name": "高年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 2.889,
-                  "std": 0.962
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.222,
-                  "std": 0.385
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 2.889,
-                  "std": 0.77
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 2.0,
-                  "std": 0.333
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 2.111,
-                  "std": 0.509
                 }
               },
               "sample_size": 3
@@ -48398,49 +45291,6 @@
               "sample_size": 48
             },
             {
-              "name": "低年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.333,
-                  "std": 0.667
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.111,
-                  "std": 0.192
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 2.111,
-                  "std": 1.171
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.556,
-                  "std": 0.694
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 1.444,
-                  "std": 0.509
-                }
-              },
-              "sample_size": 3
-            },
-            {
               "name": "Residency Trainees(Avg)",
               "name_cn": "住院实习医师(平均)",
               "participant_type": "住院实习医师",
@@ -48780,49 +45630,6 @@
                   "order": 5,
                   "mean": 1.0,
                   "std": 0.0
-                }
-              },
-              "sample_size": 3
-            },
-            {
-              "name": "高年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 2.778,
-                  "std": 0.694
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.0,
-                  "std": 0.0
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 3.778,
-                  "std": 0.694
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 2.0,
-                  "std": 0.333
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 1.333,
-                  "std": 0.333
                 }
               },
               "sample_size": 3
@@ -49353,49 +46160,6 @@
               "sample_size": 49
             },
             {
-              "name": "低年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.0,
-                  "std": 0.577
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.111,
-                  "std": 0.192
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 1.889,
-                  "std": 0.509
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.778,
-                  "std": 0.192
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 1.444,
-                  "std": 0.192
-                }
-              },
-              "sample_size": 3
-            },
-            {
               "name": "Residency Trainees(Avg)",
               "name_cn": "住院实习医师(平均)",
               "participant_type": "住院实习医师",
@@ -49735,49 +46499,6 @@
                   "order": 5,
                   "mean": 1.0,
                   "std": 0.0
-                }
-              },
-              "sample_size": 3
-            },
-            {
-              "name": "高年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.0,
-                  "std": 0.577
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.111,
-                  "std": 0.192
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 2.333,
-                  "std": 1.155
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.444,
-                  "std": 0.509
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 1.556,
-                  "std": 0.509
                 }
               },
               "sample_size": 3
@@ -50308,49 +47029,6 @@
               "sample_size": 46
             },
             {
-              "name": "低年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 2.889,
-                  "std": 0.192
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.222,
-                  "std": 0.192
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 2.0,
-                  "std": 0.333
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.444,
-                  "std": 0.385
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 1.444,
-                  "std": 0.192
-                }
-              },
-              "sample_size": 3
-            },
-            {
               "name": "Residency Trainees(Avg)",
               "name_cn": "住院实习医师(平均)",
               "participant_type": "住院实习医师",
@@ -50690,49 +47368,6 @@
                   "order": 5,
                   "mean": 2.0,
                   "std": 0.0
-                }
-              },
-              "sample_size": 3
-            },
-            {
-              "name": "高年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.111,
-                  "std": 0.385
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.0,
-                  "std": 0.0
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 2.667,
-                  "std": 0.333
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.444,
-                  "std": 0.192
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 1.556,
-                  "std": 0.192
                 }
               },
               "sample_size": 3
@@ -51263,49 +47898,6 @@
               "sample_size": 45
             },
             {
-              "name": "低年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.222,
-                  "std": 0.192
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.444,
-                  "std": 0.192
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 2.667,
-                  "std": 0.0
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.333,
-                  "std": 0.0
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 1.556,
-                  "std": 0.192
-                }
-              },
-              "sample_size": 3
-            },
-            {
               "name": "Residency Trainees(Avg)",
               "name_cn": "住院实习医师(平均)",
               "participant_type": "住院实习医师",
@@ -51645,49 +48237,6 @@
                   "order": 5,
                   "mean": 1.333,
                   "std": 0.577
-                }
-              },
-              "sample_size": 3
-            },
-            {
-              "name": "高年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 2.222,
-                  "std": 0.192
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.0,
-                  "std": 0.0
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 2.222,
-                  "std": 0.192
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.0,
-                  "std": 0.0
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 1.333,
-                  "std": 0.333
                 }
               },
               "sample_size": 3
@@ -52218,49 +48767,6 @@
               "sample_size": 49
             },
             {
-              "name": "低年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.556,
-                  "std": 0.192
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.889,
-                  "std": 0.192
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 3.222,
-                  "std": 0.77
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 2.556,
-                  "std": 0.192
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 2.889,
-                  "std": 0.192
-                }
-              },
-              "sample_size": 3
-            },
-            {
               "name": "Residency Trainees(Avg)",
               "name_cn": "住院实习医师(平均)",
               "participant_type": "住院实习医师",
@@ -52603,49 +49109,6 @@
                 }
               },
               "sample_size": 3
-            },
-            {
-              "name": "高年资医生组",
-              "name_cn": null,
-              "participant_type": "人类专家",
-              "dimensions": {
-                "dimension1": {
-                  "name_cn": "语言表达与可读性",
-                  "name_en": "Language Expression",
-                  "order": 1,
-                  "mean": 3.111,
-                  "std": 0.192
-                },
-                "dimension2": {
-                  "name_cn": "图像证据利用与可视要点覆盖",
-                  "name_en": "Image Evidence",
-                  "order": 2,
-                  "mean": 1.111,
-                  "std": 0.192
-                },
-                "dimension3": {
-                  "name_cn": "事实准确性与临床正确性",
-                  "name_en": "Factual Accuracy",
-                  "order": 3,
-                  "mean": 2.667,
-                  "std": 0.333
-                },
-                "dimension4": {
-                  "name_cn": "可操作性与规范性",
-                  "name_en": "Actionability",
-                  "order": 4,
-                  "mean": 1.778,
-                  "std": 0.385
-                },
-                "dimension5": {
-                  "name_cn": "安全性与风险控制",
-                  "name_en": "Safety",
-                  "order": 5,
-                  "mean": 1.667,
-                  "std": 0.333
-                }
-              },
-              "sample_size": 3
             }
           ]
         }
@@ -52669,8 +49132,6 @@
         "Junior-02": 60,
         "Junior-01": 60,
         "qwen3-vl-plus": 947,
-        "高年资医生组": 60,
-        "低年资医生组": 60,
         "Residency Trainees(Avg)": 180,
         "Junior Endoscopists(Avg)": 180
       }
