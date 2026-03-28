@@ -8,6 +8,12 @@
 
 GIBench 在 **5 个临床评估维度** 上对比 **12 个 AI 模型** 与 **6 名医生** 的性能，覆盖食管、胃、结直肠三个解剖区域的 **20 种病变类型** 和 **947 张图像**。
 
+> **注意：** GIBench 数据集将在论文录取后公开发布，敬请关注。
+
+### 更新动态
+
+- **2026-03**: 新增模型客观题指标（Q1-Q3）：`claude-opus-4-6-think`、`gemini-3.1-pro-preview`、`qwen3.5-plus`
+
 ### 评估任务
 
 | 任务         | 描述     | 指标        |
@@ -73,11 +79,18 @@ GIBench/
 
 ## 引用
 
+[论文 (arXiv)](https://arxiv.org/abs/2601.08183)
+
 如果您在研究中使用了 GIBench，请引用：
 
 ```bibtex
-@misc{gibench2025,
-  title={GIBench: A Benchmark for Gastrointestinal Endoscopy Visual Question Answering},
-  year={2025}
+@article{zhu2025gibench,
+  title={GI-Bench: A Panoramic Benchmark Revealing the Knowledge-Experience Dissociation of Multimodal Large Language Models in Gastrointestinal Endoscopy Against Clinical Standards},
+  author={Yan Zhu and Te Luo and Pei-Yao Fu and Zhen Zhang and Zi-Long Wang and Yi-Fan Qu and Zi-Han Geng and Jia-Qi Xu and Lu Yao and Li-Yun Ma and Wei Su and Wei-Feng Chen and Quan-Lin Li and Shuo Wang and Ping-Hong Zhou},
+  year={2025},
+  eprint={2601.08183},
+  archivePrefix={arXiv},
+  primaryClass={cs.CV},
+  url={https://arxiv.org/abs/2601.08183}
 }
 ```

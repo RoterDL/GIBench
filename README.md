@@ -8,6 +8,12 @@
 
 GIBench benchmarks **12 AI models** against **6 physicians** across **5 clinical evaluation dimensions**, covering **20 lesion types** and **947 images** from three anatomical regions: esophagus, stomach, and colorectum.
 
+> **Note:** The GIBench dataset will be publicly released upon paper acceptance. Please stay tuned.
+
+### Updates
+
+- **2026-03**: Added objective metrics (Q1-Q3) for new models: `claude-opus-4-6-think`, `gemini-3.1-pro-preview`, `qwen3.5-plus`
+
 ### Evaluation Tasks
 
 | Task         | Description             | Metric       |
@@ -73,11 +79,18 @@ This project is for research purposes.
 
 ## Citation
 
+[Paper (arXiv)](https://arxiv.org/abs/2601.08183)
+
 If you use GIBench in your research, please cite:
 
 ```bibtex
-@misc{gibench2025,
-  title={GIBench: A Benchmark for Gastrointestinal Endoscopy Visual Question Answering},
-  year={2025}
+@article{zhu2025gibench,
+  title={GI-Bench: A Panoramic Benchmark Revealing the Knowledge-Experience Dissociation of Multimodal Large Language Models in Gastrointestinal Endoscopy Against Clinical Standards},
+  author={Yan Zhu and Te Luo and Pei-Yao Fu and Zhen Zhang and Zi-Long Wang and Yi-Fan Qu and Zi-Han Geng and Jia-Qi Xu and Lu Yao and Li-Yun Ma and Wei Su and Wei-Feng Chen and Quan-Lin Li and Shuo Wang and Ping-Hong Zhou},
+  year={2025},
+  eprint={2601.08183},
+  archivePrefix={arXiv},
+  primaryClass={cs.CV},
+  url={https://arxiv.org/abs/2601.08183}
 }
 ```

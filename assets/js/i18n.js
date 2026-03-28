@@ -47,19 +47,13 @@ const UI_TEXTS = {
   "table-col-q4": { zh: "Q4<br>看图说话", en: "Q4<br>Findings" },
   "table-col-q5": { zh: "Q5<br>后续建议", en: "Q5<br>Recommendations" },
   "card-title-ranking": { zh: "模型整体排名", en: "Model Overall Ranking" },
-  "card-subtitle-ranking": {
-    zh: "具体加权方式请参考论文和文档。",
-    en: "See paper/docs for weighting details.",
-  },
+  "card-subtitle-ranking": { zh: "", en: "" },
   "card-title-summary": { zh: "当前模型概览", en: "Current Model Summary" },
   "card-title-human-ranking": {
     zh: "人机对比整体排名",
     en: "Overall ranking (Human vs Model)",
   },
-  "card-subtitle-human-ranking": {
-    zh: "具体加权方式请参考论文和文档。",
-    en: "See paper/docs for weighting details.",
-  },
+  "card-subtitle-human-ranking": { zh: "", en: "" },
   "card-title-detail": { zh: "按病变 / 区域细节", en: "Per-disease / region details" },
   "card-subtitle-detail": {
     zh: "选择子任务与病变，对比所有模型在对应指标下的表现。",

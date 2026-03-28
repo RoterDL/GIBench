@@ -111,6 +111,37 @@ body {
   max-width: 680px;
 }
 
+/* ── Hero Badges ── */
+.hero-badges {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-page);
+  color: var(--text-muted);
+  font-size: var(--font-small);
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.hero-badge:hover {
+  border-color: var(--text-main);
+  color: var(--text-main);
+}
+
+.hero-badge svg {
+  flex-shrink: 0;
+}
+
 .tags {
   display: flex;
   flex-wrap: wrap;
@@ -148,16 +179,6 @@ body {
   border: 1px solid var(--border-subtle);
   background: var(--bg-page);
   color: var(--text-muted);
-}
-
-.tag--primary {
-  background: #F0F4F0;
-  border-color: #C4D9C5;
-  color: var(--accent-secondary);
-}
-
-.surface-main .tag--primary {
-  color: var(--accent-secondary);
 }
 
 .is-hidden {
