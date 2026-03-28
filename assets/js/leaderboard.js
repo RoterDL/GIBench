@@ -389,7 +389,7 @@ function getColumnMax(rows) {
   return { maxQ1, maxQ2, maxQ3 };
 }
 
-function renderModelTable(tbody, rows, selectedName, t, columnMax) {
+function renderModelTable(tbody, rows, selectedName, t, columnMax, standards) {
   tbody.innerHTML = "";
   rows.forEach((row, idx) => {
     const tr = document.createElement("tr");
@@ -416,6 +416,12 @@ function renderModelTable(tbody, rows, selectedName, t, columnMax) {
 
     const nameCell = document.createElement("td");
     nameCell.textContent = row.name;
+    if ((standards?.new_models || []).includes(row.name)) {
+      const badge = document.createElement("span");
+      badge.className = "tag tag--new";
+      badge.textContent = "NEW";
+      nameCell.appendChild(badge);
+    }
     tr.appendChild(nameCell);
 
     const { maxQ1, maxQ2, maxQ3 } = columnMax || {};
@@ -507,7 +513,7 @@ export function initLeaderboard(rootData, options) {
       selectedName = rows[0].name;
     }
     const columnMax = getColumnMax(rows);
-    renderModelTable(tbody, rows, selectedName, t, columnMax);
+    renderModelTable(tbody, rows, selectedName, t, columnMax, standards);
     renderSummary(models[selectedName], t, standards);
   }
 

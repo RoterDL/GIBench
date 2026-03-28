@@ -996,6 +996,16 @@ tbody tr.is-selected td {
   color: var(--category-opensource);
 }
 
+.tag--new {
+  background: #FFF8E1;
+  border-color: #FFD54F;
+  color: #E65100;
+  font-weight: 600;
+  margin-left: 6px;
+  vertical-align: middle;
+  font-size: var(--font-micro);
+}
+
 .tag--junior-endoscopist {
   background: var(--category-junior-bg);
   border-color: #E0CEA0;

@@ -421,6 +421,14 @@ function renderParticipantTable(tbody, rows, selectedName, t, columnMax, { lang,
     tag.textContent = t(`legend.${category}`);
     nameWrap.appendChild(tag);
 
+    // 新增模型标识
+    if ((standards?.new_models || []).includes(row.name)) {
+      const badge = document.createElement("span");
+      badge.className = "tag tag--new";
+      badge.textContent = "NEW";
+      nameWrap.appendChild(badge);
+    }
+
     nameCell.appendChild(nameWrap);
     tr.appendChild(nameCell);
 
