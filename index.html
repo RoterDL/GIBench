@@ -135,19 +135,6 @@
                 <span id="task-pill-q3">Q3 诊断</span>
               </button>
             </div>
-            <div class="controls-group">
-              <span class="label" id="label-sort">排序（示意）</span>
-              <span class="select-wrap">
-                <select
-                  id="sort-select"
-                  class="select"
-                >
-                  <option id="sort-opt-q1" value="q1">按 Q1 Macro-F1</option>
-                  <option id="sort-opt-q2" value="q2">按 Q2 mIoU</option>
-                  <option id="sort-opt-q3" value="q3">按 Q3 Macro-F1</option>
-                </select>
-              </span>
-            </div>
           </div>
 
           <section class="card card--paired">
@@ -165,9 +152,9 @@
                       <tr>
                         <th>#</th>
                         <th id="table-col-model">模型</th>
-                        <th>Q1 Macro-F1</th>
-                        <th>Q2 mIoU</th>
-                        <th>Q3 Macro-F1</th>
+                        <th data-sort="q1" class="th-sortable is-sorted">Q1 Macro-F1</th>
+                        <th data-sort="q2" class="th-sortable">Q2 mIoU</th>
+                        <th data-sort="q3" class="th-sortable">Q3 Macro-F1</th>
                       </tr>
                     </thead>
                     <tbody id="leaderboard-body"></tbody>
@@ -255,21 +242,6 @@
                 仅展示总体层面的人机差异，可在论文/补充材料中查看更细粒度分析。
               </span>
             </div>
-            <div class="controls-group">
-              <span class="label" id="label-sort-human">排序（示意）</span>
-              <span class="select-wrap">
-                <select
-                  id="human-sort-select"
-                  class="select"
-                >
-                  <option id="human-sort-opt-q1" value="q1">按 Q1 Macro-F1</option>
-                  <option id="human-sort-opt-q2" value="q2">按 Q2 mIoU</option>
-                  <option id="human-sort-opt-q3" value="q3">按 Q3 Macro-F1</option>
-                  <option id="human-sort-opt-q4" value="q4">按 Q4 Likert</option>
-                  <option id="human-sort-opt-q5" value="q5">按 Q5 Likert</option>
-                </select>
-              </span>
-            </div>
           </div>
 
           <section class="card card--paired">
@@ -289,11 +261,11 @@
                       <tr>
                         <th>#</th>
                         <th id="table-col-participant-human">参与者</th>
-                        <th id="table-col-q1">Q1<br>解剖定位</th>
-                        <th id="table-col-q2">Q2<br>病变定位</th>
-                        <th id="table-col-q3">Q3<br>诊断</th>
-                        <th id="table-col-q4">Q4<br>看图说话</th>
-                        <th id="table-col-q5">Q5<br>后续建议</th>
+                        <th id="table-col-q1" data-sort="q1" class="th-sortable is-sorted">Q1<br>解剖定位</th>
+                        <th id="table-col-q2" data-sort="q2" class="th-sortable">Q2<br>病变定位</th>
+                        <th id="table-col-q3" data-sort="q3" class="th-sortable">Q3<br>诊断</th>
+                        <th id="table-col-q4" data-sort="q4" class="th-sortable">Q4<br>看图说话</th>
+                        <th id="table-col-q5" data-sort="q5" class="th-sortable">Q5<br>后续建议</th>
                       </tr>
                     </thead>
                     <tbody id="human-leaderboard-body"></tbody>

@@ -487,8 +487,7 @@ function renderSummary(record, t, standards) {
 export function initLeaderboard(rootData, options) {
   const models = rootData.models || {};
   const tbody = document.getElementById("leaderboard-body");
-  const sortSelect = document.getElementById("sort-select");
-  if (!tbody || !sortSelect) return;
+  if (!tbody) return;
 
   const t = options?.t || ((key) => key);
   const standards = options?.standards || {};
@@ -498,7 +497,7 @@ export function initLeaderboard(rootData, options) {
   initDetailCard(models, standards, { t, getLang, onLanguageChange });
 
   let currentLang = getLang();
-  let sortBy = sortSelect.value || "q1";
+  let sortBy = "q1";
   let rows = computeModelRows(models, sortBy);
   let selectedName = rows[0] ? rows[0].name : null;
 
@@ -517,10 +516,23 @@ export function initLeaderboard(rootData, options) {
     renderSummary(models[selectedName], t, standards);
   }
 
-  sortSelect.addEventListener("change", () => {
-    sortBy = sortSelect.value || "q1";
-    refresh();
-  });
+  const leaderboardTable = tbody.closest("table");
+  if (leaderboardTable) {
+    const theadRow = leaderboardTable.querySelector("thead tr");
+    if (theadRow) {
+      theadRow.querySelectorAll("th[data-sort]").forEach((th) => {
+        th.style.cursor = "pointer";
+        th.addEventListener("click", () => {
+          const newSort = th.getAttribute("data-sort");
+          if (!newSort) return;
+          sortBy = newSort;
+          theadRow.querySelectorAll("th[data-sort]").forEach((h) => h.classList.remove("is-sorted"));
+          th.classList.add("is-sorted");
+          refresh();
+        });
+      });
+    }
+  }
 
   tbody.addEventListener("click", (ev) => {
     const tr = ev.target.closest("tr");

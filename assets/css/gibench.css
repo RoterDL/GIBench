@@ -478,6 +478,43 @@ th {
   text-align: left;
 }
 
+/* 可点击排序表头 */
+th.th-sortable {
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  padding-right: 18px;
+  transition: color 0.15s ease;
+}
+
+th.th-sortable::after {
+  content: "▾";
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 10px;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+th.th-sortable:hover {
+  color: var(--text-main);
+}
+
+th.th-sortable:hover::after {
+  opacity: 0.4;
+}
+
+th.th-sortable.is-sorted {
+  color: var(--accent-primary);
+}
+
+th.th-sortable.is-sorted::after {
+  opacity: 1;
+  color: var(--accent-primary);
+}
+
 tbody tr:nth-child(odd) td {
   background: #ffffff;
 }
@@ -1009,12 +1046,14 @@ tbody tr.is-selected td {
 }
 
 .tag--junior-endoscopist {
+  display: none;
   background: var(--category-junior-bg);
   border-color: #E0CEA0;
   color: var(--category-junior);
 }
 
 .tag--residency-trainee {
+  display: none;
   background: var(--category-trainee-bg);
   border-color: #E8C0BE;
   color: var(--category-trainee);

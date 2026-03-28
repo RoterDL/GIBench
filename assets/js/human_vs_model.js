@@ -125,7 +125,15 @@ function buildPhysicianChecker(standards) {
 function getDisplayName(name, lang, standards) {
   if (!name) return name;
   // 去掉名称中的 (Avg) 后缀
-  return name.replace(/\(Avg\)$/i, "").trim();
+  const stripped = name.replace(/\(Avg\)$/i, "").trim();
+  // 中文模式下，利用 seniority_names_en 反向查找翻译
+  if (lang === "zh") {
+    const mapping = standards?.seniority_names_en || {};
+    for (const [cn, en] of Object.entries(mapping)) {
+      if (en === stripped) return cn;
+    }
+  }
+  return stripped;
 }
 
 function extractMacroValue(entry, candidates) {
@@ -871,15 +879,14 @@ function initHumanDetailCard(hvmData, standards, { t, getLang, onLanguageChange 
 
 export function initHumanVsModel(hvmData, options) {
   const tbody = document.getElementById("human-leaderboard-body");
-  const sortSelect = document.getElementById("human-sort-select");
-  if (!tbody || !sortSelect) return;
+  if (!tbody) return;
 
   const t = options?.t || ((key) => key);
   const standards = options?.standards || {};
   const onLanguageChange = options?.onLanguageChange || (() => {});
   const getLang = options?.getLang || (() => "zh");
 
-  let sortBy = sortSelect.value || "q1";
+  let sortBy = "q1";
   let rows = computeParticipantRows(hvmData, standards, sortBy);
   let selectedName = rows[0] ? rows[0].name : null;
 
@@ -896,10 +903,23 @@ export function initHumanVsModel(hvmData, options) {
     renderParticipantTable(tbody, rows, selectedName, t, columnMax, { lang: getLang(), standards });
   }
 
-  sortSelect.addEventListener("change", () => {
-    sortBy = sortSelect.value || "q1";
-    refresh();
-  });
+  const humanTable = tbody.closest("table");
+  if (humanTable) {
+    const theadRow = humanTable.querySelector("thead tr");
+    if (theadRow) {
+      theadRow.querySelectorAll("th[data-sort]").forEach((th) => {
+        th.style.cursor = "pointer";
+        th.addEventListener("click", () => {
+          const newSort = th.getAttribute("data-sort");
+          if (!newSort) return;
+          sortBy = newSort;
+          theadRow.querySelectorAll("th[data-sort]").forEach((h) => h.classList.remove("is-sorted"));
+          th.classList.add("is-sorted");
+          refresh();
+        });
+      });
+    }
+  }
 
   tbody.addEventListener("click", (ev) => {
     const tr = ev.target.closest("tr");
