@@ -1,6 +1,6 @@
 {
   "bench_name": "GIBench",
-  "generated_at": "2026-03-28T08:54:40",
+  "generated_at": "2026-03-28T11:18:59",
   "description": "GIBench 多任务统一模型榜指标（Q1 解剖定位、Q2 病变定位、Q3 诊断）",
   "human_vs_model": {
     "q1_anatomical_robustness": {
